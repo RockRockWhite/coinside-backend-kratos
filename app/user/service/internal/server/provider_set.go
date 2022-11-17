@@ -1,8 +1,8 @@
-package data
+package server
 
 import (
 	"github.com/google/wire"
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewDB, NewUserRepoNoCache)
+var ProviderSet = wire.NewSet(NewGrpcServer)
