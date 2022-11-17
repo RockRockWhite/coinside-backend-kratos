@@ -1,0 +1,153 @@
+syntax = "proto3";
+package api;
+option java_package = "group.ljxsteam.coinside.card";
+option go_package = "./;api";
+
+enum Code {
+  OK = 0;
+  ERROR_UNKNOWN = 2;
+  ERROR_CARD_NOTFOUND = 3;
+}
+
+message CreateCardRequest{
+  uint64 team_id = 1;
+  string title = 2;
+  string content = 3;
+}
+
+message CreateCardResponse{
+  Code code = 1;
+  uint64 id = 2;
+}
+
+message GetCardInfoRequest{
+  uint64 id = 1;
+}
+
+message GetCardInfoResponse{
+  Code code = 1;
+  CardInfo card = 2;
+}
+
+message CardInfo{
+  uint64 id = 1;
+  uint64 team_id = 2;
+  string title = 3;
+  string content = 4;
+  CardStatus status = 5;
+  string created_at = 6;
+  string updated_at = 7;
+  repeated CardMember members = 8;
+  repeated CardTag tags = 9;
+}
+
+enum CardStatus{
+  CARD_STATUS_DOING = 0;
+  CARD_STATUS_DONE = 1;
+}
+
+message CardMember{
+  uint64 user_id = 1;
+  bool is_admin = 2;
+  string created_at = 3;
+  string updated_at = 4;
+}
+
+message CardTag{
+  uint64 id = 1;
+  string content = 2;
+  string created_at = 3;
+  string updated_at = 4;
+}
+
+message GetCardListRequest{
+}
+
+message GetCardListResponse{
+  Code code = 1;
+  repeated CardInfo cards = 2;
+}
+
+message UpdateCardRequest{
+  uint64 id = 1;
+  string title = 2;
+  string content = 3;
+  CardStatus status = 4;
+}
+
+message UpdateCardResponse{
+  Code code = 1;
+}
+
+message DeleteCardRequest{
+  uint64 id = 1;
+}
+
+message DeleteCardResponse{
+  Code code = 1;
+}
+
+message AddCardTagRequest{
+  uint64 id = 1;
+  string content = 2;
+}
+
+message AddCardTagResponse{
+  Code code = 1;
+}
+
+message DeleteCardTagRequest{
+  uint64 id = 1;
+  string content = 2;
+}
+
+message DeleteCardTagResponse{
+  Code code = 1;
+}
+
+message AddCardMemberRequest{
+  uint64 id = 1;
+  uint64 user_id = 2;
+}
+
+message AddCardMemberResponse{
+  Code code = 1;
+}
+
+message DeleteCardMemberRequest{
+  uint64 id = 1;
+  uint64 user_id = 2;
+}
+
+message DeleteCardMemberResponse{
+  Code code = 1;
+}
+
+service CardService {
+  rpc CreateCard(CreateCardRequest) returns (CreateCardResponse);
+  rpc CreateCardStream (stream CreateCardRequest) returns (CreateCardResponse);
+
+  rpc GetCardInfo(GetCardInfoRequest) returns (GetCardInfoResponse);
+  rpc GetCardInfoStream (stream GetCardInfoRequest) returns (GetCardInfoResponse);
+
+  rpc GetCardList(GetCardListRequest) returns (GetCardListResponse);
+  rpc GetCardListStream (stream GetCardListRequest) returns (GetCardListResponse);
+
+  rpc UpdateCard(UpdateCardRequest) returns (UpdateCardResponse);
+  rpc UpdateCardStream (stream UpdateCardRequest) returns (UpdateCardResponse);
+
+  rpc DeleteCard(DeleteCardRequest) returns (DeleteCardResponse);
+  rpc DeleteCardStream (stream DeleteCardRequest) returns (DeleteCardResponse);
+
+  rpc AddCardTag(AddCardTagRequest) returns (AddCardTagResponse);
+  rpc AddCardTagStream (stream AddCardTagRequest) returns (AddCardTagResponse);
+
+  rpc DeleteCardTag(DeleteCardTagRequest) returns (DeleteCardTagResponse);
+  rpc DeleteCardTagStream (stream DeleteCardTagRequest) returns (DeleteCardResponse);
+
+  rpc AddCardMember(AddCardMemberRequest) returns (AddCardMemberResponse);
+  rpc AddCardMemberStream (stream AddCardMemberRequest) returns (AddCardMemberResponse);
+
+  rpc DeleteCardMember(DeleteCardMemberRequest) returns (DeleteCardMemberResponse);
+  rpc DeleteCardMemberStream (stream DeleteCardMemberRequest) returns (DeleteCardMemberResponse);
+}
