@@ -1,6 +1,5 @@
 syntax = "proto3";
 package api;
-option java_package = "group.ljxsteam.coinside.user";
 option go_package = "./;api";
 
 enum Code {
