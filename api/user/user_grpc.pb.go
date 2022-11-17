@@ -18,99 +18,99 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// UserServiceClient is the client API for UserService service.
+// UserClient is the client API for User service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type UserServiceClient interface {
+type UserClient interface {
 	// add a user
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
 	// add a user via stream
-	CreateUserStream(ctx context.Context, opts ...grpc.CallOption) (UserService_CreateUserStreamClient, error)
+	CreateUserStream(ctx context.Context, opts ...grpc.CallOption) (User_CreateUserStreamClient, error)
 	// Get a user's info
 	GetUserInfo(ctx context.Context, in *GetUserInfoRequest, opts ...grpc.CallOption) (*GetUserInfoResponse, error)
 	// GGet a user's info via stream
-	GetUserInfoStream(ctx context.Context, opts ...grpc.CallOption) (UserService_GetUserInfoStreamClient, error)
+	GetUserInfoStream(ctx context.Context, opts ...grpc.CallOption) (User_GetUserInfoStreamClient, error)
 	// Get a user's info by nickname
 	GetUserInfoByNickname(ctx context.Context, in *GetUserInfoByNicknameRequest, opts ...grpc.CallOption) (*GetUserInfoResponse, error)
 	// Get a user's info by nickname via stream
-	GetUserInfoByNicknameStream(ctx context.Context, opts ...grpc.CallOption) (UserService_GetUserInfoByNicknameStreamClient, error)
+	GetUserInfoByNicknameStream(ctx context.Context, opts ...grpc.CallOption) (User_GetUserInfoByNicknameStreamClient, error)
 	// Get a user's info by email
 	GetUserInfoByEmail(ctx context.Context, in *GetUserInfoByEmailRequest, opts ...grpc.CallOption) (*GetUserInfoResponse, error)
 	// Get a user's info by email via stream
-	GetUserInfoByEmailStream(ctx context.Context, opts ...grpc.CallOption) (UserService_GetUserInfoByEmailStreamClient, error)
+	GetUserInfoByEmailStream(ctx context.Context, opts ...grpc.CallOption) (User_GetUserInfoByEmailStreamClient, error)
 	// Get a user's info by mobile
 	GetUserInfoByMobile(ctx context.Context, in *GetUserInfoByMobileRequest, opts ...grpc.CallOption) (*GetUserInfoResponse, error)
 	// Get a user's info by mobile via stream
-	GetUserInfoByMobileStream(ctx context.Context, opts ...grpc.CallOption) (UserService_GetUserInfoByMobileStreamClient, error)
+	GetUserInfoByMobileStream(ctx context.Context, opts ...grpc.CallOption) (User_GetUserInfoByMobileStreamClient, error)
 	// Set a user's fullname
 	SetFullname(ctx context.Context, in *SetFullnameRequest, opts ...grpc.CallOption) (*SetFullnameResponse, error)
 	// Set a user's fullname via stream
-	SetFullnameStream(ctx context.Context, opts ...grpc.CallOption) (UserService_SetFullnameStreamClient, error)
+	SetFullnameStream(ctx context.Context, opts ...grpc.CallOption) (User_SetFullnameStreamClient, error)
 	// Set a user's avatar
 	SetAvatar(ctx context.Context, in *SetAvatarRequest, opts ...grpc.CallOption) (*SetAvatarResponse, error)
 	// Set a user's avatar via stream
-	SetAvatarStream(ctx context.Context, opts ...grpc.CallOption) (UserService_SetAvatarStreamClient, error)
+	SetAvatarStream(ctx context.Context, opts ...grpc.CallOption) (User_SetAvatarStreamClient, error)
 	// Set a user's config
 	SetConfig(ctx context.Context, in *SetConfigRequest, opts ...grpc.CallOption) (*SetConfigResponse, error)
 	// Set a user's config via stream
-	SetConfigStream(ctx context.Context, opts ...grpc.CallOption) (UserService_SetConfigStreamClient, error)
+	SetConfigStream(ctx context.Context, opts ...grpc.CallOption) (User_SetConfigStreamClient, error)
 	// Set a user's email
 	SetEmail(ctx context.Context, in *SetEmailRequest, opts ...grpc.CallOption) (*SetEmailResponse, error)
 	// Set a user's email via stream
-	SetEmailStream(ctx context.Context, opts ...grpc.CallOption) (UserService_SetEmailStreamClient, error)
+	SetEmailStream(ctx context.Context, opts ...grpc.CallOption) (User_SetEmailStreamClient, error)
 	// Set a user's mobile
 	SetMobile(ctx context.Context, in *SetMobileRequest, opts ...grpc.CallOption) (*SetMobileResponse, error)
 	// Set a user's mobile via stream
-	SetMobileStream(ctx context.Context, opts ...grpc.CallOption) (UserService_SetMobileStreamClient, error)
+	SetMobileStream(ctx context.Context, opts ...grpc.CallOption) (User_SetMobileStreamClient, error)
 	// delete a user
 	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*DeleteUserResponse, error)
 	// delete a user via stream
-	DeleteUserStream(ctx context.Context, opts ...grpc.CallOption) (UserService_DeleteUserStreamClient, error)
+	DeleteUserStream(ctx context.Context, opts ...grpc.CallOption) (User_DeleteUserStreamClient, error)
 	// login
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 }
 
-type userServiceClient struct {
+type userClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewUserServiceClient(cc grpc.ClientConnInterface) UserServiceClient {
-	return &userServiceClient{cc}
+func NewUserClient(cc grpc.ClientConnInterface) UserClient {
+	return &userClient{cc}
 }
 
-func (c *userServiceClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error) {
+func (c *userClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error) {
 	out := new(CreateUserResponse)
-	err := c.cc.Invoke(ctx, "/api.UserService/CreateUser", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.User/CreateUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userServiceClient) CreateUserStream(ctx context.Context, opts ...grpc.CallOption) (UserService_CreateUserStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &UserService_ServiceDesc.Streams[0], "/api.UserService/CreateUserStream", opts...)
+func (c *userClient) CreateUserStream(ctx context.Context, opts ...grpc.CallOption) (User_CreateUserStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &User_ServiceDesc.Streams[0], "/api.User/CreateUserStream", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &userServiceCreateUserStreamClient{stream}
+	x := &userCreateUserStreamClient{stream}
 	return x, nil
 }
 
-type UserService_CreateUserStreamClient interface {
+type User_CreateUserStreamClient interface {
 	Send(*CreateUserRequest) error
 	Recv() (*CreateUserResponse, error)
 	grpc.ClientStream
 }
 
-type userServiceCreateUserStreamClient struct {
+type userCreateUserStreamClient struct {
 	grpc.ClientStream
 }
 
-func (x *userServiceCreateUserStreamClient) Send(m *CreateUserRequest) error {
+func (x *userCreateUserStreamClient) Send(m *CreateUserRequest) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *userServiceCreateUserStreamClient) Recv() (*CreateUserResponse, error) {
+func (x *userCreateUserStreamClient) Recv() (*CreateUserResponse, error) {
 	m := new(CreateUserResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -118,39 +118,39 @@ func (x *userServiceCreateUserStreamClient) Recv() (*CreateUserResponse, error) 
 	return m, nil
 }
 
-func (c *userServiceClient) GetUserInfo(ctx context.Context, in *GetUserInfoRequest, opts ...grpc.CallOption) (*GetUserInfoResponse, error) {
+func (c *userClient) GetUserInfo(ctx context.Context, in *GetUserInfoRequest, opts ...grpc.CallOption) (*GetUserInfoResponse, error) {
 	out := new(GetUserInfoResponse)
-	err := c.cc.Invoke(ctx, "/api.UserService/GetUserInfo", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.User/GetUserInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userServiceClient) GetUserInfoStream(ctx context.Context, opts ...grpc.CallOption) (UserService_GetUserInfoStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &UserService_ServiceDesc.Streams[1], "/api.UserService/GetUserInfoStream", opts...)
+func (c *userClient) GetUserInfoStream(ctx context.Context, opts ...grpc.CallOption) (User_GetUserInfoStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &User_ServiceDesc.Streams[1], "/api.User/GetUserInfoStream", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &userServiceGetUserInfoStreamClient{stream}
+	x := &userGetUserInfoStreamClient{stream}
 	return x, nil
 }
 
-type UserService_GetUserInfoStreamClient interface {
+type User_GetUserInfoStreamClient interface {
 	Send(*GetUserInfoRequest) error
 	Recv() (*GetUserInfoResponse, error)
 	grpc.ClientStream
 }
 
-type userServiceGetUserInfoStreamClient struct {
+type userGetUserInfoStreamClient struct {
 	grpc.ClientStream
 }
 
-func (x *userServiceGetUserInfoStreamClient) Send(m *GetUserInfoRequest) error {
+func (x *userGetUserInfoStreamClient) Send(m *GetUserInfoRequest) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *userServiceGetUserInfoStreamClient) Recv() (*GetUserInfoResponse, error) {
+func (x *userGetUserInfoStreamClient) Recv() (*GetUserInfoResponse, error) {
 	m := new(GetUserInfoResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -158,39 +158,39 @@ func (x *userServiceGetUserInfoStreamClient) Recv() (*GetUserInfoResponse, error
 	return m, nil
 }
 
-func (c *userServiceClient) GetUserInfoByNickname(ctx context.Context, in *GetUserInfoByNicknameRequest, opts ...grpc.CallOption) (*GetUserInfoResponse, error) {
+func (c *userClient) GetUserInfoByNickname(ctx context.Context, in *GetUserInfoByNicknameRequest, opts ...grpc.CallOption) (*GetUserInfoResponse, error) {
 	out := new(GetUserInfoResponse)
-	err := c.cc.Invoke(ctx, "/api.UserService/GetUserInfoByNickname", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.User/GetUserInfoByNickname", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userServiceClient) GetUserInfoByNicknameStream(ctx context.Context, opts ...grpc.CallOption) (UserService_GetUserInfoByNicknameStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &UserService_ServiceDesc.Streams[2], "/api.UserService/GetUserInfoByNicknameStream", opts...)
+func (c *userClient) GetUserInfoByNicknameStream(ctx context.Context, opts ...grpc.CallOption) (User_GetUserInfoByNicknameStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &User_ServiceDesc.Streams[2], "/api.User/GetUserInfoByNicknameStream", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &userServiceGetUserInfoByNicknameStreamClient{stream}
+	x := &userGetUserInfoByNicknameStreamClient{stream}
 	return x, nil
 }
 
-type UserService_GetUserInfoByNicknameStreamClient interface {
+type User_GetUserInfoByNicknameStreamClient interface {
 	Send(*GetUserInfoByNicknameRequest) error
 	Recv() (*GetUserInfoResponse, error)
 	grpc.ClientStream
 }
 
-type userServiceGetUserInfoByNicknameStreamClient struct {
+type userGetUserInfoByNicknameStreamClient struct {
 	grpc.ClientStream
 }
 
-func (x *userServiceGetUserInfoByNicknameStreamClient) Send(m *GetUserInfoByNicknameRequest) error {
+func (x *userGetUserInfoByNicknameStreamClient) Send(m *GetUserInfoByNicknameRequest) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *userServiceGetUserInfoByNicknameStreamClient) Recv() (*GetUserInfoResponse, error) {
+func (x *userGetUserInfoByNicknameStreamClient) Recv() (*GetUserInfoResponse, error) {
 	m := new(GetUserInfoResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -198,39 +198,39 @@ func (x *userServiceGetUserInfoByNicknameStreamClient) Recv() (*GetUserInfoRespo
 	return m, nil
 }
 
-func (c *userServiceClient) GetUserInfoByEmail(ctx context.Context, in *GetUserInfoByEmailRequest, opts ...grpc.CallOption) (*GetUserInfoResponse, error) {
+func (c *userClient) GetUserInfoByEmail(ctx context.Context, in *GetUserInfoByEmailRequest, opts ...grpc.CallOption) (*GetUserInfoResponse, error) {
 	out := new(GetUserInfoResponse)
-	err := c.cc.Invoke(ctx, "/api.UserService/GetUserInfoByEmail", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.User/GetUserInfoByEmail", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userServiceClient) GetUserInfoByEmailStream(ctx context.Context, opts ...grpc.CallOption) (UserService_GetUserInfoByEmailStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &UserService_ServiceDesc.Streams[3], "/api.UserService/GetUserInfoByEmailStream", opts...)
+func (c *userClient) GetUserInfoByEmailStream(ctx context.Context, opts ...grpc.CallOption) (User_GetUserInfoByEmailStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &User_ServiceDesc.Streams[3], "/api.User/GetUserInfoByEmailStream", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &userServiceGetUserInfoByEmailStreamClient{stream}
+	x := &userGetUserInfoByEmailStreamClient{stream}
 	return x, nil
 }
 
-type UserService_GetUserInfoByEmailStreamClient interface {
+type User_GetUserInfoByEmailStreamClient interface {
 	Send(*GetUserInfoByEmailRequest) error
 	Recv() (*GetUserInfoResponse, error)
 	grpc.ClientStream
 }
 
-type userServiceGetUserInfoByEmailStreamClient struct {
+type userGetUserInfoByEmailStreamClient struct {
 	grpc.ClientStream
 }
 
-func (x *userServiceGetUserInfoByEmailStreamClient) Send(m *GetUserInfoByEmailRequest) error {
+func (x *userGetUserInfoByEmailStreamClient) Send(m *GetUserInfoByEmailRequest) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *userServiceGetUserInfoByEmailStreamClient) Recv() (*GetUserInfoResponse, error) {
+func (x *userGetUserInfoByEmailStreamClient) Recv() (*GetUserInfoResponse, error) {
 	m := new(GetUserInfoResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -238,39 +238,39 @@ func (x *userServiceGetUserInfoByEmailStreamClient) Recv() (*GetUserInfoResponse
 	return m, nil
 }
 
-func (c *userServiceClient) GetUserInfoByMobile(ctx context.Context, in *GetUserInfoByMobileRequest, opts ...grpc.CallOption) (*GetUserInfoResponse, error) {
+func (c *userClient) GetUserInfoByMobile(ctx context.Context, in *GetUserInfoByMobileRequest, opts ...grpc.CallOption) (*GetUserInfoResponse, error) {
 	out := new(GetUserInfoResponse)
-	err := c.cc.Invoke(ctx, "/api.UserService/GetUserInfoByMobile", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.User/GetUserInfoByMobile", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userServiceClient) GetUserInfoByMobileStream(ctx context.Context, opts ...grpc.CallOption) (UserService_GetUserInfoByMobileStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &UserService_ServiceDesc.Streams[4], "/api.UserService/GetUserInfoByMobileStream", opts...)
+func (c *userClient) GetUserInfoByMobileStream(ctx context.Context, opts ...grpc.CallOption) (User_GetUserInfoByMobileStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &User_ServiceDesc.Streams[4], "/api.User/GetUserInfoByMobileStream", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &userServiceGetUserInfoByMobileStreamClient{stream}
+	x := &userGetUserInfoByMobileStreamClient{stream}
 	return x, nil
 }
 
-type UserService_GetUserInfoByMobileStreamClient interface {
+type User_GetUserInfoByMobileStreamClient interface {
 	Send(*GetUserInfoByMobileRequest) error
 	Recv() (*GetUserInfoResponse, error)
 	grpc.ClientStream
 }
 
-type userServiceGetUserInfoByMobileStreamClient struct {
+type userGetUserInfoByMobileStreamClient struct {
 	grpc.ClientStream
 }
 
-func (x *userServiceGetUserInfoByMobileStreamClient) Send(m *GetUserInfoByMobileRequest) error {
+func (x *userGetUserInfoByMobileStreamClient) Send(m *GetUserInfoByMobileRequest) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *userServiceGetUserInfoByMobileStreamClient) Recv() (*GetUserInfoResponse, error) {
+func (x *userGetUserInfoByMobileStreamClient) Recv() (*GetUserInfoResponse, error) {
 	m := new(GetUserInfoResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -278,39 +278,39 @@ func (x *userServiceGetUserInfoByMobileStreamClient) Recv() (*GetUserInfoRespons
 	return m, nil
 }
 
-func (c *userServiceClient) SetFullname(ctx context.Context, in *SetFullnameRequest, opts ...grpc.CallOption) (*SetFullnameResponse, error) {
+func (c *userClient) SetFullname(ctx context.Context, in *SetFullnameRequest, opts ...grpc.CallOption) (*SetFullnameResponse, error) {
 	out := new(SetFullnameResponse)
-	err := c.cc.Invoke(ctx, "/api.UserService/SetFullname", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.User/SetFullname", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userServiceClient) SetFullnameStream(ctx context.Context, opts ...grpc.CallOption) (UserService_SetFullnameStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &UserService_ServiceDesc.Streams[5], "/api.UserService/SetFullnameStream", opts...)
+func (c *userClient) SetFullnameStream(ctx context.Context, opts ...grpc.CallOption) (User_SetFullnameStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &User_ServiceDesc.Streams[5], "/api.User/SetFullnameStream", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &userServiceSetFullnameStreamClient{stream}
+	x := &userSetFullnameStreamClient{stream}
 	return x, nil
 }
 
-type UserService_SetFullnameStreamClient interface {
+type User_SetFullnameStreamClient interface {
 	Send(*SetFullnameRequest) error
 	Recv() (*SetFullnameResponse, error)
 	grpc.ClientStream
 }
 
-type userServiceSetFullnameStreamClient struct {
+type userSetFullnameStreamClient struct {
 	grpc.ClientStream
 }
 
-func (x *userServiceSetFullnameStreamClient) Send(m *SetFullnameRequest) error {
+func (x *userSetFullnameStreamClient) Send(m *SetFullnameRequest) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *userServiceSetFullnameStreamClient) Recv() (*SetFullnameResponse, error) {
+func (x *userSetFullnameStreamClient) Recv() (*SetFullnameResponse, error) {
 	m := new(SetFullnameResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -318,39 +318,39 @@ func (x *userServiceSetFullnameStreamClient) Recv() (*SetFullnameResponse, error
 	return m, nil
 }
 
-func (c *userServiceClient) SetAvatar(ctx context.Context, in *SetAvatarRequest, opts ...grpc.CallOption) (*SetAvatarResponse, error) {
+func (c *userClient) SetAvatar(ctx context.Context, in *SetAvatarRequest, opts ...grpc.CallOption) (*SetAvatarResponse, error) {
 	out := new(SetAvatarResponse)
-	err := c.cc.Invoke(ctx, "/api.UserService/SetAvatar", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.User/SetAvatar", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userServiceClient) SetAvatarStream(ctx context.Context, opts ...grpc.CallOption) (UserService_SetAvatarStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &UserService_ServiceDesc.Streams[6], "/api.UserService/SetAvatarStream", opts...)
+func (c *userClient) SetAvatarStream(ctx context.Context, opts ...grpc.CallOption) (User_SetAvatarStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &User_ServiceDesc.Streams[6], "/api.User/SetAvatarStream", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &userServiceSetAvatarStreamClient{stream}
+	x := &userSetAvatarStreamClient{stream}
 	return x, nil
 }
 
-type UserService_SetAvatarStreamClient interface {
+type User_SetAvatarStreamClient interface {
 	Send(*SetAvatarRequest) error
 	Recv() (*SetAvatarResponse, error)
 	grpc.ClientStream
 }
 
-type userServiceSetAvatarStreamClient struct {
+type userSetAvatarStreamClient struct {
 	grpc.ClientStream
 }
 
-func (x *userServiceSetAvatarStreamClient) Send(m *SetAvatarRequest) error {
+func (x *userSetAvatarStreamClient) Send(m *SetAvatarRequest) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *userServiceSetAvatarStreamClient) Recv() (*SetAvatarResponse, error) {
+func (x *userSetAvatarStreamClient) Recv() (*SetAvatarResponse, error) {
 	m := new(SetAvatarResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -358,39 +358,39 @@ func (x *userServiceSetAvatarStreamClient) Recv() (*SetAvatarResponse, error) {
 	return m, nil
 }
 
-func (c *userServiceClient) SetConfig(ctx context.Context, in *SetConfigRequest, opts ...grpc.CallOption) (*SetConfigResponse, error) {
+func (c *userClient) SetConfig(ctx context.Context, in *SetConfigRequest, opts ...grpc.CallOption) (*SetConfigResponse, error) {
 	out := new(SetConfigResponse)
-	err := c.cc.Invoke(ctx, "/api.UserService/SetConfig", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.User/SetConfig", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userServiceClient) SetConfigStream(ctx context.Context, opts ...grpc.CallOption) (UserService_SetConfigStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &UserService_ServiceDesc.Streams[7], "/api.UserService/SetConfigStream", opts...)
+func (c *userClient) SetConfigStream(ctx context.Context, opts ...grpc.CallOption) (User_SetConfigStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &User_ServiceDesc.Streams[7], "/api.User/SetConfigStream", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &userServiceSetConfigStreamClient{stream}
+	x := &userSetConfigStreamClient{stream}
 	return x, nil
 }
 
-type UserService_SetConfigStreamClient interface {
+type User_SetConfigStreamClient interface {
 	Send(*SetConfigRequest) error
 	Recv() (*SetConfigResponse, error)
 	grpc.ClientStream
 }
 
-type userServiceSetConfigStreamClient struct {
+type userSetConfigStreamClient struct {
 	grpc.ClientStream
 }
 
-func (x *userServiceSetConfigStreamClient) Send(m *SetConfigRequest) error {
+func (x *userSetConfigStreamClient) Send(m *SetConfigRequest) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *userServiceSetConfigStreamClient) Recv() (*SetConfigResponse, error) {
+func (x *userSetConfigStreamClient) Recv() (*SetConfigResponse, error) {
 	m := new(SetConfigResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -398,39 +398,39 @@ func (x *userServiceSetConfigStreamClient) Recv() (*SetConfigResponse, error) {
 	return m, nil
 }
 
-func (c *userServiceClient) SetEmail(ctx context.Context, in *SetEmailRequest, opts ...grpc.CallOption) (*SetEmailResponse, error) {
+func (c *userClient) SetEmail(ctx context.Context, in *SetEmailRequest, opts ...grpc.CallOption) (*SetEmailResponse, error) {
 	out := new(SetEmailResponse)
-	err := c.cc.Invoke(ctx, "/api.UserService/SetEmail", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.User/SetEmail", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userServiceClient) SetEmailStream(ctx context.Context, opts ...grpc.CallOption) (UserService_SetEmailStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &UserService_ServiceDesc.Streams[8], "/api.UserService/SetEmailStream", opts...)
+func (c *userClient) SetEmailStream(ctx context.Context, opts ...grpc.CallOption) (User_SetEmailStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &User_ServiceDesc.Streams[8], "/api.User/SetEmailStream", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &userServiceSetEmailStreamClient{stream}
+	x := &userSetEmailStreamClient{stream}
 	return x, nil
 }
 
-type UserService_SetEmailStreamClient interface {
+type User_SetEmailStreamClient interface {
 	Send(*SetEmailRequest) error
 	Recv() (*SetEmailResponse, error)
 	grpc.ClientStream
 }
 
-type userServiceSetEmailStreamClient struct {
+type userSetEmailStreamClient struct {
 	grpc.ClientStream
 }
 
-func (x *userServiceSetEmailStreamClient) Send(m *SetEmailRequest) error {
+func (x *userSetEmailStreamClient) Send(m *SetEmailRequest) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *userServiceSetEmailStreamClient) Recv() (*SetEmailResponse, error) {
+func (x *userSetEmailStreamClient) Recv() (*SetEmailResponse, error) {
 	m := new(SetEmailResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -438,39 +438,39 @@ func (x *userServiceSetEmailStreamClient) Recv() (*SetEmailResponse, error) {
 	return m, nil
 }
 
-func (c *userServiceClient) SetMobile(ctx context.Context, in *SetMobileRequest, opts ...grpc.CallOption) (*SetMobileResponse, error) {
+func (c *userClient) SetMobile(ctx context.Context, in *SetMobileRequest, opts ...grpc.CallOption) (*SetMobileResponse, error) {
 	out := new(SetMobileResponse)
-	err := c.cc.Invoke(ctx, "/api.UserService/SetMobile", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.User/SetMobile", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userServiceClient) SetMobileStream(ctx context.Context, opts ...grpc.CallOption) (UserService_SetMobileStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &UserService_ServiceDesc.Streams[9], "/api.UserService/SetMobileStream", opts...)
+func (c *userClient) SetMobileStream(ctx context.Context, opts ...grpc.CallOption) (User_SetMobileStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &User_ServiceDesc.Streams[9], "/api.User/SetMobileStream", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &userServiceSetMobileStreamClient{stream}
+	x := &userSetMobileStreamClient{stream}
 	return x, nil
 }
 
-type UserService_SetMobileStreamClient interface {
+type User_SetMobileStreamClient interface {
 	Send(*SetMobileRequest) error
 	Recv() (*SetMobileResponse, error)
 	grpc.ClientStream
 }
 
-type userServiceSetMobileStreamClient struct {
+type userSetMobileStreamClient struct {
 	grpc.ClientStream
 }
 
-func (x *userServiceSetMobileStreamClient) Send(m *SetMobileRequest) error {
+func (x *userSetMobileStreamClient) Send(m *SetMobileRequest) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *userServiceSetMobileStreamClient) Recv() (*SetMobileResponse, error) {
+func (x *userSetMobileStreamClient) Recv() (*SetMobileResponse, error) {
 	m := new(SetMobileResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -478,39 +478,39 @@ func (x *userServiceSetMobileStreamClient) Recv() (*SetMobileResponse, error) {
 	return m, nil
 }
 
-func (c *userServiceClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*DeleteUserResponse, error) {
+func (c *userClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*DeleteUserResponse, error) {
 	out := new(DeleteUserResponse)
-	err := c.cc.Invoke(ctx, "/api.UserService/DeleteUser", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.User/DeleteUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userServiceClient) DeleteUserStream(ctx context.Context, opts ...grpc.CallOption) (UserService_DeleteUserStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &UserService_ServiceDesc.Streams[10], "/api.UserService/DeleteUserStream", opts...)
+func (c *userClient) DeleteUserStream(ctx context.Context, opts ...grpc.CallOption) (User_DeleteUserStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &User_ServiceDesc.Streams[10], "/api.User/DeleteUserStream", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &userServiceDeleteUserStreamClient{stream}
+	x := &userDeleteUserStreamClient{stream}
 	return x, nil
 }
 
-type UserService_DeleteUserStreamClient interface {
+type User_DeleteUserStreamClient interface {
 	Send(*DeleteUserRequest) error
 	Recv() (*DeleteUserResponse, error)
 	grpc.ClientStream
 }
 
-type userServiceDeleteUserStreamClient struct {
+type userDeleteUserStreamClient struct {
 	grpc.ClientStream
 }
 
-func (x *userServiceDeleteUserStreamClient) Send(m *DeleteUserRequest) error {
+func (x *userDeleteUserStreamClient) Send(m *DeleteUserRequest) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *userServiceDeleteUserStreamClient) Recv() (*DeleteUserResponse, error) {
+func (x *userDeleteUserStreamClient) Recv() (*DeleteUserResponse, error) {
 	m := new(DeleteUserResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -518,191 +518,191 @@ func (x *userServiceDeleteUserStreamClient) Recv() (*DeleteUserResponse, error) 
 	return m, nil
 }
 
-func (c *userServiceClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error) {
+func (c *userClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error) {
 	out := new(LoginResponse)
-	err := c.cc.Invoke(ctx, "/api.UserService/Login", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.User/Login", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// UserServiceServer is the server API for UserService service.
-// All implementations must embed UnimplementedUserServiceServer
+// UserServer is the server API for User service.
+// All implementations must embed UnimplementedUserServer
 // for forward compatibility
-type UserServiceServer interface {
+type UserServer interface {
 	// add a user
 	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
 	// add a user via stream
-	CreateUserStream(UserService_CreateUserStreamServer) error
+	CreateUserStream(User_CreateUserStreamServer) error
 	// Get a user's info
 	GetUserInfo(context.Context, *GetUserInfoRequest) (*GetUserInfoResponse, error)
 	// GGet a user's info via stream
-	GetUserInfoStream(UserService_GetUserInfoStreamServer) error
+	GetUserInfoStream(User_GetUserInfoStreamServer) error
 	// Get a user's info by nickname
 	GetUserInfoByNickname(context.Context, *GetUserInfoByNicknameRequest) (*GetUserInfoResponse, error)
 	// Get a user's info by nickname via stream
-	GetUserInfoByNicknameStream(UserService_GetUserInfoByNicknameStreamServer) error
+	GetUserInfoByNicknameStream(User_GetUserInfoByNicknameStreamServer) error
 	// Get a user's info by email
 	GetUserInfoByEmail(context.Context, *GetUserInfoByEmailRequest) (*GetUserInfoResponse, error)
 	// Get a user's info by email via stream
-	GetUserInfoByEmailStream(UserService_GetUserInfoByEmailStreamServer) error
+	GetUserInfoByEmailStream(User_GetUserInfoByEmailStreamServer) error
 	// Get a user's info by mobile
 	GetUserInfoByMobile(context.Context, *GetUserInfoByMobileRequest) (*GetUserInfoResponse, error)
 	// Get a user's info by mobile via stream
-	GetUserInfoByMobileStream(UserService_GetUserInfoByMobileStreamServer) error
+	GetUserInfoByMobileStream(User_GetUserInfoByMobileStreamServer) error
 	// Set a user's fullname
 	SetFullname(context.Context, *SetFullnameRequest) (*SetFullnameResponse, error)
 	// Set a user's fullname via stream
-	SetFullnameStream(UserService_SetFullnameStreamServer) error
+	SetFullnameStream(User_SetFullnameStreamServer) error
 	// Set a user's avatar
 	SetAvatar(context.Context, *SetAvatarRequest) (*SetAvatarResponse, error)
 	// Set a user's avatar via stream
-	SetAvatarStream(UserService_SetAvatarStreamServer) error
+	SetAvatarStream(User_SetAvatarStreamServer) error
 	// Set a user's config
 	SetConfig(context.Context, *SetConfigRequest) (*SetConfigResponse, error)
 	// Set a user's config via stream
-	SetConfigStream(UserService_SetConfigStreamServer) error
+	SetConfigStream(User_SetConfigStreamServer) error
 	// Set a user's email
 	SetEmail(context.Context, *SetEmailRequest) (*SetEmailResponse, error)
 	// Set a user's email via stream
-	SetEmailStream(UserService_SetEmailStreamServer) error
+	SetEmailStream(User_SetEmailStreamServer) error
 	// Set a user's mobile
 	SetMobile(context.Context, *SetMobileRequest) (*SetMobileResponse, error)
 	// Set a user's mobile via stream
-	SetMobileStream(UserService_SetMobileStreamServer) error
+	SetMobileStream(User_SetMobileStreamServer) error
 	// delete a user
 	DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserResponse, error)
 	// delete a user via stream
-	DeleteUserStream(UserService_DeleteUserStreamServer) error
+	DeleteUserStream(User_DeleteUserStreamServer) error
 	// login
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
-	mustEmbedUnimplementedUserServiceServer()
+	mustEmbedUnimplementedUserServer()
 }
 
-// UnimplementedUserServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedUserServiceServer struct {
+// UnimplementedUserServer must be embedded to have forward compatible implementations.
+type UnimplementedUserServer struct {
 }
 
-func (UnimplementedUserServiceServer) CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error) {
+func (UnimplementedUserServer) CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
 }
-func (UnimplementedUserServiceServer) CreateUserStream(UserService_CreateUserStreamServer) error {
+func (UnimplementedUserServer) CreateUserStream(User_CreateUserStreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method CreateUserStream not implemented")
 }
-func (UnimplementedUserServiceServer) GetUserInfo(context.Context, *GetUserInfoRequest) (*GetUserInfoResponse, error) {
+func (UnimplementedUserServer) GetUserInfo(context.Context, *GetUserInfoRequest) (*GetUserInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserInfo not implemented")
 }
-func (UnimplementedUserServiceServer) GetUserInfoStream(UserService_GetUserInfoStreamServer) error {
+func (UnimplementedUserServer) GetUserInfoStream(User_GetUserInfoStreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetUserInfoStream not implemented")
 }
-func (UnimplementedUserServiceServer) GetUserInfoByNickname(context.Context, *GetUserInfoByNicknameRequest) (*GetUserInfoResponse, error) {
+func (UnimplementedUserServer) GetUserInfoByNickname(context.Context, *GetUserInfoByNicknameRequest) (*GetUserInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserInfoByNickname not implemented")
 }
-func (UnimplementedUserServiceServer) GetUserInfoByNicknameStream(UserService_GetUserInfoByNicknameStreamServer) error {
+func (UnimplementedUserServer) GetUserInfoByNicknameStream(User_GetUserInfoByNicknameStreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetUserInfoByNicknameStream not implemented")
 }
-func (UnimplementedUserServiceServer) GetUserInfoByEmail(context.Context, *GetUserInfoByEmailRequest) (*GetUserInfoResponse, error) {
+func (UnimplementedUserServer) GetUserInfoByEmail(context.Context, *GetUserInfoByEmailRequest) (*GetUserInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserInfoByEmail not implemented")
 }
-func (UnimplementedUserServiceServer) GetUserInfoByEmailStream(UserService_GetUserInfoByEmailStreamServer) error {
+func (UnimplementedUserServer) GetUserInfoByEmailStream(User_GetUserInfoByEmailStreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetUserInfoByEmailStream not implemented")
 }
-func (UnimplementedUserServiceServer) GetUserInfoByMobile(context.Context, *GetUserInfoByMobileRequest) (*GetUserInfoResponse, error) {
+func (UnimplementedUserServer) GetUserInfoByMobile(context.Context, *GetUserInfoByMobileRequest) (*GetUserInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserInfoByMobile not implemented")
 }
-func (UnimplementedUserServiceServer) GetUserInfoByMobileStream(UserService_GetUserInfoByMobileStreamServer) error {
+func (UnimplementedUserServer) GetUserInfoByMobileStream(User_GetUserInfoByMobileStreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetUserInfoByMobileStream not implemented")
 }
-func (UnimplementedUserServiceServer) SetFullname(context.Context, *SetFullnameRequest) (*SetFullnameResponse, error) {
+func (UnimplementedUserServer) SetFullname(context.Context, *SetFullnameRequest) (*SetFullnameResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetFullname not implemented")
 }
-func (UnimplementedUserServiceServer) SetFullnameStream(UserService_SetFullnameStreamServer) error {
+func (UnimplementedUserServer) SetFullnameStream(User_SetFullnameStreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method SetFullnameStream not implemented")
 }
-func (UnimplementedUserServiceServer) SetAvatar(context.Context, *SetAvatarRequest) (*SetAvatarResponse, error) {
+func (UnimplementedUserServer) SetAvatar(context.Context, *SetAvatarRequest) (*SetAvatarResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetAvatar not implemented")
 }
-func (UnimplementedUserServiceServer) SetAvatarStream(UserService_SetAvatarStreamServer) error {
+func (UnimplementedUserServer) SetAvatarStream(User_SetAvatarStreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method SetAvatarStream not implemented")
 }
-func (UnimplementedUserServiceServer) SetConfig(context.Context, *SetConfigRequest) (*SetConfigResponse, error) {
+func (UnimplementedUserServer) SetConfig(context.Context, *SetConfigRequest) (*SetConfigResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetConfig not implemented")
 }
-func (UnimplementedUserServiceServer) SetConfigStream(UserService_SetConfigStreamServer) error {
+func (UnimplementedUserServer) SetConfigStream(User_SetConfigStreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method SetConfigStream not implemented")
 }
-func (UnimplementedUserServiceServer) SetEmail(context.Context, *SetEmailRequest) (*SetEmailResponse, error) {
+func (UnimplementedUserServer) SetEmail(context.Context, *SetEmailRequest) (*SetEmailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetEmail not implemented")
 }
-func (UnimplementedUserServiceServer) SetEmailStream(UserService_SetEmailStreamServer) error {
+func (UnimplementedUserServer) SetEmailStream(User_SetEmailStreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method SetEmailStream not implemented")
 }
-func (UnimplementedUserServiceServer) SetMobile(context.Context, *SetMobileRequest) (*SetMobileResponse, error) {
+func (UnimplementedUserServer) SetMobile(context.Context, *SetMobileRequest) (*SetMobileResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetMobile not implemented")
 }
-func (UnimplementedUserServiceServer) SetMobileStream(UserService_SetMobileStreamServer) error {
+func (UnimplementedUserServer) SetMobileStream(User_SetMobileStreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method SetMobileStream not implemented")
 }
-func (UnimplementedUserServiceServer) DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserResponse, error) {
+func (UnimplementedUserServer) DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
 }
-func (UnimplementedUserServiceServer) DeleteUserStream(UserService_DeleteUserStreamServer) error {
+func (UnimplementedUserServer) DeleteUserStream(User_DeleteUserStreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method DeleteUserStream not implemented")
 }
-func (UnimplementedUserServiceServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
+func (UnimplementedUserServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
-func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
+func (UnimplementedUserServer) mustEmbedUnimplementedUserServer() {}
 
-// UnsafeUserServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to UserServiceServer will
+// UnsafeUserServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to UserServer will
 // result in compilation errors.
-type UnsafeUserServiceServer interface {
-	mustEmbedUnimplementedUserServiceServer()
+type UnsafeUserServer interface {
+	mustEmbedUnimplementedUserServer()
 }
 
-func RegisterUserServiceServer(s grpc.ServiceRegistrar, srv UserServiceServer) {
-	s.RegisterService(&UserService_ServiceDesc, srv)
+func RegisterUserServer(s grpc.ServiceRegistrar, srv UserServer) {
+	s.RegisterService(&User_ServiceDesc, srv)
 }
 
-func _UserService_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _User_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateUserRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).CreateUser(ctx, in)
+		return srv.(UserServer).CreateUser(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.UserService/CreateUser",
+		FullMethod: "/api.User/CreateUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).CreateUser(ctx, req.(*CreateUserRequest))
+		return srv.(UserServer).CreateUser(ctx, req.(*CreateUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_CreateUserStream_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(UserServiceServer).CreateUserStream(&userServiceCreateUserStreamServer{stream})
+func _User_CreateUserStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(UserServer).CreateUserStream(&userCreateUserStreamServer{stream})
 }
 
-type UserService_CreateUserStreamServer interface {
+type User_CreateUserStreamServer interface {
 	Send(*CreateUserResponse) error
 	Recv() (*CreateUserRequest, error)
 	grpc.ServerStream
 }
 
-type userServiceCreateUserStreamServer struct {
+type userCreateUserStreamServer struct {
 	grpc.ServerStream
 }
 
-func (x *userServiceCreateUserStreamServer) Send(m *CreateUserResponse) error {
+func (x *userCreateUserStreamServer) Send(m *CreateUserResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *userServiceCreateUserStreamServer) Recv() (*CreateUserRequest, error) {
+func (x *userCreateUserStreamServer) Recv() (*CreateUserRequest, error) {
 	m := new(CreateUserRequest)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -710,43 +710,43 @@ func (x *userServiceCreateUserStreamServer) Recv() (*CreateUserRequest, error) {
 	return m, nil
 }
 
-func _UserService_GetUserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _User_GetUserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetUserInfoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).GetUserInfo(ctx, in)
+		return srv.(UserServer).GetUserInfo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.UserService/GetUserInfo",
+		FullMethod: "/api.User/GetUserInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).GetUserInfo(ctx, req.(*GetUserInfoRequest))
+		return srv.(UserServer).GetUserInfo(ctx, req.(*GetUserInfoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_GetUserInfoStream_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(UserServiceServer).GetUserInfoStream(&userServiceGetUserInfoStreamServer{stream})
+func _User_GetUserInfoStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(UserServer).GetUserInfoStream(&userGetUserInfoStreamServer{stream})
 }
 
-type UserService_GetUserInfoStreamServer interface {
+type User_GetUserInfoStreamServer interface {
 	Send(*GetUserInfoResponse) error
 	Recv() (*GetUserInfoRequest, error)
 	grpc.ServerStream
 }
 
-type userServiceGetUserInfoStreamServer struct {
+type userGetUserInfoStreamServer struct {
 	grpc.ServerStream
 }
 
-func (x *userServiceGetUserInfoStreamServer) Send(m *GetUserInfoResponse) error {
+func (x *userGetUserInfoStreamServer) Send(m *GetUserInfoResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *userServiceGetUserInfoStreamServer) Recv() (*GetUserInfoRequest, error) {
+func (x *userGetUserInfoStreamServer) Recv() (*GetUserInfoRequest, error) {
 	m := new(GetUserInfoRequest)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -754,43 +754,43 @@ func (x *userServiceGetUserInfoStreamServer) Recv() (*GetUserInfoRequest, error)
 	return m, nil
 }
 
-func _UserService_GetUserInfoByNickname_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _User_GetUserInfoByNickname_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetUserInfoByNicknameRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).GetUserInfoByNickname(ctx, in)
+		return srv.(UserServer).GetUserInfoByNickname(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.UserService/GetUserInfoByNickname",
+		FullMethod: "/api.User/GetUserInfoByNickname",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).GetUserInfoByNickname(ctx, req.(*GetUserInfoByNicknameRequest))
+		return srv.(UserServer).GetUserInfoByNickname(ctx, req.(*GetUserInfoByNicknameRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_GetUserInfoByNicknameStream_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(UserServiceServer).GetUserInfoByNicknameStream(&userServiceGetUserInfoByNicknameStreamServer{stream})
+func _User_GetUserInfoByNicknameStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(UserServer).GetUserInfoByNicknameStream(&userGetUserInfoByNicknameStreamServer{stream})
 }
 
-type UserService_GetUserInfoByNicknameStreamServer interface {
+type User_GetUserInfoByNicknameStreamServer interface {
 	Send(*GetUserInfoResponse) error
 	Recv() (*GetUserInfoByNicknameRequest, error)
 	grpc.ServerStream
 }
 
-type userServiceGetUserInfoByNicknameStreamServer struct {
+type userGetUserInfoByNicknameStreamServer struct {
 	grpc.ServerStream
 }
 
-func (x *userServiceGetUserInfoByNicknameStreamServer) Send(m *GetUserInfoResponse) error {
+func (x *userGetUserInfoByNicknameStreamServer) Send(m *GetUserInfoResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *userServiceGetUserInfoByNicknameStreamServer) Recv() (*GetUserInfoByNicknameRequest, error) {
+func (x *userGetUserInfoByNicknameStreamServer) Recv() (*GetUserInfoByNicknameRequest, error) {
 	m := new(GetUserInfoByNicknameRequest)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -798,43 +798,43 @@ func (x *userServiceGetUserInfoByNicknameStreamServer) Recv() (*GetUserInfoByNic
 	return m, nil
 }
 
-func _UserService_GetUserInfoByEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _User_GetUserInfoByEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetUserInfoByEmailRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).GetUserInfoByEmail(ctx, in)
+		return srv.(UserServer).GetUserInfoByEmail(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.UserService/GetUserInfoByEmail",
+		FullMethod: "/api.User/GetUserInfoByEmail",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).GetUserInfoByEmail(ctx, req.(*GetUserInfoByEmailRequest))
+		return srv.(UserServer).GetUserInfoByEmail(ctx, req.(*GetUserInfoByEmailRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_GetUserInfoByEmailStream_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(UserServiceServer).GetUserInfoByEmailStream(&userServiceGetUserInfoByEmailStreamServer{stream})
+func _User_GetUserInfoByEmailStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(UserServer).GetUserInfoByEmailStream(&userGetUserInfoByEmailStreamServer{stream})
 }
 
-type UserService_GetUserInfoByEmailStreamServer interface {
+type User_GetUserInfoByEmailStreamServer interface {
 	Send(*GetUserInfoResponse) error
 	Recv() (*GetUserInfoByEmailRequest, error)
 	grpc.ServerStream
 }
 
-type userServiceGetUserInfoByEmailStreamServer struct {
+type userGetUserInfoByEmailStreamServer struct {
 	grpc.ServerStream
 }
 
-func (x *userServiceGetUserInfoByEmailStreamServer) Send(m *GetUserInfoResponse) error {
+func (x *userGetUserInfoByEmailStreamServer) Send(m *GetUserInfoResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *userServiceGetUserInfoByEmailStreamServer) Recv() (*GetUserInfoByEmailRequest, error) {
+func (x *userGetUserInfoByEmailStreamServer) Recv() (*GetUserInfoByEmailRequest, error) {
 	m := new(GetUserInfoByEmailRequest)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -842,43 +842,43 @@ func (x *userServiceGetUserInfoByEmailStreamServer) Recv() (*GetUserInfoByEmailR
 	return m, nil
 }
 
-func _UserService_GetUserInfoByMobile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _User_GetUserInfoByMobile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetUserInfoByMobileRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).GetUserInfoByMobile(ctx, in)
+		return srv.(UserServer).GetUserInfoByMobile(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.UserService/GetUserInfoByMobile",
+		FullMethod: "/api.User/GetUserInfoByMobile",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).GetUserInfoByMobile(ctx, req.(*GetUserInfoByMobileRequest))
+		return srv.(UserServer).GetUserInfoByMobile(ctx, req.(*GetUserInfoByMobileRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_GetUserInfoByMobileStream_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(UserServiceServer).GetUserInfoByMobileStream(&userServiceGetUserInfoByMobileStreamServer{stream})
+func _User_GetUserInfoByMobileStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(UserServer).GetUserInfoByMobileStream(&userGetUserInfoByMobileStreamServer{stream})
 }
 
-type UserService_GetUserInfoByMobileStreamServer interface {
+type User_GetUserInfoByMobileStreamServer interface {
 	Send(*GetUserInfoResponse) error
 	Recv() (*GetUserInfoByMobileRequest, error)
 	grpc.ServerStream
 }
 
-type userServiceGetUserInfoByMobileStreamServer struct {
+type userGetUserInfoByMobileStreamServer struct {
 	grpc.ServerStream
 }
 
-func (x *userServiceGetUserInfoByMobileStreamServer) Send(m *GetUserInfoResponse) error {
+func (x *userGetUserInfoByMobileStreamServer) Send(m *GetUserInfoResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *userServiceGetUserInfoByMobileStreamServer) Recv() (*GetUserInfoByMobileRequest, error) {
+func (x *userGetUserInfoByMobileStreamServer) Recv() (*GetUserInfoByMobileRequest, error) {
 	m := new(GetUserInfoByMobileRequest)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -886,43 +886,43 @@ func (x *userServiceGetUserInfoByMobileStreamServer) Recv() (*GetUserInfoByMobil
 	return m, nil
 }
 
-func _UserService_SetFullname_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _User_SetFullname_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetFullnameRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).SetFullname(ctx, in)
+		return srv.(UserServer).SetFullname(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.UserService/SetFullname",
+		FullMethod: "/api.User/SetFullname",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).SetFullname(ctx, req.(*SetFullnameRequest))
+		return srv.(UserServer).SetFullname(ctx, req.(*SetFullnameRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_SetFullnameStream_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(UserServiceServer).SetFullnameStream(&userServiceSetFullnameStreamServer{stream})
+func _User_SetFullnameStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(UserServer).SetFullnameStream(&userSetFullnameStreamServer{stream})
 }
 
-type UserService_SetFullnameStreamServer interface {
+type User_SetFullnameStreamServer interface {
 	Send(*SetFullnameResponse) error
 	Recv() (*SetFullnameRequest, error)
 	grpc.ServerStream
 }
 
-type userServiceSetFullnameStreamServer struct {
+type userSetFullnameStreamServer struct {
 	grpc.ServerStream
 }
 
-func (x *userServiceSetFullnameStreamServer) Send(m *SetFullnameResponse) error {
+func (x *userSetFullnameStreamServer) Send(m *SetFullnameResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *userServiceSetFullnameStreamServer) Recv() (*SetFullnameRequest, error) {
+func (x *userSetFullnameStreamServer) Recv() (*SetFullnameRequest, error) {
 	m := new(SetFullnameRequest)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -930,43 +930,43 @@ func (x *userServiceSetFullnameStreamServer) Recv() (*SetFullnameRequest, error)
 	return m, nil
 }
 
-func _UserService_SetAvatar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _User_SetAvatar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetAvatarRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).SetAvatar(ctx, in)
+		return srv.(UserServer).SetAvatar(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.UserService/SetAvatar",
+		FullMethod: "/api.User/SetAvatar",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).SetAvatar(ctx, req.(*SetAvatarRequest))
+		return srv.(UserServer).SetAvatar(ctx, req.(*SetAvatarRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_SetAvatarStream_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(UserServiceServer).SetAvatarStream(&userServiceSetAvatarStreamServer{stream})
+func _User_SetAvatarStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(UserServer).SetAvatarStream(&userSetAvatarStreamServer{stream})
 }
 
-type UserService_SetAvatarStreamServer interface {
+type User_SetAvatarStreamServer interface {
 	Send(*SetAvatarResponse) error
 	Recv() (*SetAvatarRequest, error)
 	grpc.ServerStream
 }
 
-type userServiceSetAvatarStreamServer struct {
+type userSetAvatarStreamServer struct {
 	grpc.ServerStream
 }
 
-func (x *userServiceSetAvatarStreamServer) Send(m *SetAvatarResponse) error {
+func (x *userSetAvatarStreamServer) Send(m *SetAvatarResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *userServiceSetAvatarStreamServer) Recv() (*SetAvatarRequest, error) {
+func (x *userSetAvatarStreamServer) Recv() (*SetAvatarRequest, error) {
 	m := new(SetAvatarRequest)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -974,43 +974,43 @@ func (x *userServiceSetAvatarStreamServer) Recv() (*SetAvatarRequest, error) {
 	return m, nil
 }
 
-func _UserService_SetConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _User_SetConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetConfigRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).SetConfig(ctx, in)
+		return srv.(UserServer).SetConfig(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.UserService/SetConfig",
+		FullMethod: "/api.User/SetConfig",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).SetConfig(ctx, req.(*SetConfigRequest))
+		return srv.(UserServer).SetConfig(ctx, req.(*SetConfigRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_SetConfigStream_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(UserServiceServer).SetConfigStream(&userServiceSetConfigStreamServer{stream})
+func _User_SetConfigStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(UserServer).SetConfigStream(&userSetConfigStreamServer{stream})
 }
 
-type UserService_SetConfigStreamServer interface {
+type User_SetConfigStreamServer interface {
 	Send(*SetConfigResponse) error
 	Recv() (*SetConfigRequest, error)
 	grpc.ServerStream
 }
 
-type userServiceSetConfigStreamServer struct {
+type userSetConfigStreamServer struct {
 	grpc.ServerStream
 }
 
-func (x *userServiceSetConfigStreamServer) Send(m *SetConfigResponse) error {
+func (x *userSetConfigStreamServer) Send(m *SetConfigResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *userServiceSetConfigStreamServer) Recv() (*SetConfigRequest, error) {
+func (x *userSetConfigStreamServer) Recv() (*SetConfigRequest, error) {
 	m := new(SetConfigRequest)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -1018,43 +1018,43 @@ func (x *userServiceSetConfigStreamServer) Recv() (*SetConfigRequest, error) {
 	return m, nil
 }
 
-func _UserService_SetEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _User_SetEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetEmailRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).SetEmail(ctx, in)
+		return srv.(UserServer).SetEmail(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.UserService/SetEmail",
+		FullMethod: "/api.User/SetEmail",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).SetEmail(ctx, req.(*SetEmailRequest))
+		return srv.(UserServer).SetEmail(ctx, req.(*SetEmailRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_SetEmailStream_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(UserServiceServer).SetEmailStream(&userServiceSetEmailStreamServer{stream})
+func _User_SetEmailStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(UserServer).SetEmailStream(&userSetEmailStreamServer{stream})
 }
 
-type UserService_SetEmailStreamServer interface {
+type User_SetEmailStreamServer interface {
 	Send(*SetEmailResponse) error
 	Recv() (*SetEmailRequest, error)
 	grpc.ServerStream
 }
 
-type userServiceSetEmailStreamServer struct {
+type userSetEmailStreamServer struct {
 	grpc.ServerStream
 }
 
-func (x *userServiceSetEmailStreamServer) Send(m *SetEmailResponse) error {
+func (x *userSetEmailStreamServer) Send(m *SetEmailResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *userServiceSetEmailStreamServer) Recv() (*SetEmailRequest, error) {
+func (x *userSetEmailStreamServer) Recv() (*SetEmailRequest, error) {
 	m := new(SetEmailRequest)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -1062,43 +1062,43 @@ func (x *userServiceSetEmailStreamServer) Recv() (*SetEmailRequest, error) {
 	return m, nil
 }
 
-func _UserService_SetMobile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _User_SetMobile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetMobileRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).SetMobile(ctx, in)
+		return srv.(UserServer).SetMobile(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.UserService/SetMobile",
+		FullMethod: "/api.User/SetMobile",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).SetMobile(ctx, req.(*SetMobileRequest))
+		return srv.(UserServer).SetMobile(ctx, req.(*SetMobileRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_SetMobileStream_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(UserServiceServer).SetMobileStream(&userServiceSetMobileStreamServer{stream})
+func _User_SetMobileStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(UserServer).SetMobileStream(&userSetMobileStreamServer{stream})
 }
 
-type UserService_SetMobileStreamServer interface {
+type User_SetMobileStreamServer interface {
 	Send(*SetMobileResponse) error
 	Recv() (*SetMobileRequest, error)
 	grpc.ServerStream
 }
 
-type userServiceSetMobileStreamServer struct {
+type userSetMobileStreamServer struct {
 	grpc.ServerStream
 }
 
-func (x *userServiceSetMobileStreamServer) Send(m *SetMobileResponse) error {
+func (x *userSetMobileStreamServer) Send(m *SetMobileResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *userServiceSetMobileStreamServer) Recv() (*SetMobileRequest, error) {
+func (x *userSetMobileStreamServer) Recv() (*SetMobileRequest, error) {
 	m := new(SetMobileRequest)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -1106,43 +1106,43 @@ func (x *userServiceSetMobileStreamServer) Recv() (*SetMobileRequest, error) {
 	return m, nil
 }
 
-func _UserService_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _User_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteUserRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).DeleteUser(ctx, in)
+		return srv.(UserServer).DeleteUser(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.UserService/DeleteUser",
+		FullMethod: "/api.User/DeleteUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).DeleteUser(ctx, req.(*DeleteUserRequest))
+		return srv.(UserServer).DeleteUser(ctx, req.(*DeleteUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_DeleteUserStream_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(UserServiceServer).DeleteUserStream(&userServiceDeleteUserStreamServer{stream})
+func _User_DeleteUserStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(UserServer).DeleteUserStream(&userDeleteUserStreamServer{stream})
 }
 
-type UserService_DeleteUserStreamServer interface {
+type User_DeleteUserStreamServer interface {
 	Send(*DeleteUserResponse) error
 	Recv() (*DeleteUserRequest, error)
 	grpc.ServerStream
 }
 
-type userServiceDeleteUserStreamServer struct {
+type userDeleteUserStreamServer struct {
 	grpc.ServerStream
 }
 
-func (x *userServiceDeleteUserStreamServer) Send(m *DeleteUserResponse) error {
+func (x *userDeleteUserStreamServer) Send(m *DeleteUserResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *userServiceDeleteUserStreamServer) Recv() (*DeleteUserRequest, error) {
+func (x *userDeleteUserStreamServer) Recv() (*DeleteUserRequest, error) {
 	m := new(DeleteUserRequest)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -1150,144 +1150,144 @@ func (x *userServiceDeleteUserStreamServer) Recv() (*DeleteUserRequest, error) {
 	return m, nil
 }
 
-func _UserService_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _User_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(LoginRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).Login(ctx, in)
+		return srv.(UserServer).Login(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.UserService/Login",
+		FullMethod: "/api.User/Login",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).Login(ctx, req.(*LoginRequest))
+		return srv.(UserServer).Login(ctx, req.(*LoginRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
+// User_ServiceDesc is the grpc.ServiceDesc for User service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var UserService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "api.UserService",
-	HandlerType: (*UserServiceServer)(nil),
+var User_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "api.User",
+	HandlerType: (*UserServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "CreateUser",
-			Handler:    _UserService_CreateUser_Handler,
+			Handler:    _User_CreateUser_Handler,
 		},
 		{
 			MethodName: "GetUserInfo",
-			Handler:    _UserService_GetUserInfo_Handler,
+			Handler:    _User_GetUserInfo_Handler,
 		},
 		{
 			MethodName: "GetUserInfoByNickname",
-			Handler:    _UserService_GetUserInfoByNickname_Handler,
+			Handler:    _User_GetUserInfoByNickname_Handler,
 		},
 		{
 			MethodName: "GetUserInfoByEmail",
-			Handler:    _UserService_GetUserInfoByEmail_Handler,
+			Handler:    _User_GetUserInfoByEmail_Handler,
 		},
 		{
 			MethodName: "GetUserInfoByMobile",
-			Handler:    _UserService_GetUserInfoByMobile_Handler,
+			Handler:    _User_GetUserInfoByMobile_Handler,
 		},
 		{
 			MethodName: "SetFullname",
-			Handler:    _UserService_SetFullname_Handler,
+			Handler:    _User_SetFullname_Handler,
 		},
 		{
 			MethodName: "SetAvatar",
-			Handler:    _UserService_SetAvatar_Handler,
+			Handler:    _User_SetAvatar_Handler,
 		},
 		{
 			MethodName: "SetConfig",
-			Handler:    _UserService_SetConfig_Handler,
+			Handler:    _User_SetConfig_Handler,
 		},
 		{
 			MethodName: "SetEmail",
-			Handler:    _UserService_SetEmail_Handler,
+			Handler:    _User_SetEmail_Handler,
 		},
 		{
 			MethodName: "SetMobile",
-			Handler:    _UserService_SetMobile_Handler,
+			Handler:    _User_SetMobile_Handler,
 		},
 		{
 			MethodName: "DeleteUser",
-			Handler:    _UserService_DeleteUser_Handler,
+			Handler:    _User_DeleteUser_Handler,
 		},
 		{
 			MethodName: "Login",
-			Handler:    _UserService_Login_Handler,
+			Handler:    _User_Login_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "CreateUserStream",
-			Handler:       _UserService_CreateUserStream_Handler,
+			Handler:       _User_CreateUserStream_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},
 		{
 			StreamName:    "GetUserInfoStream",
-			Handler:       _UserService_GetUserInfoStream_Handler,
+			Handler:       _User_GetUserInfoStream_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},
 		{
 			StreamName:    "GetUserInfoByNicknameStream",
-			Handler:       _UserService_GetUserInfoByNicknameStream_Handler,
+			Handler:       _User_GetUserInfoByNicknameStream_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},
 		{
 			StreamName:    "GetUserInfoByEmailStream",
-			Handler:       _UserService_GetUserInfoByEmailStream_Handler,
+			Handler:       _User_GetUserInfoByEmailStream_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},
 		{
 			StreamName:    "GetUserInfoByMobileStream",
-			Handler:       _UserService_GetUserInfoByMobileStream_Handler,
+			Handler:       _User_GetUserInfoByMobileStream_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},
 		{
 			StreamName:    "SetFullnameStream",
-			Handler:       _UserService_SetFullnameStream_Handler,
+			Handler:       _User_SetFullnameStream_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},
 		{
 			StreamName:    "SetAvatarStream",
-			Handler:       _UserService_SetAvatarStream_Handler,
+			Handler:       _User_SetAvatarStream_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},
 		{
 			StreamName:    "SetConfigStream",
-			Handler:       _UserService_SetConfigStream_Handler,
+			Handler:       _User_SetConfigStream_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},
 		{
 			StreamName:    "SetEmailStream",
-			Handler:       _UserService_SetEmailStream_Handler,
+			Handler:       _User_SetEmailStream_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},
 		{
 			StreamName:    "SetMobileStream",
-			Handler:       _UserService_SetMobileStream_Handler,
+			Handler:       _User_SetMobileStream_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},
 		{
 			StreamName:    "DeleteUserStream",
-			Handler:       _UserService_DeleteUserStream_Handler,
+			Handler:       _User_DeleteUserStream_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},

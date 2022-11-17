@@ -129,7 +129,7 @@ message LoginResponse
 }
 
 // The user service definition.
-service UserService {
+service User {
   // add a user
   rpc CreateUser(CreateUserRequest) returns (CreateUserResponse){}
   // add a user via stream
