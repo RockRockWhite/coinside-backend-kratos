@@ -2,12 +2,12 @@
 
 //go:generate go run github.com/google/wire/cmd/wire
 //go:build !wireinject
+// +build !wireinject
 
 package main
 
 import (
 	"github.com/go-kratos/kratos/v2"
-	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/ljxsteam/coinside-backend-kratos/app/user/service/config"
 	"github.com/ljxsteam/coinside-backend-kratos/app/user/service/internal/data"
 	"github.com/ljxsteam/coinside-backend-kratos/app/user/service/internal/server"
@@ -17,12 +17,13 @@ import (
 // Injectors from wire.go:
 
 // initApp init kratos application.
-func initApp(string2 string, registrar registry.Registrar, configConfig *config.Config) (*kratos.App, func(), error) {
+func initApp(configConfig *config.Config) (*kratos.App, func(), error) {
 	db := data.NewDB(configConfig)
 	userRepo := data.NewUserRepoNoCache(db)
 	userService := service.NewUserService(userRepo)
 	grpcServer := server.NewGrpcServer(configConfig, userService)
-	app := newApp(string2, grpcServer, registrar)
+	registrar := server.NewRegistrar(configConfig)
+	app := newApp(configConfig, grpcServer, registrar)
 	return app, func() {
 	}, nil
 }
