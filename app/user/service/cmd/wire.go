@@ -1,22 +1,20 @@
+// The build tag makes sure the stub is not built in the final build.
 //go:build wireinject
 // +build wireinject
-
-// The build tag makes sure the stub is not built in the final build.
 
 package main
 
 import (
-	"github.com/go-kratos/beer-shop/app/cart/service/internal/biz"
-	"github.com/go-kratos/beer-shop/app/cart/service/internal/conf"
-	"github.com/go-kratos/beer-shop/app/cart/service/internal/data"
-	"github.com/go-kratos/beer-shop/app/cart/service/internal/server"
-	"github.com/go-kratos/beer-shop/app/cart/service/internal/service"
 	"github.com/go-kratos/kratos/v2"
-	"github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/google/wire"
+	"github.com/ljxsteam/coinside-backend-kratos/app/user/service/config"
+	"github.com/ljxsteam/coinside-backend-kratos/app/user/service/internal/data"
+	"github.com/ljxsteam/coinside-backend-kratos/app/user/service/internal/server"
+	"github.com/ljxsteam/coinside-backend-kratos/app/user/service/internal/service"
 )
 
 // initApp init kratos application.
-func initApp(string, *conf.Registry, log.Logger) (*kratos.App, func(), error) {
-	panic(wire.Build(server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, newApp))
+func initApp(string, registry.Registrar, *config.Config) (*kratos.App, func(), error) {
+	panic(wire.Build(server.ProviderSet, data.ProviderSet, service.ProviderSet, newApp))
 }

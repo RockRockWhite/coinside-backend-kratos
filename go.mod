@@ -3,7 +3,6 @@ module github.com/ljxsteam/coinside-backend-kratos
 go 1.19
 
 require (
-	github.com/envoyproxy/go-control-plane v0.10.2-0.20220325020618-49ff273808a1
 	github.com/go-kratos/kratos/contrib/registry/zookeeper/v2 v2.0.0-20221110150034-a7bae93ee08d
 	github.com/go-kratos/kratos/v2 v2.5.3
 	github.com/go-zookeeper/zk v1.0.3
