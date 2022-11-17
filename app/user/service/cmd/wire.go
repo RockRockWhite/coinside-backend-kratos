@@ -6,7 +6,6 @@ package main
 
 import (
 	"github.com/go-kratos/kratos/v2"
-	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/google/wire"
 	"github.com/ljxsteam/coinside-backend-kratos/app/user/service/config"
 	"github.com/ljxsteam/coinside-backend-kratos/app/user/service/internal/data"
@@ -15,6 +14,6 @@ import (
 )
 
 // initApp init kratos application.
-func initApp(string, registry.Registrar, *config.Config) (*kratos.App, func(), error) {
+func initApp(*config.Config) (*kratos.App, func(), error) {
 	panic(wire.Build(server.ProviderSet, data.ProviderSet, service.ProviderSet, newApp))
 }
