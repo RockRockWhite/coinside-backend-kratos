@@ -17,7 +17,7 @@ services:
     image: mariadb:latest
     volumes:
       - userdb_data:/var/lib/mysql
-      - ./apps/user/rpc/model/sql:/docker-entrypoint-initdb.d
+      - ./app/user/resource/sql:/docker-entrypoint-initdb.d
     restart: always
     environment:
       - LANG=C.UTF-8
