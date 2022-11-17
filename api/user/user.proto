@@ -1,0 +1,189 @@
+syntax = "proto3";
+package api;
+option go_package = "./;api";
+
+enum Code {
+  OK = 0;
+  ERROR_UNKNOWN = 2;
+  ERROR_USER_NOTFOUND = 3;
+  ERROR_USER_NICKNAME_EXISTS = 4;
+  ERROR_USER_EMAIL_EXISTS = 5;
+  ERROR_USER_MOBILE_EXISTS = 6;
+  ERROR_USER_PASSWORD = 7;
+  ERROR_VERIFY_CODE = 8;
+}
+
+message CreateUserRequest {
+  string nickname = 1;  // 用户昵称
+  string passwd = 2;    // 用户密码
+  string fullname = 3;  // 用户全名
+  string email = 4;     // 用户邮箱
+  string mobile = 5;    // 用户手机号
+}
+
+message CreateUserResponse
+{
+  uint64 id = 1;
+  Code code = 2;
+}
+
+message UserInfo {
+  uint64 id = 1;            // 用户id
+  string nickname = 2;      // 用户昵称
+  string fullname = 3;      // 用户全名
+  string avatar = 4;        // 用户头像链接
+  string email = 5;         // 用户邮箱
+  bool email_verified = 6;  // 用户邮箱验证状态
+  string mobile = 7;        // 用户手机号
+  string config = 8;        // 用户配置
+  string logined_at = 9;    // 用户最后登录时间
+  string created_at = 10;   // 用户创建时间
+  string updated_at = 11;   // 用户更新时间
+}
+
+message GetUserInfoRequest {
+  uint64 id = 1; // 用户id
+}
+
+message GetUserInfoByNicknameRequest {
+  string nickname = 1; // 用户昵称
+}
+
+message GetUserInfoByEmailRequest {
+  string email = 1; // 用户邮箱
+}
+
+message GetUserInfoByMobileRequest {
+  string mobile = 1; // 用户手机号
+}
+
+message GetUserInfoResponse {
+  UserInfo info = 1;
+  Code code = 2;
+}
+
+message SetFullnameRequest {
+  uint64 id = 1; // 用户id
+  string fullname = 2; // 用户全名
+}
+
+message SetFullnameResponse {
+  Code code = 1;
+}
+
+message SetAvatarRequest {
+  uint64 id = 1; // 用户id
+  string avatar = 2; // 用户头像链接
+}
+
+message SetAvatarResponse {
+  Code code = 1;
+}
+
+message SetConfigRequest {
+  uint64 id = 1; // 用户id
+  string config = 2; // 用户配置
+}
+
+message SetConfigResponse {
+  Code code = 1;
+}
+
+message SetEmailRequest {
+  uint64 id = 1; // 用户id
+  string email = 2; // 用户邮箱
+  string verify_code = 3; // 验证码
+}
+
+message SetEmailResponse {
+  Code code = 1;
+}
+
+message SetMobileRequest {
+  uint64 id = 1; // 用户id
+  string mobile = 2; // 用户手机号
+  string verify_code = 3; // 验证码
+}
+
+message SetMobileResponse {
+  Code code = 1;
+}
+
+message DeleteUserRequest {
+  uint64 id = 1; // 用户id
+}
+
+message DeleteUserResponse {
+  Code code = 1;
+}
+
+message LoginRequest
+{
+  uint64 id = 1;        // 用户id
+  string password = 2;  // 用户密码
+}
+
+message LoginResponse
+{
+  Code code = 1;
+}
+
+// The user service definition.
+service User {
+  // add a user
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse){}
+  // add a user via stream
+  rpc CreateUserStream(stream CreateUserRequest) returns (stream CreateUserResponse){}
+
+  // Get a user's info
+  rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse){}
+  // GGet a user's info via stream
+  rpc GetUserInfoStream(stream GetUserInfoRequest) returns (stream GetUserInfoResponse){}
+  // Get a user's info by nickname
+  rpc GetUserInfoByNickname(GetUserInfoByNicknameRequest) returns (GetUserInfoResponse){}
+  // Get a user's info by nickname via stream
+  rpc GetUserInfoByNicknameStream(stream GetUserInfoByNicknameRequest) returns (stream GetUserInfoResponse){}
+  // Get a user's info by email
+  rpc GetUserInfoByEmail(GetUserInfoByEmailRequest) returns (GetUserInfoResponse){}
+  // Get a user's info by email via stream
+  rpc GetUserInfoByEmailStream(stream GetUserInfoByEmailRequest) returns (stream GetUserInfoResponse){}
+  // Get a user's info by mobile
+  rpc GetUserInfoByMobile(GetUserInfoByMobileRequest) returns (GetUserInfoResponse){}
+  // Get a user's info by mobile via stream
+  rpc GetUserInfoByMobileStream(stream GetUserInfoByMobileRequest) returns (stream GetUserInfoResponse){}
+
+
+  // Set a user's fullname
+  rpc SetFullname(SetFullnameRequest) returns (SetFullnameResponse){}
+  // Set a user's fullname via stream
+  rpc SetFullnameStream(stream SetFullnameRequest) returns (stream SetFullnameResponse){}
+
+  // Set a user's avatar
+  rpc SetAvatar(SetAvatarRequest) returns (SetAvatarResponse){}
+  // Set a user's avatar via stream
+  rpc SetAvatarStream(stream SetAvatarRequest) returns (stream SetAvatarResponse){}
+
+  // Set a user's config
+  rpc SetConfig(SetConfigRequest) returns (SetConfigResponse){}
+  // Set a user's config via stream
+  rpc SetConfigStream(stream SetConfigRequest) returns (stream SetConfigResponse){}
+
+  // Set a user's email
+  rpc SetEmail(SetEmailRequest) returns (SetEmailResponse){}
+  // Set a user's email via stream
+  rpc SetEmailStream(stream SetEmailRequest) returns (stream SetEmailResponse){}
+
+  // Set a user's mobile
+  rpc SetMobile(SetMobileRequest) returns (SetMobileResponse){}
+  // Set a user's mobile via stream
+  rpc SetMobileStream(stream SetMobileRequest) returns (stream SetMobileResponse){}
+
+
+  // delete a user
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse){}
+  // delete a user via stream
+  rpc DeleteUserStream(stream DeleteUserRequest) returns (stream DeleteUserResponse){}
+
+  // login
+  rpc Login(LoginRequest) returns (LoginResponse){}
+}
