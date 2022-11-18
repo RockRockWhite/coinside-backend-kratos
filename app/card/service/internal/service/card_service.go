@@ -37,39 +37,42 @@ func (c CardService) CreateCardStream(server api.CardService_CreateCardStreamSer
 }
 
 func (c CardService) GetCardInfo(ctx context.Context, request *api.GetCardInfoRequest) (*api.GetCardInfoResponse, error) {
-	one, err := c.repo.FindOne(ctx, request.Id)
+	//one, err := c.repo.FindOne(ctx, request.Id)
+	//
+	//switch err {
+	//case nil:
+	//case gorm.ErrRecordNotFound:
+	//	return &api.GetCardInfoResponse{
+	//		//: nil,
+	//		Code: api.Code_ERROR_CARD_NOTFOUND,
+	//	}, nil
+	//
+	//default:
+	//	return &api.GetCardInfoResponse{
+	//		Code: api.Code_ERROR_UNKNOWN,
+	//	}, err
+	//}
+	//
+	//info := &api.CardInfo{
+	//	Id:      one.Id,
+	//	TeamId:  one.TeamId,
+	//	Title:   one.Title,
+	//	Content: one.Content,
+	//	//todo:这个bug
+	//	Status:    api.CardStatus(one.Status),
+	//	Members:   one.Members,
+	//	Tags:      one.Tags,
+	//	CreatedAt: one.CreatedAt.Format("2006-01-02 15:04:05"),
+	//	UpdatedAt: one.UpdatedAt.Format("2006-01-02 15:04:05"),
+	//}
+	//
+	//return &api.GetCardInfoResponse{
+	//	Card: info,
+	//	Code: api.Code_OK,
+	//}, nil
 
-	switch err {
-	case nil:
-	case gorm.ErrRecordNotFound:
-		return &api.GetCardInfoResponse{
-			//: nil,
-			Code: api.Code_ERROR_CARD_NOTFOUND,
-		}, nil
-
-	default:
-		return &api.GetCardInfoResponse{
-			Code: api.Code_ERROR_UNKNOWN,
-		}, err
-	}
-
-	info := &api.CardInfo{
-		Id:      one.Id,
-		TeamId:  one.TeamId,
-		Title:   one.Title,
-		Content: one.Content,
-		//todo:这个bug
-		Status:    api.CardStatus(one.Status),
-		Members:   one.Members,
-		Tags:      one.Tags,
-		CreatedAt: one.CreatedAt.Format("2006-01-02 15:04:05"),
-		UpdatedAt: one.UpdatedAt.Format("2006-01-02 15:04:05"),
-	}
-
-	return &api.GetCardInfoResponse{
-		Card: info,
-		Code: api.Code_OK,
-	}, nil
+	//TODO implement me
+	panic("implement me")
 }
 
 func (c CardService) GetCardInfoStream(server api.CardService_GetCardInfoStreamServer) error {
@@ -102,6 +105,8 @@ func (c CardService) UpdateCard(ctx context.Context, request *api.UpdateCardRequ
 		}, err
 
 	}
+
+	// todo: to be changed.
 
 	NewCard := data.Card{
 		Id:      one.Id,
