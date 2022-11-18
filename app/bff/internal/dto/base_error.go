@@ -11,4 +11,9 @@ var (
 		Message: "Bad request parameters or illegal request.",
 		Data:    nil,
 	}
+	ErrorForbidden ResponseDto = ResponseDto{
+		Code:    "ERROR_FORBIDDEN",
+		Message: "Cannot not access this resource.",
+		Data:    nil,
+	}
 )

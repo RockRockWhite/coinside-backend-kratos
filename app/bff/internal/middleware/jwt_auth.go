@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
+	api "github.com/ljxsteam/coinside-backend-kratos/api/user"
 	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/dto"
 	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/util"
 	"net/http"
@@ -24,7 +25,11 @@ func JwtAuth(condFunc func(c *gin.Context) bool) gin.HandlerFunc {
 		claims, err := util.ParseJwtToken(token)
 
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, nil)
+			c.JSON(http.StatusOK, dto.ResponseDto{
+				Code:    dto.UserErrorCode[api.Code_ERROR_UNKNOWN].Code,
+				Message: dto.UserErrorCode[api.Code_ERROR_UNKNOWN].Message,
+				Data:    err,
+			})
 
 			c.Abort()
 			return
@@ -40,7 +45,7 @@ func JwtAuth(condFunc func(c *gin.Context) bool) gin.HandlerFunc {
 		}
 
 		if !access {
-			c.JSON(http.StatusForbidden, dto.ErrorUnauthorized)
+			c.JSON(http.StatusOK, dto.ErrorForbidden)
 
 			c.Abort()
 			return
