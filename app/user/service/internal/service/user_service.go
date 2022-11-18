@@ -6,6 +6,7 @@ import (
 	"github.com/ljxsteam/coinside-backend-kratos/app/user/service/internal/data"
 	utils "github.com/ljxsteam/coinside-backend-kratos/pkg/util"
 	"gorm.io/gorm"
+	"time"
 )
 
 type UserService struct {
@@ -453,6 +454,15 @@ func (u UserService) Login(ctx context.Context, request *api.LoginRequest) (*api
 		return &api.LoginResponse{
 			Code: api.Code_ERROR_USER_PASSWORD,
 		}, nil
+	}
+
+	// login succeed.
+	one.LoginedAt = time.Now()
+	err = u.repo.Update(ctx, one)
+	if err != nil {
+		return &api.LoginResponse{
+			Code: api.Code_ERROR_UNKNOWN,
+		}, err
 	}
 
 	return &api.LoginResponse{

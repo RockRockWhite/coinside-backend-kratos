@@ -140,16 +140,182 @@ func (u *UserController) GetUserId(c *gin.Context) {
 	c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
 }
 
-func (u *UserController) PatchUser(c *gin.Context) {
+func (u *UserController) SetFullname(c *gin.Context) {
+	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 
+	reqDto := struct {
+		Fullname string `json:"fullname"`
+	}{}
+	if err := c.ShouldBind(&reqDto); err != nil {
+		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
+		return
+	}
+
+	res, err := u.client.SetFullname(context.Background(), &api.SetFullnameRequest{
+		Id:       id,
+		Fullname: reqDto.Fullname,
+	})
+
+	resDto := dto.ResponseDto{
+		Code:    dto.UserErrorCode[res.Code].Code,
+		Message: dto.UserErrorCode[res.Code].Message,
+		Data:    nil,
+	}
+
+	if res.Code != api.Code_OK {
+		resDto.Data = err
+	} else {
+	}
+
+	c.JSON(http.StatusOK, resDto)
 }
 
-func (u *UserController) PatchPassword(c *gin.Context) {
+func (u *UserController) SetAvatar(c *gin.Context) {
+	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 
+	reqDto := struct {
+		Avatar string `json:"avatar"`
+	}{}
+	if err := c.ShouldBind(&reqDto); err != nil {
+		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
+		return
+	}
+
+	res, err := u.client.SetAvatar(context.Background(), &api.SetAvatarRequest{
+		Id:     id,
+		Avatar: reqDto.Avatar,
+	})
+
+	resDto := dto.ResponseDto{
+		Code:    dto.UserErrorCode[res.Code].Code,
+		Message: dto.UserErrorCode[res.Code].Message,
+		Data:    nil,
+	}
+
+	if res.Code != api.Code_OK {
+		resDto.Data = err
+	} else {
+	}
+
+	c.JSON(http.StatusOK, resDto)
+}
+
+func (u *UserController) SetConfig(c *gin.Context) {
+	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
+
+	reqDto := struct {
+		Config string `json:"config"`
+	}{}
+	if err := c.ShouldBind(&reqDto); err != nil {
+		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
+		return
+	}
+
+	res, err := u.client.SetConfig(context.Background(), &api.SetConfigRequest{
+		Id:     id,
+		Config: reqDto.Config,
+	})
+
+	resDto := dto.ResponseDto{
+		Code:    dto.UserErrorCode[res.Code].Code,
+		Message: dto.UserErrorCode[res.Code].Message,
+		Data:    nil,
+	}
+
+	if res.Code != api.Code_OK {
+		resDto.Data = err
+	} else {
+	}
+
+	c.JSON(http.StatusOK, resDto)
+}
+
+func (u *UserController) SetEmail(c *gin.Context) {
+	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
+
+	reqDto := struct {
+		Email      string `json:"email"`
+		VerifyCode string `json:"verify_code"`
+	}{}
+	if err := c.ShouldBind(&reqDto); err != nil {
+		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
+		return
+	}
+
+	res, err := u.client.SetEmail(context.Background(), &api.SetEmailRequest{
+		Id:         id,
+		Email:      reqDto.Email,
+		VerifyCode: reqDto.VerifyCode,
+	})
+
+	resDto := dto.ResponseDto{
+		Code:    dto.UserErrorCode[res.Code].Code,
+		Message: dto.UserErrorCode[res.Code].Message,
+		Data:    nil,
+	}
+
+	if res.Code != api.Code_OK {
+		resDto.Data = err
+	} else {
+	}
+
+	c.JSON(http.StatusOK, resDto)
+}
+
+func (u *UserController) SetMobile(c *gin.Context) {
+	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
+
+	reqDto := struct {
+		Mobile     string `json:"mobile"`
+		VerifyCode string `json:"verify_code"`
+	}{}
+	if err := c.ShouldBind(&reqDto); err != nil {
+		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
+		return
+	}
+
+	res, err := u.client.SetMobile(context.Background(), &api.SetMobileRequest{
+		Id:         id,
+		Mobile:     reqDto.Mobile,
+		VerifyCode: reqDto.VerifyCode,
+	})
+
+	resDto := dto.ResponseDto{
+		Code:    dto.UserErrorCode[res.Code].Code,
+		Message: dto.UserErrorCode[res.Code].Message,
+		Data:    nil,
+	}
+
+	if res.Code != api.Code_OK {
+		resDto.Data = err
+	} else {
+	}
+
+	c.JSON(http.StatusOK, resDto)
+}
+
+func (u *UserController) SetPassword(c *gin.Context) {
 }
 
 func (u *UserController) DeleteUser(c *gin.Context) {
+	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 
+	res, err := u.client.DeleteUser(context.Background(), &api.DeleteUserRequest{
+		Id: id,
+	})
+
+	resDto := dto.ResponseDto{
+		Code:    dto.UserErrorCode[res.Code].Code,
+		Message: dto.UserErrorCode[res.Code].Message,
+		Data:    nil,
+	}
+
+	if res.Code != api.Code_OK {
+		resDto.Data = err
+	} else {
+	}
+
+	c.JSON(http.StatusOK, resDto)
 }
 
 func (u *UserController) Login(c *gin.Context) {
