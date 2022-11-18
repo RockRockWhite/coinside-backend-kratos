@@ -37,7 +37,7 @@ CREATE TABLE
 (
     `id`         int         NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT 'id',
     `content`    varchar(32) NOT NULL UNIQUE COMMENT '标签内容',
-    `created_at` timestamp   NOT NULL COMMENT '创建时间',
+    `created_at` timestamp   NULL COMMENT '创建时间',
     `updated_at` timestamp   NULL COMMENT '更新时间',
     `deleted_at` timestamp   NULL COMMENT '删除时间，软删除支持字段',
     INDEX `idx_delete_at` (`deleted_at`)
@@ -50,12 +50,8 @@ CREATE TABLE
     `id`         int       NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT 'id',
     `card_id`    int       NULL COMMENT '卡片id',
     `tag_id`     int       NOT NULL COMMENT '标签id',
-    `created_at` timestamp NOT NULL COMMENT '创建时间',
-    `updated_at` timestamp NULL COMMENT '更新时间',
-    `deleted_at` timestamp NULL COMMENT '删除时间，软删除支持字段',
     INDEX `idx_card_id` (`card_id`),
     INDEX `idx_tag_id` (`tag_id`),
-    INDEX `idx_delete_at` (`deleted_at`),
     UNIQUE `idx_card_tag` (`card_id`, `tag_id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT '卡片-标签表';
