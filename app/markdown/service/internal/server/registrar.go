@@ -4,7 +4,7 @@ import (
 	"github.com/go-kratos/kratos/contrib/registry/zookeeper/v2"
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-zookeeper/zk"
-	"github.com/ljxsteam/coinside-backend-kratos/app/team/service/config"
+	"github.com/ljxsteam/coinside-backend-kratos/app/markdown/service/config"
 	"time"
 )
 
