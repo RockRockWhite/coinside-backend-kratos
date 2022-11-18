@@ -11,8 +11,8 @@ CREATE TABLE
     `deleted_at` timestamp    NULL COMMENT '删除时间，软删除支持字段',
     INDEX `idx_team_id` (`team_id`),
     INDEX `idx_delete_at` (`deleted_at`)
-    ) ENGINE = InnoDB
-    DEFAULT CHARSET = utf8mb4 COMMENT '卡片信息表';
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT '卡片信息表';
 
 
 CREATE TABLE
@@ -29,8 +29,8 @@ CREATE TABLE
     INDEX `idx_user_id` (`user_id`),
     INDEX `idx_delete_at` (`deleted_at`),
     UNIQUE `idx_card_user` (`card_id`, `user_id`)
-    ) ENGINE = InnoDB
-    DEFAULT CHARSET = utf8mb4 COMMENT '卡片成员表';
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT '卡片成员表';
 
 CREATE TABLE
     IF NOT EXISTS `c_tag`
@@ -41,8 +41,8 @@ CREATE TABLE
     `updated_at` timestamp   NULL COMMENT '更新时间',
     `deleted_at` timestamp   NULL COMMENT '删除时间，软删除支持字段',
     INDEX `idx_delete_at` (`deleted_at`)
-    ) ENGINE = InnoDB
-    DEFAULT CHARSET = utf8mb4 COMMENT '标签信息表';
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT '标签信息表';
 
 CREATE TABLE
     IF NOT EXISTS `c_card_tag`
@@ -57,5 +57,5 @@ CREATE TABLE
     INDEX `idx_tag_id` (`tag_id`),
     INDEX `idx_delete_at` (`deleted_at`),
     UNIQUE `idx_card_tag` (`card_id`, `tag_id`)
-    ) ENGINE = InnoDB
-    DEFAULT CHARSET = utf8mb4 COMMENT '卡片-标签表';
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT '卡片-标签表';

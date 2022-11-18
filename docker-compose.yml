@@ -30,6 +30,8 @@ services:
       - app-network
     expose:
       - 3306
+    ports:
+      - "3306:3306"
 
   user-rpc:
     build:
@@ -44,11 +46,11 @@ services:
       - zookeeper
       - userdb
 
-  # Team-Service
-  teamdb:
+  # Card-Service
+  carddb:
     image: mariadb:latest
     volumes:
-      - teamdb_data:/var/lib/mysql
+      - carddb_data:/var/lib/mysql
       - ./app/card/resource/sql:/docker-entrypoint-initdb.d
     restart: always
     environment:
@@ -84,4 +86,4 @@ networks:
 
 volumes:
   userdb_data:
-  teamdb_data:
+  carddb_data:

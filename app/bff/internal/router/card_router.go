@@ -1,9 +1,9 @@
 package router
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/controller"
+	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/middleware"
 )
 
 func CardRouter(r *gin.Engine, controller *controller.CardController) *gin.Engine {
@@ -16,18 +16,17 @@ func CardRouter(r *gin.Engine, controller *controller.CardController) *gin.Engin
 
 	card := r.Group("/cards")
 	{
-		fmt.Println(card)
-		//user.GET("/:id", middleware.JwtAuth(selfCond), controller.GetUserInfo)
-		//user.GET("/id", controller.GetUserId)
-		//user.POST("", controller.CreateUser)
-		//
-		//user.PUT(":id/fullname", middleware.JwtAuth(selfCond), controller.SetFullname)
-		//user.PUT(":id/avatar", middleware.JwtAuth(selfCond), controller.SetAvatar)
-		//user.PUT(":id/config", middleware.JwtAuth(selfCond), controller.SetConfig)
-		//user.PUT(":id/mobile", middleware.JwtAuth(selfCond), controller.SetMobile)
-		//user.PUT(":id/email", middleware.JwtAuth(selfCond), controller.SetEmail)
-		//
-		//user.DELETE("/:id", middleware.JwtAuth(selfCond), controller.DeleteUser)
+
+		card.GET("/:id", middleware.JwtAuth(nil), controller.GetCardInfo)
+		card.POST("", controller.CreateCard)
+
+		card.PUT(":id/title", middleware.JwtAuth(nil), controller.SetTitle)
+		card.PUT(":id/content", middleware.JwtAuth(nil), controller.SetContent)
+		card.PUT(":id/members/:user_id", middleware.JwtAuth(nil), controller.SetMember)
+		card.DELETE(":id/members/:user_id", middleware.JwtAuth(nil), controller.DeleteMember)
+		card.PUT(":id/tags/:tag_content", middleware.JwtAuth(nil), controller.AddTag)
+		card.DELETE(":id/tags/:tag_content", middleware.JwtAuth(nil), controller.DeleleTag)
+		card.DELETE("/:id", middleware.JwtAuth(nil), controller.DeleteCard)
 	}
 
 	return r

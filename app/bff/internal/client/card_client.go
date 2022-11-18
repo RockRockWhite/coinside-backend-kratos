@@ -13,7 +13,7 @@ import (
 func NewCardClinet(conf *config.Config, dis registry.Discovery) card.CardClient {
 	conn, err := grpc.DialInsecure(
 		context.Background(),
-		grpc.WithEndpoint(fmt.Sprintf("discovery:///%s", conf.GetString("service.user.name"))),
+		grpc.WithEndpoint(fmt.Sprintf("discovery:///%s", conf.GetString("service.card.name"))),
 		grpc.WithDiscovery(dis),
 		grpc.WithMiddleware(
 			recovery.Recovery(),

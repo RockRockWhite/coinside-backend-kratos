@@ -124,18 +124,11 @@ func (u *CardController) SetContent(c *gin.Context) {
 
 func (u *CardController) AddTag(c *gin.Context) {
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
-
-	reqDto := struct {
-		TagContent string `json:"tag_content"`
-	}{}
-	if err := c.ShouldBind(&reqDto); err != nil {
-		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
-		return
-	}
+	tagContent := c.Param("tag_content")
 
 	res, err := u.client.AddCardTag(context.Background(), &card.AddCardTagRequest{
 		Id:      id,
-		Content: reqDto.TagContent,
+		Content: tagContent,
 	})
 
 	resDto := dto.ResponseDto{
@@ -154,18 +147,11 @@ func (u *CardController) AddTag(c *gin.Context) {
 
 func (u *CardController) DeleleTag(c *gin.Context) {
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
-
-	reqDto := struct {
-		TagContent string `json:"tag_content"`
-	}{}
-	if err := c.ShouldBind(&reqDto); err != nil {
-		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
-		return
-	}
+	tagContent := c.Param("tag_content")
 
 	res, err := u.client.DeleteCardTag(context.Background(), &card.DeleteCardTagRequest{
 		Id:      id,
-		Content: reqDto.TagContent,
+		Content: tagContent,
 	})
 
 	resDto := dto.ResponseDto{
@@ -184,10 +170,10 @@ func (u *CardController) DeleleTag(c *gin.Context) {
 
 func (u *CardController) SetMember(c *gin.Context) {
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
+	userId, _ := strconv.ParseUint(c.Param("user_id"), 10, 64)
 
 	reqDto := struct {
-		UserId  uint64 `json:"user_id"`
-		IsAdmin bool   `json:"is_admin"`
+		IsAdmin bool `json:"is_admin"`
 	}{}
 	if err := c.ShouldBind(&reqDto); err != nil {
 		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
@@ -196,7 +182,7 @@ func (u *CardController) SetMember(c *gin.Context) {
 
 	res, err := u.client.SetCardMember(context.Background(), &card.SetCardMemberRequest{
 		Id:      id,
-		UserId:  reqDto.UserId,
+		UserId:  userId,
 		IsAdmin: reqDto.IsAdmin,
 	})
 
@@ -214,20 +200,13 @@ func (u *CardController) SetMember(c *gin.Context) {
 	c.JSON(http.StatusOK, resDto)
 }
 
-func (u *CardController) DeleleMember(c *gin.Context) {
+func (u *CardController) DeleteMember(c *gin.Context) {
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
-
-	reqDto := struct {
-		UserId uint64 `json:"user_id"`
-	}{}
-	if err := c.ShouldBind(&reqDto); err != nil {
-		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
-		return
-	}
+	userId, _ := strconv.ParseUint(c.Param("user_id"), 10, 64)
 
 	res, err := u.client.DeleteCardMember(context.Background(), &card.DeleteCardMemberRequest{
 		Id:     id,
-		UserId: reqDto.UserId,
+		UserId: userId,
 	})
 
 	resDto := dto.ResponseDto{
