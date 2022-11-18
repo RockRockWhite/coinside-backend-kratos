@@ -49,7 +49,7 @@ services:
     image: mariadb:latest
     volumes:
       - teamdb_data:/var/lib/mysql
-      - ./apps/team/src/main/resources/sql:/docker-entrypoint-initdb.d
+      - ./app/card/resource/sql:/docker-entrypoint-initdb.d
     restart: always
     environment:
       - LANG=C.UTF-8
@@ -84,3 +84,4 @@ networks:
 
 volumes:
   userdb_data:
+  teamdb_data:
