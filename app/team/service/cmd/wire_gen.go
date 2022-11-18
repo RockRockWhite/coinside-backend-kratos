@@ -20,7 +20,7 @@ import (
 func initApp(configConfig *config.Config) (*kratos.App, func(), error) {
 	db := data.NewDB(configConfig)
 	teamRepo := data.NewTeamRepoNoCache(db)
-	teamService := service.NewUserService(teamRepo)
+	teamService := service.NewTeamService(teamRepo)
 	grpcServer := server.NewGrpcServer(configConfig, teamService)
 	registrar := server.NewRegistrar(configConfig)
 	app := newApp(configConfig, grpcServer, registrar)

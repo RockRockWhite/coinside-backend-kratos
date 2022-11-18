@@ -1,0 +1,101 @@
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+syntax = "proto3";
+
+option go_package = "./;api";
+package markdown;
+
+// The markdown service definition.
+service Markdown {
+  // Get a Markdown by id
+  rpc GetMarkdownById(GetMarkdownByIdRequest) returns (GetMarkdownResponse){}
+  // Get a Markdown by id via stream
+  rpc GetMarkdownByIdStream(stream GetMarkdownByIdRequest) returns (stream GetMarkdownResponse){}
+
+  // Get a Markdowns by card_id
+  rpc GetMarkdownsByCardId(GetMarkdownsByCardIdRequest) returns (GetMarkdownsResponse){}
+  // Get a  Markdown by card_id via stream
+  rpc GetMarkdownsByCardIdStream(stream GetMarkdownsByCardIdRequest) returns (stream GetMarkdownsResponse){}
+
+  // add a Markdown
+  rpc AddMarkdown(MarkdownInfo) returns (AddMarkdownResponse){}
+  // add a Markdown via stream
+  rpc AddMarkdownStream(stream MarkdownInfo) returns (stream AddMarkdownResponse){}
+
+  // update a Markdown
+  rpc UpdateMarkdown(MarkdownInfo) returns (UpdateMarkdownResponse){}
+  // update a Markdown via stream
+  rpc UpdateMarkdownStream(MarkdownInfo) returns (stream UpdateMarkdownResponse){}
+
+  // delete a Markdown
+  rpc DeleteMarkdown(DeleteMarkdownRequest) returns (DeleteMarkdownResponse){}
+  // delete a Markdown via stream
+  rpc DeleteMarkdownStream(stream DeleteMarkdownRequest) returns (stream DeleteMarkdownResponse){}
+
+}
+
+
+enum Code {
+  OK = 0;
+  ERROR_UNKNOWN = 1;
+  ERROR_TEAM_NOTFOUND = 2;
+}
+
+// The response message containing the greetings
+message MarkdownInfo {
+  uint64 id = 1; // Markdown id
+  uint64 card_id = 2; // 所属卡片id
+  string content = 3; // Markdown内容
+  string created_at = 5; // Markdown创建时间
+  string updated_at = 6; // Markdown更新时间
+}
+
+message GetMarkdownResponse {
+  MarkdownInfo Markdown = 1;
+  Code code = 2;
+}
+
+message GetMarkdownByIdRequest
+{
+  uint64 id = 1;
+}
+
+message GetMarkdownsResponse{
+  repeated MarkdownInfo Markdown = 1;
+  Code code = 2;
+}
+
+message GetMarkdownsByCardIdRequest
+{
+  uint64 card_id = 1;
+}
+
+message AddMarkdownResponse
+{
+  Code code = 1;
+  uint64 id = 2;
+}
+
+message UpdateMarkdownResponse
+{
+  Code code = 1;
+}
+
+message DeleteMarkdownRequest
+{
+  uint64 id = 1;
+}
+
+message DeleteMarkdownResponse
+{
+  Code code = 1;
+}

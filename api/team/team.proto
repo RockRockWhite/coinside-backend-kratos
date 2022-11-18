@@ -1,0 +1,167 @@
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+syntax = "proto3";
+
+option go_package = "./;api";
+package team;
+
+
+// The team service definition.
+service Team {
+  // Get a team by id
+  rpc GetTeamByID(GetTeamByIdRequest) returns (GetTeamResponse){}
+  // Get a team by id via stream
+  rpc GetTeamByIDStream(stream GetTeamByIdRequest) returns (stream GetTeamResponse){}
+
+  // Get a team by name
+  rpc GetTeamsByName(GetTeamsByNameRequest) returns (GetTeamsResponse){}
+  // Get a user by name via stream
+  rpc GetTeamsByNameStream(stream GetTeamsByNameRequest) returns (stream GetTeamsResponse){}
+
+  // add a team
+  rpc AddTeam(TeamInfo) returns (AddTeamResponse){}
+  // add a team via stream
+  rpc AddTeamStream(stream TeamInfo) returns (stream AddTeamResponse){}
+
+  // update a team
+  rpc UpdateTeam(TeamInfo) returns (UpdateTeamResponse){}
+  // update a team via stream
+  rpc UpdateTeamSteam(TeamInfo) returns (stream UpdateTeamResponse){}
+
+  // delete a team
+  rpc DeleteTeam(DeleteTeamRequest) returns (DeleteTeamResponse){}
+  // delete a team via stream
+  rpc DeleteTeamStream(stream DeleteTeamRequest) returns (stream DeleteTeamResponse){}
+
+  //add  a  Member
+  rpc AddMember(AddMemberRequest) returns (AddMemberResponse){}
+  // add a member  via stream
+  rpc AddMemberStream(stream AddMemberRequest) returns (stream AddMemberResponse){}
+
+  //Delete  a  Member
+  rpc DeleteMember(DeleteMemberRequest) returns (DeleteMemberResponse){}
+  // Delete a Member  via stream
+  rpc DeleteMemberStream(stream DeleteMemberRequest) returns (stream DeleteMemberResponse){}
+
+  //add an administrator
+  rpc AddAdmin(AddAdminRequest) returns (AddAdminResponse){}
+  // add an administrator  via stream
+  rpc AddAdminStream(stream AddAdminRequest) returns (stream AddAdminResponse){}
+
+
+}
+
+enum Code {
+  OK = 0;
+  ERROR_UNKNOWN = 1;
+  ERROR_TEAM_NOTFOUND = 2;
+}
+
+// The response message containing the greetings
+message TeamInfo {
+  uint64 id = 1; // 团队id
+  string name = 2; // 团队名
+  string description = 3; // 团队描述
+  string website = 4; // 团队官网
+  string avatar = 5; // 头像链接
+  string email = 6; // 团队邮箱
+  repeated TeamMember members = 7;
+  string created_at = 8; // 团队创建时间
+  string updated_at = 9; // 团队更新时间
+}
+
+message TeamMember{
+  uint64 user_id = 1;
+  uint64 team_id = 2;
+  bool is_admin = 3;
+  string created_at = 4; // 团队创建时间
+  string updated_at = 5; // 团队更新时间
+}
+
+message GetTeamResponse {
+  TeamInfo team = 1;
+  Code code = 2;
+}
+
+message GetTeamByIdRequest
+{
+  uint64 id = 1;
+}
+
+message GetTeamsByNameRequest
+{
+  string name = 1;
+}
+
+message GetTeamsResponse
+{
+  repeated TeamInfo team = 1;
+  Code code = 2;
+}
+
+message AddTeamResponse
+{
+  Code code = 1;
+  uint64 id = 2;
+}
+
+message UpdateTeamResponse
+{
+  Code code = 1;
+}
+
+message DeleteTeamRequest
+{
+  uint64 id = 1;
+}
+
+message DeleteTeamResponse
+{
+  Code code = 1;
+}
+
+message AddMemberRequest
+{
+  uint64 team_id = 1;
+  uint64 user_id = 2;
+  bool is_admin = 3;
+}
+
+message AddMemberResponse
+{
+  Code code = 1;
+}
+
+message DeleteMemberRequest
+{
+  uint64 team_id = 1;
+  uint64 user_id = 2;
+}
+
+message DeleteMemberResponse
+{
+  Code code = 1;
+}
+
+
+message  AddAdminRequest
+{
+  uint64 team_id = 1;
+  uint64 user_id = 2;
+}
+
+message AddAdminResponse
+{
+  Code code = 1;
+}
+
+
