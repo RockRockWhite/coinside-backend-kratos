@@ -1,6 +1,6 @@
 syntax = "proto3";
 package api;
-option java_package = "group.ljxsteam.coinside.card";
+
 option go_package = "./;api";
 
 enum Code {
@@ -108,6 +108,7 @@ message DeleteCardTagResponse{
 message AddCardMemberRequest{
   uint64 id = 1;
   uint64 user_id = 2;
+  bool is_admin = 3;
 }
 
 message AddCardMemberResponse{
