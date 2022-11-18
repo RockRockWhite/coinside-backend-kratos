@@ -16,14 +16,21 @@ type UserController struct {
 func (u *UserController) GetUserInfo(c *gin.Context) {
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 
-	user, err := u.client.GetUserInfo(context.Background(), &api.GetUserInfoRequest{Id: id})
+	res, err := u.client.GetUserInfo(context.Background(), &api.GetUserInfoRequest{Id: id})
 
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
-		return
+	resDto := dto.ResponseDto{
+		Code:    dto.UserErrorCode[res.Code].Code,
+		Message: dto.UserErrorCode[res.Code].Message,
+		Data:    nil,
 	}
 
-	c.JSON(http.StatusOK, user)
+	if res.Code != api.Code_OK {
+		resDto.Data = err
+	} else {
+		resDto.Data = res.Info
+	}
+
+	c.JSON(http.StatusOK, resDto)
 }
 
 func (u *UserController) CreateUser(c *gin.Context) {
@@ -53,6 +60,83 @@ func (u *UserController) CreateUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, resDto)
+}
+
+func (u *UserController) GetUserId(c *gin.Context) {
+	nickname := c.Query("nickname")
+	if nickname != "" {
+		res, err := u.client.GetUserInfoByNickname(context.Background(), &api.GetUserInfoByNicknameRequest{Nickname: nickname})
+
+		resDto := dto.ResponseDto{
+			Code:    dto.UserErrorCode[res.Code].Code,
+			Message: dto.UserErrorCode[res.Code].Message,
+			Data:    nil,
+		}
+
+		if res.Code != api.Code_OK {
+			resDto.Data = err
+		} else {
+			resDto.Data = struct {
+				Id uint64 `json:"id"`
+			}{
+				Id: res.Info.Id,
+			}
+		}
+
+		c.JSON(http.StatusOK, resDto)
+		return
+	}
+
+	email := c.Query("email")
+	if email != "" {
+		res, err := u.client.GetUserInfoByEmail(context.Background(), &api.GetUserInfoByEmailRequest{Email: email})
+
+		resDto := dto.ResponseDto{
+			Code:    dto.UserErrorCode[res.Code].Code,
+			Message: dto.UserErrorCode[res.Code].Message,
+			Data:    nil,
+		}
+
+		if res.Code != api.Code_OK {
+			resDto.Data = err
+		} else {
+			resDto.Data = struct {
+				Id uint64 `json:"id"`
+			}{
+				Id: res.Info.Id,
+			}
+		}
+
+		c.JSON(http.StatusOK, resDto)
+		return
+	}
+
+	mobile := c.Query("mobile")
+	if mobile != "" {
+		res, err := u.client.GetUserInfoByMobile(context.Background(), &api.GetUserInfoByMobileRequest{Mobile: mobile})
+
+		resDto := dto.ResponseDto{
+			Code:    dto.UserErrorCode[res.Code].Code,
+			Message: dto.UserErrorCode[res.Code].Message,
+			Data:    nil,
+		}
+
+		if res.Code != api.Code_OK {
+			resDto.Data = err
+		} else {
+			resDto.Data = struct {
+				Id uint64 `json:"id"`
+			}{
+				Id: res.Info.Id,
+			}
+		}
+
+		c.JSON(http.StatusOK, resDto)
+		return
+	}
+
+	// 三个参数都未正确传入
+	c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
 }
 
 func (u *UserController) PatchUser(c *gin.Context) {
