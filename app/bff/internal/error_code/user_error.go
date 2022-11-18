@@ -1,4 +1,4 @@
-package error
+package error_code
 
 import api "github.com/ljxsteam/coinside-backend-kratos/api/user"
 
@@ -37,4 +37,8 @@ func init() {
 			Message: "Verify code exists.",
 		},
 	}
+}
+
+func GetUserError() UserError {
+	return userError
 }
