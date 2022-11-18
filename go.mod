@@ -7,6 +7,7 @@ require (
 	github.com/go-kratos/kratos/contrib/registry/zookeeper/v2 v2.0.0-20221110150034-a7bae93ee08d
 	github.com/go-kratos/kratos/v2 v2.5.3
 	github.com/go-zookeeper/zk v1.0.3
+	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/wire v0.5.0
 	github.com/spf13/viper v1.14.0
 	github.com/stretchr/testify v1.8.1
