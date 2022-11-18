@@ -1,363 +1,270 @@
 package controller
 
 import (
-	api "github.com/ljxsteam/coinside-backend-kratos/api/card"
+	"context"
+	"github.com/gin-gonic/gin"
+	"github.com/ljxsteam/coinside-backend-kratos/api/card"
+	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/dto"
+	"net/http"
+	"strconv"
 )
 
 type CardController struct {
-	client api.CardClient
+	client card.CardClient
 }
 
-//
-//func (u *CardController) GetUserInfo(c *gin.Context) {
-//	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
-//
-//	res, err := u.client.GetUserInfo(context.Background(), &api.GetUserInfoRequest{Id: id})
-//
-//	resDto := dto.ResponseDto{
-//		Code:    dto.UserErrorCode[res.Code].Code,
-//		Message: dto.UserErrorCode[res.Code].Message,
-//		Data:    nil,
-//	}
-//
-//	if res.Code != api.Code_OK {
-//		resDto.Data = err
-//	} else {
-//		resDto.Data = res.Info
-//	}
-//
-//	c.JSON(http.StatusOK, resDto)
-//}
-//
-//func (u *CardController) CreateUser(c *gin.Context) {
-//	var req api.CreateUserRequest
-//
-//	if err := c.ShouldBind(&req); err != nil {
-//		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
-//		return
-//	}
-//
-//	res, err := u.client.CreateUser(context.Background(), &req)
-//
-//	resDto := dto.ResponseDto{
-//		Code:    dto.UserErrorCode[res.Code].Code,
-//		Message: dto.UserErrorCode[res.Code].Message,
-//		Data:    nil,
-//	}
-//
-//	if res.Code != api.Code_OK {
-//		resDto.Data = err
-//	} else {
-//		resDto.Data = struct {
-//			Id uint64 `json:"id"`
-//		}{
-//			Id: res.Id,
-//		}
-//	}
-//
-//	c.JSON(http.StatusOK, resDto)
-//}
-//
-//func (u *CardController) GetUserId(c *gin.Context) {
-//	nickname := c.Query("nickname")
-//	if nickname != "" {
-//		res, err := u.client.GetUserInfoByNickname(context.Background(), &api.GetUserInfoByNicknameRequest{Nickname: nickname})
-//
-//		resDto := dto.ResponseDto{
-//			Code:    dto.UserErrorCode[res.Code].Code,
-//			Message: dto.UserErrorCode[res.Code].Message,
-//			Data:    nil,
-//		}
-//
-//		if res.Code != api.Code_OK {
-//			resDto.Data = err
-//		} else {
-//			resDto.Data = struct {
-//				Id uint64 `json:"id"`
-//			}{
-//				Id: res.Info.Id,
-//			}
-//		}
-//
-//		c.JSON(http.StatusOK, resDto)
-//		return
-//	}
-//
-//	email := c.Query("email")
-//	if email != "" {
-//		res, err := u.client.GetUserInfoByEmail(context.Background(), &api.GetUserInfoByEmailRequest{Email: email})
-//
-//		resDto := dto.ResponseDto{
-//			Code:    dto.UserErrorCode[res.Code].Code,
-//			Message: dto.UserErrorCode[res.Code].Message,
-//			Data:    nil,
-//		}
-//
-//		if res.Code != api.Code_OK {
-//			resDto.Data = err
-//		} else {
-//			resDto.Data = struct {
-//				Id uint64 `json:"id"`
-//			}{
-//				Id: res.Info.Id,
-//			}
-//		}
-//
-//		c.JSON(http.StatusOK, resDto)
-//		return
-//	}
-//
-//	mobile := c.Query("mobile")
-//	if mobile != "" {
-//		res, err := u.client.GetUserInfoByMobile(context.Background(), &api.GetUserInfoByMobileRequest{Mobile: mobile})
-//
-//		resDto := dto.ResponseDto{
-//			Code:    dto.UserErrorCode[res.Code].Code,
-//			Message: dto.UserErrorCode[res.Code].Message,
-//			Data:    nil,
-//		}
-//
-//		if res.Code != api.Code_OK {
-//			resDto.Data = err
-//		} else {
-//			resDto.Data = struct {
-//				Id uint64 `json:"id"`
-//			}{
-//				Id: res.Info.Id,
-//			}
-//		}
-//
-//		c.JSON(http.StatusOK, resDto)
-//		return
-//	}
-//
-//	// 三个参数都未正确传入
-//	c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
-//}
-//
-//func (u *CardController) SetFullname(c *gin.Context) {
-//	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
-//
-//	reqDto := struct {
-//		Fullname string `json:"fullname"`
-//	}{}
-//	if err := c.ShouldBind(&reqDto); err != nil {
-//		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
-//		return
-//	}
-//
-//	res, err := u.client.SetFullname(context.Background(), &api.SetFullnameRequest{
-//		Id:       id,
-//		Fullname: reqDto.Fullname,
-//	})
-//
-//	resDto := dto.ResponseDto{
-//		Code:    dto.UserErrorCode[res.Code].Code,
-//		Message: dto.UserErrorCode[res.Code].Message,
-//		Data:    nil,
-//	}
-//
-//	if res.Code != api.Code_OK {
-//		resDto.Data = err
-//	} else {
-//	}
-//
-//	c.JSON(http.StatusOK, resDto)
-//}
-//
-//func (u *CardController) SetAvatar(c *gin.Context) {
-//	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
-//
-//	reqDto := struct {
-//		Avatar string `json:"avatar"`
-//	}{}
-//	if err := c.ShouldBind(&reqDto); err != nil {
-//		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
-//		return
-//	}
-//
-//	res, err := u.client.SetAvatar(context.Background(), &api.SetAvatarRequest{
-//		Id:     id,
-//		Avatar: reqDto.Avatar,
-//	})
-//
-//	resDto := dto.ResponseDto{
-//		Code:    dto.UserErrorCode[res.Code].Code,
-//		Message: dto.UserErrorCode[res.Code].Message,
-//		Data:    nil,
-//	}
-//
-//	if res.Code != api.Code_OK {
-//		resDto.Data = err
-//	} else {
-//	}
-//
-//	c.JSON(http.StatusOK, resDto)
-//}
-//
-//func (u *CardController) SetConfig(c *gin.Context) {
-//	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
-//
-//	reqDto := struct {
-//		Config string `json:"config"`
-//	}{}
-//	if err := c.ShouldBind(&reqDto); err != nil {
-//		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
-//		return
-//	}
-//
-//	res, err := u.client.SetConfig(context.Background(), &api.SetConfigRequest{
-//		Id:     id,
-//		Config: reqDto.Config,
-//	})
-//
-//	resDto := dto.ResponseDto{
-//		Code:    dto.UserErrorCode[res.Code].Code,
-//		Message: dto.UserErrorCode[res.Code].Message,
-//		Data:    nil,
-//	}
-//
-//	if res.Code != api.Code_OK {
-//		resDto.Data = err
-//	} else {
-//	}
-//
-//	c.JSON(http.StatusOK, resDto)
-//}
-//
-//func (u *CardController) SetEmail(c *gin.Context) {
-//	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
-//
-//	reqDto := struct {
-//		Email      string `json:"email"`
-//		VerifyCode string `json:"verify_code"`
-//	}{}
-//	if err := c.ShouldBind(&reqDto); err != nil {
-//		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
-//		return
-//	}
-//
-//	res, err := u.client.SetEmail(context.Background(), &api.SetEmailRequest{
-//		Id:         id,
-//		Email:      reqDto.Email,
-//		VerifyCode: reqDto.VerifyCode,
-//	})
-//
-//	resDto := dto.ResponseDto{
-//		Code:    dto.UserErrorCode[res.Code].Code,
-//		Message: dto.UserErrorCode[res.Code].Message,
-//		Data:    nil,
-//	}
-//
-//	if res.Code != api.Code_OK {
-//		resDto.Data = err
-//	} else {
-//	}
-//
-//	c.JSON(http.StatusOK, resDto)
-//}
-//
-//func (u *CardController) SetMobile(c *gin.Context) {
-//	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
-//
-//	reqDto := struct {
-//		Mobile     string `json:"mobile"`
-//		VerifyCode string `json:"verify_code"`
-//	}{}
-//	if err := c.ShouldBind(&reqDto); err != nil {
-//		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
-//		return
-//	}
-//
-//	res, err := u.client.SetMobile(context.Background(), &api.SetMobileRequest{
-//		Id:         id,
-//		Mobile:     reqDto.Mobile,
-//		VerifyCode: reqDto.VerifyCode,
-//	})
-//
-//	resDto := dto.ResponseDto{
-//		Code:    dto.UserErrorCode[res.Code].Code,
-//		Message: dto.UserErrorCode[res.Code].Message,
-//		Data:    nil,
-//	}
-//
-//	if res.Code != api.Code_OK {
-//		resDto.Data = err
-//	} else {
-//	}
-//
-//	c.JSON(http.StatusOK, resDto)
-//}
-//
-//func (u *CardController) SetPassword(c *gin.Context) {
-//}
-//
-//func (u *CardController) DeleteUser(c *gin.Context) {
-//	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
-//
-//	res, err := u.client.DeleteUser(context.Background(), &api.DeleteUserRequest{
-//		Id: id,
-//	})
-//
-//	resDto := dto.ResponseDto{
-//		Code:    dto.UserErrorCode[res.Code].Code,
-//		Message: dto.UserErrorCode[res.Code].Message,
-//		Data:    nil,
-//	}
-//
-//	if res.Code != api.Code_OK {
-//		resDto.Data = err
-//	} else {
-//	}
-//
-//	c.JSON(http.StatusOK, resDto)
-//}
-//
-//func (u *CardController) Login(c *gin.Context) {
-//	// 获得登陆信息
-//	reqDto := struct {
-//		Id       uint64 `json:"id"`
-//		Password string `json:"password"`
-//	}{}
-//	if err := c.ShouldBind(&reqDto); err != nil {
-//		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
-//		return
-//	}
-//
-//	// rpc请求登陆
-//	res, err := u.client.Login(context.Background(), &api.LoginRequest{
-//		Id:       reqDto.Id,
-//		Password: reqDto.Password,
-//	})
-//
-//	resDto := dto.ResponseDto{
-//		Code:    dto.UserErrorCode[res.Code].Code,
-//		Message: dto.UserErrorCode[res.Code].Message,
-//		Data:    nil,
-//	}
-//
-//	if res.Code != api.Code_OK {
-//		resDto.Data = err
-//	} else {
-//		// 登陆成功，派发token
-//		token, err := util.GenerateJwtToken(
-//			&util.JwtClaims{Id: reqDto.Id})
-//		if err == nil {
-//			resDto.Data = struct {
-//				Token string `json:"token"`
-//			}{
-//				Token: token,
-//			}
-//		} else {
-//			resDto.Code = dto.UserErrorCode[api.Code_ERROR_UNKNOWN].Code
-//			resDto.Message = dto.UserErrorCode[api.Code_ERROR_UNKNOWN].Message
-//			resDto.Data = err
-//		}
-//	}
-//
-//	c.JSON(http.StatusOK, resDto)
-//}
+func (u *CardController) GetCardInfo(c *gin.Context) {
+	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 
-func NewCardController(client api.CardClient) *CardController {
+	res, err := u.client.GetCardInfo(context.Background(), &card.GetCardInfoRequest{Id: id})
+
+	resDto := dto.ResponseDto{
+		Code:    dto.CardErrorCode[res.Code].Code,
+		Message: dto.CardErrorCode[res.Code].Message,
+		Data:    nil,
+	}
+
+	if res.Code != card.Code_OK {
+		resDto.Data = err
+	} else {
+		resDto.Data = res.Info
+	}
+
+	c.JSON(http.StatusOK, resDto)
+}
+
+func (u *CardController) CreateCard(c *gin.Context) {
+	var req card.CreateCardRequest
+
+	if err := c.ShouldBind(&req); err != nil {
+		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
+		return
+	}
+
+	res, err := u.client.CreateCard(context.Background(), &req)
+
+	resDto := dto.ResponseDto{
+		Code:    dto.CardErrorCode[res.Code].Code,
+		Message: dto.CardErrorCode[res.Code].Message,
+		Data:    nil,
+	}
+
+	if res.Code != card.Code_OK {
+		resDto.Data = err
+	} else {
+		resDto.Data = struct {
+			Id uint64 `json:"id"`
+		}{
+			Id: res.Id,
+		}
+	}
+
+	c.JSON(http.StatusOK, resDto)
+}
+
+func (u *CardController) SetTitle(c *gin.Context) {
+	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
+
+	reqDto := struct {
+		Title string `json:"title"`
+	}{}
+	if err := c.ShouldBind(&reqDto); err != nil {
+		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
+		return
+	}
+
+	res, err := u.client.UpdateCardTitle(context.Background(), &card.UpdateCardTitleRequest{
+		Id:    id,
+		Title: reqDto.Title,
+	})
+
+	resDto := dto.ResponseDto{
+		Code:    dto.CardErrorCode[res.Code].Code,
+		Message: dto.CardErrorCode[res.Code].Message,
+		Data:    nil,
+	}
+
+	if res.Code != card.Code_OK {
+		resDto.Data = err
+	} else {
+	}
+
+	c.JSON(http.StatusOK, resDto)
+}
+
+func (u *CardController) SetContent(c *gin.Context) {
+	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
+
+	reqDto := struct {
+		Content string `json:"content"`
+	}{}
+	if err := c.ShouldBind(&reqDto); err != nil {
+		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
+		return
+	}
+
+	res, err := u.client.UpdateCardContent(context.Background(), &card.UpdateCardContentRequest{
+		Id:      id,
+		Content: reqDto.Content,
+	})
+
+	resDto := dto.ResponseDto{
+		Code:    dto.CardErrorCode[res.Code].Code,
+		Message: dto.CardErrorCode[res.Code].Message,
+		Data:    nil,
+	}
+
+	if res.Code != card.Code_OK {
+		resDto.Data = err
+	} else {
+	}
+
+	c.JSON(http.StatusOK, resDto)
+}
+
+func (u *CardController) AddTag(c *gin.Context) {
+	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
+
+	reqDto := struct {
+		TagContent string `json:"tag_content"`
+	}{}
+	if err := c.ShouldBind(&reqDto); err != nil {
+		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
+		return
+	}
+
+	res, err := u.client.AddCardTag(context.Background(), &card.AddCardTagRequest{
+		Id:      id,
+		Content: reqDto.TagContent,
+	})
+
+	resDto := dto.ResponseDto{
+		Code:    dto.CardErrorCode[res.Code].Code,
+		Message: dto.CardErrorCode[res.Code].Message,
+		Data:    nil,
+	}
+
+	if res.Code != card.Code_OK {
+		resDto.Data = err
+	} else {
+	}
+
+	c.JSON(http.StatusOK, resDto)
+}
+
+func (u *CardController) DeleleTag(c *gin.Context) {
+	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
+
+	reqDto := struct {
+		TagContent string `json:"tag_content"`
+	}{}
+	if err := c.ShouldBind(&reqDto); err != nil {
+		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
+		return
+	}
+
+	res, err := u.client.DeleteCardTag(context.Background(), &card.DeleteCardTagRequest{
+		Id:      id,
+		Content: reqDto.TagContent,
+	})
+
+	resDto := dto.ResponseDto{
+		Code:    dto.CardErrorCode[res.Code].Code,
+		Message: dto.CardErrorCode[res.Code].Message,
+		Data:    nil,
+	}
+
+	if res.Code != card.Code_OK {
+		resDto.Data = err
+	} else {
+	}
+
+	c.JSON(http.StatusOK, resDto)
+}
+
+func (u *CardController) SetMember(c *gin.Context) {
+	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
+
+	reqDto := struct {
+		UserId  uint64 `json:"user_id"`
+		IsAdmin bool   `json:"is_admin"`
+	}{}
+	if err := c.ShouldBind(&reqDto); err != nil {
+		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
+		return
+	}
+
+	res, err := u.client.SetCardMember(context.Background(), &card.SetCardMemberRequest{
+		Id:      id,
+		UserId:  reqDto.UserId,
+		IsAdmin: reqDto.IsAdmin,
+	})
+
+	resDto := dto.ResponseDto{
+		Code:    dto.CardErrorCode[res.Code].Code,
+		Message: dto.CardErrorCode[res.Code].Message,
+		Data:    nil,
+	}
+
+	if res.Code != card.Code_OK {
+		resDto.Data = err
+	} else {
+	}
+
+	c.JSON(http.StatusOK, resDto)
+}
+
+func (u *CardController) DeleleMember(c *gin.Context) {
+	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
+
+	reqDto := struct {
+		UserId uint64 `json:"user_id"`
+	}{}
+	if err := c.ShouldBind(&reqDto); err != nil {
+		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
+		return
+	}
+
+	res, err := u.client.DeleteCardMember(context.Background(), &card.DeleteCardMemberRequest{
+		Id:     id,
+		UserId: reqDto.UserId,
+	})
+
+	resDto := dto.ResponseDto{
+		Code:    dto.CardErrorCode[res.Code].Code,
+		Message: dto.CardErrorCode[res.Code].Message,
+		Data:    nil,
+	}
+
+	if res.Code != card.Code_OK {
+		resDto.Data = err
+	} else {
+	}
+
+	c.JSON(http.StatusOK, resDto)
+}
+
+func (u *CardController) DeleteCard(c *gin.Context) {
+	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
+
+	res, err := u.client.DeleteCard(context.Background(), &card.DeleteCardRequest{
+		Id: id,
+	})
+
+	resDto := dto.ResponseDto{
+		Code:    dto.CardErrorCode[res.Code].Code,
+		Message: dto.CardErrorCode[res.Code].Message,
+		Data:    nil,
+	}
+
+	if res.Code != card.Code_OK {
+		resDto.Data = err
+	} else {
+	}
+
+	c.JSON(http.StatusOK, resDto)
+}
+
+func NewCardController(client card.CardClient) *CardController {
 	return &CardController{client: client}
 }

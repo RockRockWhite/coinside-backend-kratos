@@ -26,7 +26,7 @@ message GetCardInfoRequest{
 
 message GetCardInfoResponse{
   Code code = 1;
-  CardInfo card = 2;
+  CardInfo info = 2;
 }
 
 message CardInfo{
