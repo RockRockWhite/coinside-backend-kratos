@@ -4,7 +4,7 @@
 // - protoc             v3.21.9
 // source: card.proto
 
-package api
+package card
 
 import (
 	context "context"
@@ -54,7 +54,7 @@ func NewCardClient(cc grpc.ClientConnInterface) CardClient {
 
 func (c *cardClient) CreateCard(ctx context.Context, in *CreateCardRequest, opts ...grpc.CallOption) (*CreateCardResponse, error) {
 	out := new(CreateCardResponse)
-	err := c.cc.Invoke(ctx, "/api.Card/CreateCard", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/card.Card/CreateCard", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +62,7 @@ func (c *cardClient) CreateCard(ctx context.Context, in *CreateCardRequest, opts
 }
 
 func (c *cardClient) CreateCardStream(ctx context.Context, opts ...grpc.CallOption) (Card_CreateCardStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Card_ServiceDesc.Streams[0], "/api.Card/CreateCardStream", opts...)
+	stream, err := c.cc.NewStream(ctx, &Card_ServiceDesc.Streams[0], "/card.Card/CreateCardStream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -97,7 +97,7 @@ func (x *cardCreateCardStreamClient) CloseAndRecv() (*CreateCardResponse, error)
 
 func (c *cardClient) GetCardInfo(ctx context.Context, in *GetCardInfoRequest, opts ...grpc.CallOption) (*GetCardInfoResponse, error) {
 	out := new(GetCardInfoResponse)
-	err := c.cc.Invoke(ctx, "/api.Card/GetCardInfo", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/card.Card/GetCardInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -105,7 +105,7 @@ func (c *cardClient) GetCardInfo(ctx context.Context, in *GetCardInfoRequest, op
 }
 
 func (c *cardClient) GetCardInfoStream(ctx context.Context, opts ...grpc.CallOption) (Card_GetCardInfoStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Card_ServiceDesc.Streams[1], "/api.Card/GetCardInfoStream", opts...)
+	stream, err := c.cc.NewStream(ctx, &Card_ServiceDesc.Streams[1], "/card.Card/GetCardInfoStream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -140,7 +140,7 @@ func (x *cardGetCardInfoStreamClient) CloseAndRecv() (*GetCardInfoResponse, erro
 
 func (c *cardClient) GetCardInfoList(ctx context.Context, in *GetCardInfoListRequest, opts ...grpc.CallOption) (*GetCardInfoListResponse, error) {
 	out := new(GetCardInfoListResponse)
-	err := c.cc.Invoke(ctx, "/api.Card/GetCardInfoList", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/card.Card/GetCardInfoList", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -148,7 +148,7 @@ func (c *cardClient) GetCardInfoList(ctx context.Context, in *GetCardInfoListReq
 }
 
 func (c *cardClient) GetCardInfoListStream(ctx context.Context, opts ...grpc.CallOption) (Card_GetCardInfoListStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Card_ServiceDesc.Streams[2], "/api.Card/GetCardInfoListStream", opts...)
+	stream, err := c.cc.NewStream(ctx, &Card_ServiceDesc.Streams[2], "/card.Card/GetCardInfoListStream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -183,7 +183,7 @@ func (x *cardGetCardInfoListStreamClient) CloseAndRecv() (*GetCardInfoListRespon
 
 func (c *cardClient) UpdateCardTitle(ctx context.Context, in *UpdateCardTitleRequest, opts ...grpc.CallOption) (*UpdateCardTitleResponse, error) {
 	out := new(UpdateCardTitleResponse)
-	err := c.cc.Invoke(ctx, "/api.Card/UpdateCardTitle", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/card.Card/UpdateCardTitle", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -191,7 +191,7 @@ func (c *cardClient) UpdateCardTitle(ctx context.Context, in *UpdateCardTitleReq
 }
 
 func (c *cardClient) UpdateCardTitleStream(ctx context.Context, opts ...grpc.CallOption) (Card_UpdateCardTitleStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Card_ServiceDesc.Streams[3], "/api.Card/UpdateCardTitleStream", opts...)
+	stream, err := c.cc.NewStream(ctx, &Card_ServiceDesc.Streams[3], "/card.Card/UpdateCardTitleStream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -226,7 +226,7 @@ func (x *cardUpdateCardTitleStreamClient) CloseAndRecv() (*UpdateCardTitleRespon
 
 func (c *cardClient) UpdateCardContent(ctx context.Context, in *UpdateCardContentRequest, opts ...grpc.CallOption) (*UpdateCardContentResponse, error) {
 	out := new(UpdateCardContentResponse)
-	err := c.cc.Invoke(ctx, "/api.Card/UpdateCardContent", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/card.Card/UpdateCardContent", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -234,7 +234,7 @@ func (c *cardClient) UpdateCardContent(ctx context.Context, in *UpdateCardConten
 }
 
 func (c *cardClient) UpdateCardContentStream(ctx context.Context, opts ...grpc.CallOption) (Card_UpdateCardContentStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Card_ServiceDesc.Streams[4], "/api.Card/UpdateCardContentStream", opts...)
+	stream, err := c.cc.NewStream(ctx, &Card_ServiceDesc.Streams[4], "/card.Card/UpdateCardContentStream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -269,7 +269,7 @@ func (x *cardUpdateCardContentStreamClient) CloseAndRecv() (*UpdateCardContentRe
 
 func (c *cardClient) DeleteCard(ctx context.Context, in *DeleteCardRequest, opts ...grpc.CallOption) (*DeleteCardResponse, error) {
 	out := new(DeleteCardResponse)
-	err := c.cc.Invoke(ctx, "/api.Card/DeleteCard", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/card.Card/DeleteCard", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -277,7 +277,7 @@ func (c *cardClient) DeleteCard(ctx context.Context, in *DeleteCardRequest, opts
 }
 
 func (c *cardClient) DeleteCardStream(ctx context.Context, opts ...grpc.CallOption) (Card_DeleteCardStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Card_ServiceDesc.Streams[5], "/api.Card/DeleteCardStream", opts...)
+	stream, err := c.cc.NewStream(ctx, &Card_ServiceDesc.Streams[5], "/card.Card/DeleteCardStream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -312,7 +312,7 @@ func (x *cardDeleteCardStreamClient) CloseAndRecv() (*DeleteCardResponse, error)
 
 func (c *cardClient) AddCardTag(ctx context.Context, in *AddCardTagRequest, opts ...grpc.CallOption) (*AddCardTagResponse, error) {
 	out := new(AddCardTagResponse)
-	err := c.cc.Invoke(ctx, "/api.Card/AddCardTag", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/card.Card/AddCardTag", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -320,7 +320,7 @@ func (c *cardClient) AddCardTag(ctx context.Context, in *AddCardTagRequest, opts
 }
 
 func (c *cardClient) AddCardTagStream(ctx context.Context, opts ...grpc.CallOption) (Card_AddCardTagStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Card_ServiceDesc.Streams[6], "/api.Card/AddCardTagStream", opts...)
+	stream, err := c.cc.NewStream(ctx, &Card_ServiceDesc.Streams[6], "/card.Card/AddCardTagStream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -355,7 +355,7 @@ func (x *cardAddCardTagStreamClient) CloseAndRecv() (*AddCardTagResponse, error)
 
 func (c *cardClient) DeleteCardTag(ctx context.Context, in *DeleteCardTagRequest, opts ...grpc.CallOption) (*DeleteCardTagResponse, error) {
 	out := new(DeleteCardTagResponse)
-	err := c.cc.Invoke(ctx, "/api.Card/DeleteCardTag", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/card.Card/DeleteCardTag", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -363,7 +363,7 @@ func (c *cardClient) DeleteCardTag(ctx context.Context, in *DeleteCardTagRequest
 }
 
 func (c *cardClient) DeleteCardTagStream(ctx context.Context, opts ...grpc.CallOption) (Card_DeleteCardTagStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Card_ServiceDesc.Streams[7], "/api.Card/DeleteCardTagStream", opts...)
+	stream, err := c.cc.NewStream(ctx, &Card_ServiceDesc.Streams[7], "/card.Card/DeleteCardTagStream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -398,7 +398,7 @@ func (x *cardDeleteCardTagStreamClient) CloseAndRecv() (*DeleteCardResponse, err
 
 func (c *cardClient) SetCardMember(ctx context.Context, in *SetCardMemberRequest, opts ...grpc.CallOption) (*SetCardMemberResponse, error) {
 	out := new(SetCardMemberResponse)
-	err := c.cc.Invoke(ctx, "/api.Card/SetCardMember", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/card.Card/SetCardMember", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -406,7 +406,7 @@ func (c *cardClient) SetCardMember(ctx context.Context, in *SetCardMemberRequest
 }
 
 func (c *cardClient) SetCardMemberStream(ctx context.Context, opts ...grpc.CallOption) (Card_SetCardMemberStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Card_ServiceDesc.Streams[8], "/api.Card/SetCardMemberStream", opts...)
+	stream, err := c.cc.NewStream(ctx, &Card_ServiceDesc.Streams[8], "/card.Card/SetCardMemberStream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -441,7 +441,7 @@ func (x *cardSetCardMemberStreamClient) CloseAndRecv() (*SetCardMemberResponse, 
 
 func (c *cardClient) DeleteCardMember(ctx context.Context, in *DeleteCardMemberRequest, opts ...grpc.CallOption) (*DeleteCardMemberResponse, error) {
 	out := new(DeleteCardMemberResponse)
-	err := c.cc.Invoke(ctx, "/api.Card/DeleteCardMember", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/card.Card/DeleteCardMember", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -449,7 +449,7 @@ func (c *cardClient) DeleteCardMember(ctx context.Context, in *DeleteCardMemberR
 }
 
 func (c *cardClient) DeleteCardMemberStream(ctx context.Context, opts ...grpc.CallOption) (Card_DeleteCardMemberStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Card_ServiceDesc.Streams[9], "/api.Card/DeleteCardMemberStream", opts...)
+	stream, err := c.cc.NewStream(ctx, &Card_ServiceDesc.Streams[9], "/card.Card/DeleteCardMemberStream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -596,7 +596,7 @@ func _Card_CreateCard_Handler(srv interface{}, ctx context.Context, dec func(int
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.Card/CreateCard",
+		FullMethod: "/card.Card/CreateCard",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CardServer).CreateCard(ctx, req.(*CreateCardRequest))
@@ -640,7 +640,7 @@ func _Card_GetCardInfo_Handler(srv interface{}, ctx context.Context, dec func(in
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.Card/GetCardInfo",
+		FullMethod: "/card.Card/GetCardInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CardServer).GetCardInfo(ctx, req.(*GetCardInfoRequest))
@@ -684,7 +684,7 @@ func _Card_GetCardInfoList_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.Card/GetCardInfoList",
+		FullMethod: "/card.Card/GetCardInfoList",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CardServer).GetCardInfoList(ctx, req.(*GetCardInfoListRequest))
@@ -728,7 +728,7 @@ func _Card_UpdateCardTitle_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.Card/UpdateCardTitle",
+		FullMethod: "/card.Card/UpdateCardTitle",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CardServer).UpdateCardTitle(ctx, req.(*UpdateCardTitleRequest))
@@ -772,7 +772,7 @@ func _Card_UpdateCardContent_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.Card/UpdateCardContent",
+		FullMethod: "/card.Card/UpdateCardContent",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CardServer).UpdateCardContent(ctx, req.(*UpdateCardContentRequest))
@@ -816,7 +816,7 @@ func _Card_DeleteCard_Handler(srv interface{}, ctx context.Context, dec func(int
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.Card/DeleteCard",
+		FullMethod: "/card.Card/DeleteCard",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CardServer).DeleteCard(ctx, req.(*DeleteCardRequest))
@@ -860,7 +860,7 @@ func _Card_AddCardTag_Handler(srv interface{}, ctx context.Context, dec func(int
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.Card/AddCardTag",
+		FullMethod: "/card.Card/AddCardTag",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CardServer).AddCardTag(ctx, req.(*AddCardTagRequest))
@@ -904,7 +904,7 @@ func _Card_DeleteCardTag_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.Card/DeleteCardTag",
+		FullMethod: "/card.Card/DeleteCardTag",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CardServer).DeleteCardTag(ctx, req.(*DeleteCardTagRequest))
@@ -948,7 +948,7 @@ func _Card_SetCardMember_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.Card/SetCardMember",
+		FullMethod: "/card.Card/SetCardMember",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CardServer).SetCardMember(ctx, req.(*SetCardMemberRequest))
@@ -992,7 +992,7 @@ func _Card_DeleteCardMember_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.Card/DeleteCardMember",
+		FullMethod: "/card.Card/DeleteCardMember",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CardServer).DeleteCardMember(ctx, req.(*DeleteCardMemberRequest))
@@ -1030,7 +1030,7 @@ func (x *cardDeleteCardMemberStreamServer) Recv() (*DeleteCardMemberRequest, err
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Card_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "api.Card",
+	ServiceName: "card.Card",
 	HandlerType: (*CardServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

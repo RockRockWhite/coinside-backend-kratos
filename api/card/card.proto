@@ -1,7 +1,7 @@
 syntax = "proto3";
-package api;
+package card;
 
-option go_package = "./;api";
+option go_package = "./;card";
 
 enum Code {
   OK = 0;
