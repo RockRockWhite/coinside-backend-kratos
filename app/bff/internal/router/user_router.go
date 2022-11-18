@@ -9,7 +9,7 @@ func UserRouter(r *gin.Engine, controller *controller.UserController) *gin.Engin
 
 	user := r.Group("/users")
 	{
-		user.GET("/:id", controller.GetUser)
+		user.GET("/:id", controller.GetUserInfo)
 	}
 
 	return r

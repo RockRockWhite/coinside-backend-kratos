@@ -1,44 +1,40 @@
-package error_code
+package dto
 
 import api "github.com/ljxsteam/coinside-backend-kratos/api/user"
 
-type UserError map[api.Code]Error
+type UserError map[api.Code]ResponseDto
 
-var userError UserError
+var UserErrorCode UserError
 
 func init() {
-	userError = UserError{
-		api.Code_OK: Error{
+	UserErrorCode = UserError{
+		api.Code_OK: ResponseDto{
 			Code:    "OK",
 			Message: "Success.",
 		},
-		api.Code_ERROR_UNKNOWN: Error{
+		api.Code_ERROR_UNKNOWN: ResponseDto{
 			Code:    "ERROR_UNKNOWN",
 			Message: "",
 		},
-		api.Code_ERROR_USER_NOTFOUND: Error{
-			Code:    "Code_ERROR_USER_NOTFOUND",
+		api.Code_ERROR_USER_NOTFOUND: ResponseDto{
+			Code:    "ERROR_USER_NOTFOUND",
 			Message: "User not found.",
 		},
-		api.Code_ERROR_USER_NICKNAME_EXISTS: Error{
+		api.Code_ERROR_USER_NICKNAME_EXISTS: ResponseDto{
 			Code:    "ERROR_USER_NICKNAME_EXISTS",
 			Message: "User nickname exists.",
 		},
-		api.Code_ERROR_USER_MOBILE_EXISTS: Error{
+		api.Code_ERROR_USER_MOBILE_EXISTS: ResponseDto{
 			Code:    "ERROR_USER_MOBILE_EXISTS",
 			Message: "User mobile exists.",
 		},
-		api.Code_ERROR_USER_PASSWORD: Error{
+		api.Code_ERROR_USER_PASSWORD: ResponseDto{
 			Code:    "ERROR_USER_PASSWORD",
 			Message: "Username or password error.",
 		},
-		api.Code_ERROR_VERIFY_CODE: Error{
+		api.Code_ERROR_VERIFY_CODE: ResponseDto{
 			Code:    "ERROR_VERIFY_CODE",
 			Message: "Verify code exists.",
 		},
 	}
-}
-
-func GetUserError() UserError {
-	return userError
 }
