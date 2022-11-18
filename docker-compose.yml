@@ -13,6 +13,7 @@ services:
     networks:
       - app-network
 
+  # User-Service
   userdb:
     image: mariadb:latest
     volumes:
@@ -43,6 +44,27 @@ services:
       - zookeeper
       - userdb
 
+  # Team-Service
+  teamdb:
+    image: mariadb:latest
+    volumes:
+      - teamdb_data:/var/lib/mysql
+      - ./apps/team/src/main/resources/sql:/docker-entrypoint-initdb.d
+    restart: always
+    environment:
+      - LANG=C.UTF-8
+      - MYSQL_ROOT_PASSWORD=ljxljxljxljx
+      - MYSQL_DATABASE=coinside
+      - MYSQL_USER=ljx
+      - MYSQL_PASSWORD=ljxljxljxljx
+    networks:
+      - app-network
+    expose:
+      - 3306
+    ports:
+      - "3307:3306"
+
+  # BFF
   bff-api:
     build:
       context: ./
