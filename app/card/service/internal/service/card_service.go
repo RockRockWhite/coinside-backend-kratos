@@ -43,13 +43,13 @@ func (c CardService) GetCardInfo(ctx context.Context, request *card.GetCardInfoR
 	case gorm.ErrRecordNotFound:
 		return &card.GetCardInfoResponse{
 			Code: card.Code_ERROR_CARD_NOTFOUND,
-			Card: nil,
+			Info: nil,
 		}, nil
 
 	default:
 		return &card.GetCardInfoResponse{
 			Code: card.Code_ERROR_UNKNOWN,
-			Card: nil,
+			Info: nil,
 		}, err
 	}
 
@@ -85,7 +85,7 @@ func (c CardService) GetCardInfo(ctx context.Context, request *card.GetCardInfoR
 	}
 
 	return &card.GetCardInfoResponse{
-		Card: info,
+		Info: info,
 		Code: card.Code_OK,
 	}, nil
 }
