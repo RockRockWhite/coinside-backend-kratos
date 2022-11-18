@@ -10,6 +10,8 @@ func UserRouter(r *gin.Engine, controller *controller.UserController) *gin.Engin
 	user := r.Group("/users")
 	{
 		user.GET("/:id", controller.GetUserInfo)
+		user.GET("/id", controller.GetUserId)
+		user.POST("", controller.CreateUser)
 	}
 
 	return r
