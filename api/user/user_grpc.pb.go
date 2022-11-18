@@ -4,7 +4,7 @@
 // - protoc             v3.21.9
 // source: user.proto
 
-package api
+package user
 
 import (
 	context "context"
@@ -80,7 +80,7 @@ func NewUserClient(cc grpc.ClientConnInterface) UserClient {
 
 func (c *userClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error) {
 	out := new(CreateUserResponse)
-	err := c.cc.Invoke(ctx, "/api.User/CreateUser", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/user.User/CreateUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +88,7 @@ func (c *userClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts
 }
 
 func (c *userClient) CreateUserStream(ctx context.Context, opts ...grpc.CallOption) (User_CreateUserStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &User_ServiceDesc.Streams[0], "/api.User/CreateUserStream", opts...)
+	stream, err := c.cc.NewStream(ctx, &User_ServiceDesc.Streams[0], "/user.User/CreateUserStream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -120,7 +120,7 @@ func (x *userCreateUserStreamClient) Recv() (*CreateUserResponse, error) {
 
 func (c *userClient) GetUserInfo(ctx context.Context, in *GetUserInfoRequest, opts ...grpc.CallOption) (*GetUserInfoResponse, error) {
 	out := new(GetUserInfoResponse)
-	err := c.cc.Invoke(ctx, "/api.User/GetUserInfo", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/user.User/GetUserInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -128,7 +128,7 @@ func (c *userClient) GetUserInfo(ctx context.Context, in *GetUserInfoRequest, op
 }
 
 func (c *userClient) GetUserInfoStream(ctx context.Context, opts ...grpc.CallOption) (User_GetUserInfoStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &User_ServiceDesc.Streams[1], "/api.User/GetUserInfoStream", opts...)
+	stream, err := c.cc.NewStream(ctx, &User_ServiceDesc.Streams[1], "/user.User/GetUserInfoStream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -160,7 +160,7 @@ func (x *userGetUserInfoStreamClient) Recv() (*GetUserInfoResponse, error) {
 
 func (c *userClient) GetUserInfoByNickname(ctx context.Context, in *GetUserInfoByNicknameRequest, opts ...grpc.CallOption) (*GetUserInfoResponse, error) {
 	out := new(GetUserInfoResponse)
-	err := c.cc.Invoke(ctx, "/api.User/GetUserInfoByNickname", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/user.User/GetUserInfoByNickname", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -168,7 +168,7 @@ func (c *userClient) GetUserInfoByNickname(ctx context.Context, in *GetUserInfoB
 }
 
 func (c *userClient) GetUserInfoByNicknameStream(ctx context.Context, opts ...grpc.CallOption) (User_GetUserInfoByNicknameStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &User_ServiceDesc.Streams[2], "/api.User/GetUserInfoByNicknameStream", opts...)
+	stream, err := c.cc.NewStream(ctx, &User_ServiceDesc.Streams[2], "/user.User/GetUserInfoByNicknameStream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -200,7 +200,7 @@ func (x *userGetUserInfoByNicknameStreamClient) Recv() (*GetUserInfoResponse, er
 
 func (c *userClient) GetUserInfoByEmail(ctx context.Context, in *GetUserInfoByEmailRequest, opts ...grpc.CallOption) (*GetUserInfoResponse, error) {
 	out := new(GetUserInfoResponse)
-	err := c.cc.Invoke(ctx, "/api.User/GetUserInfoByEmail", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/user.User/GetUserInfoByEmail", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -208,7 +208,7 @@ func (c *userClient) GetUserInfoByEmail(ctx context.Context, in *GetUserInfoByEm
 }
 
 func (c *userClient) GetUserInfoByEmailStream(ctx context.Context, opts ...grpc.CallOption) (User_GetUserInfoByEmailStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &User_ServiceDesc.Streams[3], "/api.User/GetUserInfoByEmailStream", opts...)
+	stream, err := c.cc.NewStream(ctx, &User_ServiceDesc.Streams[3], "/user.User/GetUserInfoByEmailStream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -240,7 +240,7 @@ func (x *userGetUserInfoByEmailStreamClient) Recv() (*GetUserInfoResponse, error
 
 func (c *userClient) GetUserInfoByMobile(ctx context.Context, in *GetUserInfoByMobileRequest, opts ...grpc.CallOption) (*GetUserInfoResponse, error) {
 	out := new(GetUserInfoResponse)
-	err := c.cc.Invoke(ctx, "/api.User/GetUserInfoByMobile", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/user.User/GetUserInfoByMobile", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -248,7 +248,7 @@ func (c *userClient) GetUserInfoByMobile(ctx context.Context, in *GetUserInfoByM
 }
 
 func (c *userClient) GetUserInfoByMobileStream(ctx context.Context, opts ...grpc.CallOption) (User_GetUserInfoByMobileStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &User_ServiceDesc.Streams[4], "/api.User/GetUserInfoByMobileStream", opts...)
+	stream, err := c.cc.NewStream(ctx, &User_ServiceDesc.Streams[4], "/user.User/GetUserInfoByMobileStream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -280,7 +280,7 @@ func (x *userGetUserInfoByMobileStreamClient) Recv() (*GetUserInfoResponse, erro
 
 func (c *userClient) SetFullname(ctx context.Context, in *SetFullnameRequest, opts ...grpc.CallOption) (*SetFullnameResponse, error) {
 	out := new(SetFullnameResponse)
-	err := c.cc.Invoke(ctx, "/api.User/SetFullname", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/user.User/SetFullname", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -288,7 +288,7 @@ func (c *userClient) SetFullname(ctx context.Context, in *SetFullnameRequest, op
 }
 
 func (c *userClient) SetFullnameStream(ctx context.Context, opts ...grpc.CallOption) (User_SetFullnameStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &User_ServiceDesc.Streams[5], "/api.User/SetFullnameStream", opts...)
+	stream, err := c.cc.NewStream(ctx, &User_ServiceDesc.Streams[5], "/user.User/SetFullnameStream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -320,7 +320,7 @@ func (x *userSetFullnameStreamClient) Recv() (*SetFullnameResponse, error) {
 
 func (c *userClient) SetAvatar(ctx context.Context, in *SetAvatarRequest, opts ...grpc.CallOption) (*SetAvatarResponse, error) {
 	out := new(SetAvatarResponse)
-	err := c.cc.Invoke(ctx, "/api.User/SetAvatar", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/user.User/SetAvatar", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -328,7 +328,7 @@ func (c *userClient) SetAvatar(ctx context.Context, in *SetAvatarRequest, opts .
 }
 
 func (c *userClient) SetAvatarStream(ctx context.Context, opts ...grpc.CallOption) (User_SetAvatarStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &User_ServiceDesc.Streams[6], "/api.User/SetAvatarStream", opts...)
+	stream, err := c.cc.NewStream(ctx, &User_ServiceDesc.Streams[6], "/user.User/SetAvatarStream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -360,7 +360,7 @@ func (x *userSetAvatarStreamClient) Recv() (*SetAvatarResponse, error) {
 
 func (c *userClient) SetConfig(ctx context.Context, in *SetConfigRequest, opts ...grpc.CallOption) (*SetConfigResponse, error) {
 	out := new(SetConfigResponse)
-	err := c.cc.Invoke(ctx, "/api.User/SetConfig", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/user.User/SetConfig", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -368,7 +368,7 @@ func (c *userClient) SetConfig(ctx context.Context, in *SetConfigRequest, opts .
 }
 
 func (c *userClient) SetConfigStream(ctx context.Context, opts ...grpc.CallOption) (User_SetConfigStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &User_ServiceDesc.Streams[7], "/api.User/SetConfigStream", opts...)
+	stream, err := c.cc.NewStream(ctx, &User_ServiceDesc.Streams[7], "/user.User/SetConfigStream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -400,7 +400,7 @@ func (x *userSetConfigStreamClient) Recv() (*SetConfigResponse, error) {
 
 func (c *userClient) SetEmail(ctx context.Context, in *SetEmailRequest, opts ...grpc.CallOption) (*SetEmailResponse, error) {
 	out := new(SetEmailResponse)
-	err := c.cc.Invoke(ctx, "/api.User/SetEmail", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/user.User/SetEmail", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -408,7 +408,7 @@ func (c *userClient) SetEmail(ctx context.Context, in *SetEmailRequest, opts ...
 }
 
 func (c *userClient) SetEmailStream(ctx context.Context, opts ...grpc.CallOption) (User_SetEmailStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &User_ServiceDesc.Streams[8], "/api.User/SetEmailStream", opts...)
+	stream, err := c.cc.NewStream(ctx, &User_ServiceDesc.Streams[8], "/user.User/SetEmailStream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -440,7 +440,7 @@ func (x *userSetEmailStreamClient) Recv() (*SetEmailResponse, error) {
 
 func (c *userClient) SetMobile(ctx context.Context, in *SetMobileRequest, opts ...grpc.CallOption) (*SetMobileResponse, error) {
 	out := new(SetMobileResponse)
-	err := c.cc.Invoke(ctx, "/api.User/SetMobile", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/user.User/SetMobile", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -448,7 +448,7 @@ func (c *userClient) SetMobile(ctx context.Context, in *SetMobileRequest, opts .
 }
 
 func (c *userClient) SetMobileStream(ctx context.Context, opts ...grpc.CallOption) (User_SetMobileStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &User_ServiceDesc.Streams[9], "/api.User/SetMobileStream", opts...)
+	stream, err := c.cc.NewStream(ctx, &User_ServiceDesc.Streams[9], "/user.User/SetMobileStream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -480,7 +480,7 @@ func (x *userSetMobileStreamClient) Recv() (*SetMobileResponse, error) {
 
 func (c *userClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*DeleteUserResponse, error) {
 	out := new(DeleteUserResponse)
-	err := c.cc.Invoke(ctx, "/api.User/DeleteUser", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/user.User/DeleteUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -488,7 +488,7 @@ func (c *userClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, opts
 }
 
 func (c *userClient) DeleteUserStream(ctx context.Context, opts ...grpc.CallOption) (User_DeleteUserStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &User_ServiceDesc.Streams[10], "/api.User/DeleteUserStream", opts...)
+	stream, err := c.cc.NewStream(ctx, &User_ServiceDesc.Streams[10], "/user.User/DeleteUserStream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -520,7 +520,7 @@ func (x *userDeleteUserStreamClient) Recv() (*DeleteUserResponse, error) {
 
 func (c *userClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error) {
 	out := new(LoginResponse)
-	err := c.cc.Invoke(ctx, "/api.User/Login", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/user.User/Login", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -676,7 +676,7 @@ func _User_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(int
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.User/CreateUser",
+		FullMethod: "/user.User/CreateUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServer).CreateUser(ctx, req.(*CreateUserRequest))
@@ -720,7 +720,7 @@ func _User_GetUserInfo_Handler(srv interface{}, ctx context.Context, dec func(in
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.User/GetUserInfo",
+		FullMethod: "/user.User/GetUserInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServer).GetUserInfo(ctx, req.(*GetUserInfoRequest))
@@ -764,7 +764,7 @@ func _User_GetUserInfoByNickname_Handler(srv interface{}, ctx context.Context, d
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.User/GetUserInfoByNickname",
+		FullMethod: "/user.User/GetUserInfoByNickname",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServer).GetUserInfoByNickname(ctx, req.(*GetUserInfoByNicknameRequest))
@@ -808,7 +808,7 @@ func _User_GetUserInfoByEmail_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.User/GetUserInfoByEmail",
+		FullMethod: "/user.User/GetUserInfoByEmail",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServer).GetUserInfoByEmail(ctx, req.(*GetUserInfoByEmailRequest))
@@ -852,7 +852,7 @@ func _User_GetUserInfoByMobile_Handler(srv interface{}, ctx context.Context, dec
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.User/GetUserInfoByMobile",
+		FullMethod: "/user.User/GetUserInfoByMobile",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServer).GetUserInfoByMobile(ctx, req.(*GetUserInfoByMobileRequest))
@@ -896,7 +896,7 @@ func _User_SetFullname_Handler(srv interface{}, ctx context.Context, dec func(in
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.User/SetFullname",
+		FullMethod: "/user.User/SetFullname",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServer).SetFullname(ctx, req.(*SetFullnameRequest))
@@ -940,7 +940,7 @@ func _User_SetAvatar_Handler(srv interface{}, ctx context.Context, dec func(inte
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.User/SetAvatar",
+		FullMethod: "/user.User/SetAvatar",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServer).SetAvatar(ctx, req.(*SetAvatarRequest))
@@ -984,7 +984,7 @@ func _User_SetConfig_Handler(srv interface{}, ctx context.Context, dec func(inte
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.User/SetConfig",
+		FullMethod: "/user.User/SetConfig",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServer).SetConfig(ctx, req.(*SetConfigRequest))
@@ -1028,7 +1028,7 @@ func _User_SetEmail_Handler(srv interface{}, ctx context.Context, dec func(inter
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.User/SetEmail",
+		FullMethod: "/user.User/SetEmail",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServer).SetEmail(ctx, req.(*SetEmailRequest))
@@ -1072,7 +1072,7 @@ func _User_SetMobile_Handler(srv interface{}, ctx context.Context, dec func(inte
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.User/SetMobile",
+		FullMethod: "/user.User/SetMobile",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServer).SetMobile(ctx, req.(*SetMobileRequest))
@@ -1116,7 +1116,7 @@ func _User_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(int
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.User/DeleteUser",
+		FullMethod: "/user.User/DeleteUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServer).DeleteUser(ctx, req.(*DeleteUserRequest))
@@ -1160,7 +1160,7 @@ func _User_Login_Handler(srv interface{}, ctx context.Context, dec func(interfac
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.User/Login",
+		FullMethod: "/user.User/Login",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServer).Login(ctx, req.(*LoginRequest))
@@ -1172,7 +1172,7 @@ func _User_Login_Handler(srv interface{}, ctx context.Context, dec func(interfac
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var User_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "api.User",
+	ServiceName: "user.User",
 	HandlerType: (*UserServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

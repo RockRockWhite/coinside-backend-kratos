@@ -1,6 +1,6 @@
 syntax = "proto3";
-package api;
-option go_package = "./;api";
+package user;
+option go_package = "./;user";
 
 enum Code {
   OK = 0;

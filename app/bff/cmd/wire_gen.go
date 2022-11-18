@@ -21,6 +21,8 @@ func initRouter(conf *config.Config) *gin.Engine {
 	discovery := client.NewZkDiscovery(conf)
 	userClient := client.NewUserClinet(conf, discovery)
 	userController := controller.NewUserController(userClient)
-	engine := router.NewApiRouter(userController)
+	cardClient := client.NewCardClinet(conf, discovery)
+	cardController := controller.NewCardController(cardClient)
+	engine := router.NewApiRouter(userController, cardController)
 	return engine
 }
