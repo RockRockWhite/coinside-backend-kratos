@@ -29,201 +29,31 @@ services:
       - app-network
     expose:
       - 3306
-    ports:
-      - "3306:3306"
 
   user-rpc:
     build:
       context: ./
-      dockerfile: apps/user/rpc/Dockerfile
+      dockerfile: app/user/service/Dockerfile
     expose:
-      - 20000
-    ports:
-      - "8080:20000"
+      - 9000
     networks:
       - app-network
     restart: always
-    environment:
-      - COINSIDE_ENV=PRODUCTION
     depends_on:
       - zookeeper
       - userdb
 
-  teamdb:
-    image: mariadb:latest
-    volumes:
-      - teamdb_data:/var/lib/mysql
-      - ./apps/team/src/main/resources/sql:/docker-entrypoint-initdb.d
-    restart: always
-    environment:
-      - LANG=C.UTF-8
-      - MYSQL_ROOT_PASSWORD=ljxljxljxljx
-      - MYSQL_DATABASE=coinside
-      - MYSQL_USER=ljx
-      - MYSQL_PASSWORD=ljxljxljxljx
-    networks:
-      - app-network
-    expose:
-      - 3306
-    ports:
-      - "3307:3306"
-
-  tododb:
-    image: mariadb:latest
-    volumes:
-      - tododb_data:/var/lib/mysql
-      - ./apps/todo/src/main/resources/sql:/docker-entrypoint-initdb.d
-    restart: always
-    environment:
-      - LANG=C.UTF-8
-      - MYSQL_ROOT_PASSWORD=ljxljxljxljx
-      - MYSQL_DATABASE=coinside
-      - MYSQL_USER=ljx
-      - MYSQL_PASSWORD=ljxljxljxljx
-    networks:
-      - app-network
-    expose:
-      - 3306
-    ports:
-      - "3308:3306"
-
-
-  markdowndb:
-    image: mariadb:latest
-    volumes:
-      - markdowndb_data:/var/lib/mysql
-      - ./apps/markdown/src/main/resources/sql:/docker-entrypoint-initdb.d
-    restart: always
-    environment:
-      - LANG=C.UTF-8
-      - MYSQL_ROOT_PASSWORD=ljxljxljxljx
-      - MYSQL_DATABASE=coinside
-      - MYSQL_USER=ljx
-      - MYSQL_PASSWORD=ljxljxljxljx
-    networks:
-      - app-network
-    expose:
-      - 3306
-    ports:
-      - "3309:3306"
-
-  # card service
-  carddb:
-    image: mariadb:latest
-    volumes:
-      - carddb_data:/var/lib/mysql
-      - ./apps/card/rpc/model/sql:/docker-entrypoint-initdb.d
-    restart: always
-    environment:
-      - LANG=C.UTF-8
-      - MYSQL_ROOT_PASSWORD=ljxljxljxljx
-      - MYSQL_DATABASE=coinside
-      - MYSQL_USER=ljx
-      - MYSQL_PASSWORD=ljxljxljxljx
-    networks:
-      - app-network
-    expose:
-      - 3306
-    ports:
-      - "3310:3306"
-
-  api:
+  bff-api:
     build:
       context: ./
-      dockerfile: apps/api/Dockerfile
-    expose:
-      - 8080
+      dockerfile: app/bff/Dockerfile
+    ports:
+      - "8080:8080"
     networks:
       - app-network
     restart: always
     depends_on:
-      - zookeeper
-#  etcd:
-#    image: "quay.io/coreos/etcd:latest"
-#    container_name: etcd
-#    environment:
-#      - ETCDCTL_API=3
-#    command: [
-#        "etcd",
-#        "--name=etcd0",
-#        "--advertise-client-urls=http://127.0.0.1:2379",
-#        "--listen-client-urls=http://0.0.0.0:2379",
-#        "--initial-advertise-peer-urls=http://127.0.0.1:2380",
-#        "--listen-peer-urls=http://0.0.0.0:2380",
-#        "--initial-cluster=etcd0=http://127.0.0.1:2380",
-#    ]
-#    ports:
-#      - "2379:2379"
-#      - "2380:2380"
-#    networks:
-#      - app-network
-#    restart: always
-#
-#  mysql:
-#    image: mysql:latest
-#    volumes:
-#      - db_data:/var/lib/mysql
-#    restart: always
-#    environment:
-#      - MYSQL_ROOT_PASSWORD=white
-#      - MYSQL_DATABASE=order
-#    networks:
-#      - app-network
-#    expose:
-#      - 3306
-#    ports:
-#      - "3306:3306"
-#
-#  redis:
-#    image: redis:latest
-#    networks:
-#      - app-network
-#    restart: always
-#    volumes:
-#      - redis_datadir:/data
-#      - redis_redis.conf:/usr/local/etc/redis/redis.conf
-#      - redis_logs:/logs
-#    expose:
-#      - 6379
-#    ports:
-#      - "6379:6379"
-#
-#  order-rpc:
-#    build:
-#      context: ./
-#      Dockerfile: apps/order/rpc/Dockerfile
-#    ports:
-#      - "8080:8080"
-#    networks:
-#      - app-network
-#    restart: always
-#    depends_on:
-#      - etcd
-#
-#  produt-rpc:
-#    build:
-#      context: ./
-#      Dockerfile: apps/product/rpc/Dockerfile
-#    ports:
-#      - "8081:8080"
-#    networks:
-#      - app-network
-#    restart: always
-#    depends_on:
-#      - etcd
-#
-#  api:
-#    build:
-#      context: ./
-#      Dockerfile: apps/app/api/Dockerfile
-#    ports:
-#      - "80:8888"
-#    networks:
-#      - app-network
-#    restart: always
-#    depends_on:
-#      - order-rpc
-#      - produt-rpc
+      - user-rpc
 
 networks:
   app-network:
@@ -231,7 +61,3 @@ networks:
 
 volumes:
   userdb_data:
-  teamdb_data:
-  tododb_data:
-  carddb_data:
-  markdowndb_data:
