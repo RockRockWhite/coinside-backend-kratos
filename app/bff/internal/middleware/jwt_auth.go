@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/error_code"
+	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/dto"
 	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/util"
 	"net/http"
 	"strings"
@@ -14,16 +14,7 @@ func JwtAuth(condFunc func(c *gin.Context) bool) gin.HandlerFunc {
 		token := c.Request.Header.Get("Authorization")
 		if token == "" || strings.Fields(token)[0] != "Bearer" {
 			// 没有传token参数
-			c.JSON(http.StatusOK, struct {
-				error_code.Error
-				Data interface{} `json:"data"`
-			}{
-				Error: error_code.Error{
-					Code:    "ERROR_UNAUTHORIZED",
-					Message: "Unauthorized.",
-				},
-				Data: nil,
-			})
+			c.JSON(http.StatusOK, dto.ErrorUnauthorized)
 
 			c.Abort()
 			return
@@ -49,16 +40,7 @@ func JwtAuth(condFunc func(c *gin.Context) bool) gin.HandlerFunc {
 		}
 
 		if !access {
-			c.JSON(http.StatusForbidden, struct {
-				error_code.Error
-				Data interface{} `json:"data"`
-			}{
-				Error: error_code.Error{
-					Code:    "ERROR_UNAUTHORIZED",
-					Message: "Unauthorized.",
-				},
-				Data: nil,
-			})
+			c.JSON(http.StatusForbidden, dto.ErrorUnauthorized)
 
 			c.Abort()
 			return
