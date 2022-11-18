@@ -5,8 +5,8 @@ option go_package = "./;api";
 
 enum Code {
   OK = 0;
-  ERROR_UNKNOWN = 2;
-  ERROR_CARD_NOTFOUND = 3;
+  ERROR_UNKNOWN = 1;
+  ERROR_CARD_NOTFOUND = 2;
 }
 
 message CreateCardRequest{
@@ -130,7 +130,7 @@ message DeleteCardMemberResponse{
   Code code = 1;
 }
 
-service CardService {
+service Card {
   rpc CreateCard(CreateCardRequest) returns (CreateCardResponse);
   rpc CreateCardStream (stream CreateCardRequest) returns (CreateCardResponse);
 
