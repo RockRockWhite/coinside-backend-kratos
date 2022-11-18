@@ -13,6 +13,6 @@ service:
     name: "user-service"
 
 jwt:
-  secret: "lab_web_jwt_secret"
-  issuer: "fzusosdrock"
+  secret: "zRwhJ8AHxEBVx27uEivF5f6heZcz3g1Vtj60IT83Kwg"
+  issuer: "ljxsteam"
   expire_days: 14

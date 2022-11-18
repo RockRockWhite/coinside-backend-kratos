@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	api "github.com/ljxsteam/coinside-backend-kratos/api/user"
 	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/dto"
+	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/util"
 	"net/http"
 	"strconv"
 )
@@ -149,6 +150,51 @@ func (u *UserController) PatchPassword(c *gin.Context) {
 
 func (u *UserController) DeleteUser(c *gin.Context) {
 
+}
+
+func (u *UserController) Login(c *gin.Context) {
+	// 获得登陆信息
+	reqDto := struct {
+		Id       uint64 `json:"id"`
+		Password string `json:"password"`
+	}{}
+	if err := c.ShouldBind(&reqDto); err != nil {
+		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
+		return
+	}
+
+	// rpc请求登陆
+	res, err := u.client.Login(context.Background(), &api.LoginRequest{
+		Id:       reqDto.Id,
+		Password: reqDto.Password,
+	})
+
+	resDto := dto.ResponseDto{
+		Code:    dto.UserErrorCode[res.Code].Code,
+		Message: dto.UserErrorCode[res.Code].Message,
+		Data:    nil,
+	}
+
+	if res.Code != api.Code_OK {
+		resDto.Data = err
+	} else {
+		// 登陆成功，派发token
+		token, err := util.GenerateJwtToken(
+			&util.JwtClaims{Id: reqDto.Id})
+		if err == nil {
+			resDto.Data = struct {
+				Token string `json:"token"`
+			}{
+				Token: token,
+			}
+		} else {
+			resDto.Code = dto.UserErrorCode[api.Code_ERROR_UNKNOWN].Code
+			resDto.Message = dto.UserErrorCode[api.Code_ERROR_UNKNOWN].Message
+			resDto.Data = err
+		}
+	}
+
+	c.JSON(http.StatusOK, resDto)
 }
 
 func NewUserController(client api.UserClient) *UserController {

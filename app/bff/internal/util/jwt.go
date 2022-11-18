@@ -2,28 +2,18 @@ package util
 
 import (
 	"github.com/golang-jwt/jwt"
+	"github.com/ljxsteam/coinside-backend-kratos/app/user/service/config"
 	"time"
 )
 
 type JwtClaims struct {
-	Id          uint   // 用户id
-	Nickname    string // 用户昵称
-	Fullname    string // 用户全名
-	Email       string // 邮箱
-	VerifyState bool   // 邮箱验证状态
-	Telephone   string // 手机号码
+	Id uint64
 	jwt.StandardClaims
 }
 
 var _secret []byte
 var _issuer string
 var _expireDays int
-
-//func init() {
-//	_secret = []byte(config.GetString("Jwt.Secret"))
-//	_issuer = config.GetString("Jwt.Issuer")
-//	_expireDays = config.GetInt("Jwt.ExpireDays")
-//}
 
 // GenerateJwtToken 生成JwtToken
 func GenerateJwtToken(claims *JwtClaims) (string, error) {
@@ -51,4 +41,10 @@ func ParseJwtToken(tokenString string) (*JwtClaims, error) {
 	} else {
 		return nil, err
 	}
+}
+
+func InitJwtUtil(conf *config.Config) {
+	_secret = []byte(conf.GetString("jwt.secret"))
+	_issuer = conf.GetString("jwt.issuer")
+	_expireDays = conf.GetInt("jwt.expire_days")
 }

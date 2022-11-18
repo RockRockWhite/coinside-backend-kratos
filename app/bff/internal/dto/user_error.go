@@ -29,8 +29,8 @@ func init() {
 			Message: "User mobile exists.",
 		},
 		api.Code_ERROR_USER_PASSWORD: ResponseDto{
-			Code:    "ERROR_USER_PASSWORD",
-			Message: "Username or password error.",
+			Code:    "ERROR_USER_ID_OR_PASSWORD",
+			Message: "Id or password error.",
 		},
 		api.Code_ERROR_VERIFY_CODE: ResponseDto{
 			Code:    "ERROR_VERIFY_CODE",
