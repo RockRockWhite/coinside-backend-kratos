@@ -53,6 +53,7 @@ services:
       - app-network
     restart: always
     depends_on:
+      - zookeeper
       - user-rpc
 
 networks:
