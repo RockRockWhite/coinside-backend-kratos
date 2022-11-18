@@ -15,7 +15,7 @@ enum Code {
 
 message CreateUserRequest {
   string nickname = 1;  // 用户昵称
-  string passwd = 2;    // 用户密码
+  string password = 2;    // 用户密码
   string fullname = 3;  // 用户全名
   string email = 4;     // 用户邮箱
   string mobile = 5;    // 用户手机号

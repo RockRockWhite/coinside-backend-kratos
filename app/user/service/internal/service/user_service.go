@@ -16,7 +16,7 @@ type UserService struct {
 
 func (u UserService) CreateUser(ctx context.Context, request *api.CreateUserRequest) (*api.CreateUserResponse, error) {
 	salt := utils.GenerateSalt()
-	passwordHash := utils.EncryptPasswordHash(request.Passwd, salt)
+	passwordHash := utils.EncryptPasswordHash(request.Password, salt)
 
 	if _, err := u.repo.FindOneByNickname(ctx, request.Nickname); err != gorm.ErrRecordNotFound {
 		return &api.CreateUserResponse{
