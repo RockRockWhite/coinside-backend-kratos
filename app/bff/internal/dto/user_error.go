@@ -24,6 +24,10 @@ func init() {
 			Code:    "ERROR_USER_NICKNAME_EXISTS",
 			Message: "User nickname exists.",
 		},
+		user.Code_ERROR_USER_EMAIL_EXISTS: ResponseDto{
+			Code:    "ERROR_USER_Email_EXISTS",
+			Message: "User email exists.",
+		},
 		user.Code_ERROR_USER_MOBILE_EXISTS: ResponseDto{
 			Code:    "ERROR_USER_MOBILE_EXISTS",
 			Message: "User mobile exists.",
