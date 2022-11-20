@@ -20,6 +20,7 @@ func UserRouter(r *gin.Engine, controller *controller.UserController) *gin.Engin
 	{
 		user.GET("/:id", middleware.JwtAuth(selfCond), controller.GetUserInfo)
 		user.GET("/id", controller.GetUserId)
+		
 		user.POST("", controller.CreateUser)
 
 		user.PUT(":id/fullname", middleware.JwtAuth(selfCond), controller.SetFullname)
