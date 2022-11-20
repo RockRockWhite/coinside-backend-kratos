@@ -27,9 +27,9 @@ service Team {
   rpc GetTeamsByNameStream(stream GetTeamsByNameRequest) returns (stream GetTeamsResponse){}
 
   // add a team
-  rpc AddTeam(TeamInfo) returns (AddTeamResponse){}
+  rpc AddTeam(AddTeamRequest) returns (AddTeamResponse){}
   // add a team via stream
-  rpc AddTeamStream(stream TeamInfo) returns (stream AddTeamResponse){}
+  rpc AddTeamStream(stream AddTeamRequest) returns (stream AddTeamResponse){}
 
 //  // update a team
 //  rpc UpdateTeam(TeamInfo) returns (UpdateTeamResponse){}
@@ -102,6 +102,11 @@ message TeamInfo {
   repeated TeamMember members = 7;
   string created_at = 8; // 团队创建时间
   string updated_at = 9; // 团队更新时间
+}
+
+message AddTeamRequest{
+  TeamInfo team = 1;
+  uint64 creator_id = 2;
 }
 
 message TeamMember{

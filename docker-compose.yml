@@ -31,7 +31,7 @@ services:
     expose:
       - 3306
     ports:
-      - "3306:3306"
+      - "3305:3306"
 
   user-rpc:
     build:
@@ -79,6 +79,39 @@ services:
       - zookeeper
       - carddb
 
+  # Team-Service
+  teamdb:
+    image: mariadb:latest
+    volumes:
+      - teamdb_data:/var/lib/mysql
+      - ./app/team/resource/sql:/docker-entrypoint-initdb.d
+    restart: always
+    environment:
+      - LANG=C.UTF-8
+      - MYSQL_ROOT_PASSWORD=ljxljxljxljx
+      - MYSQL_DATABASE=coinside
+      - MYSQL_USER=ljx
+      - MYSQL_PASSWORD=ljxljxljxljx
+    networks:
+      - app-network
+    expose:
+      - 3306
+    ports:
+      - "3308:3306"
+
+  team-rpc:
+    build:
+      context: ./
+      dockerfile: app/team/service/Dockerfile
+    expose:
+      - 9000
+    networks:
+      - app-network
+    restart: always
+    depends_on:
+      - zookeeper
+      - teamdb
+
   # BFF
   bff-api:
     build:
@@ -100,3 +133,4 @@ networks:
 volumes:
   userdb_data:
   carddb_data:
+  teamdb_data:

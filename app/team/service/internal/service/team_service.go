@@ -72,14 +72,20 @@ func (t TeamService) GetTeamsByNameStream(server api.Team_GetTeamsByNameStreamSe
 	panic("implement me")
 }
 
-func (t TeamService) AddTeam(ctx context.Context, team *api.TeamInfo) (*api.AddTeamResponse, error) {
+func (t TeamService) AddTeam(ctx context.Context, team *api.AddTeamRequest) (*api.AddTeamResponse, error) {
 
 	id, err := t.repo.Insert(ctx, &data.Team{
-		Name:        team.Name,
-		Description: team.Description,
-		Website:     team.Website,
-		Avatar:      team.Avatar,
-		Email:       team.Email,
+		Name:        team.Team.Name,
+		Description: team.Team.Description,
+		Website:     team.Team.Website,
+		Avatar:      team.Team.Avatar,
+		Email:       team.Team.Email,
+		Members: []data.TeamMember{
+			{
+				UserId:  team.CreatorId,
+				IsAdmin: true,
+			},
+		},
 	})
 
 	if err != nil {
