@@ -2,7 +2,7 @@ package util
 
 import (
 	"github.com/golang-jwt/jwt"
-	"github.com/ljxsteam/coinside-backend-kratos/app/user/service/config"
+	"github.com/ljxsteam/coinside-backend-kratos/pkg/config"
 	"time"
 )
 

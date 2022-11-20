@@ -31,10 +31,36 @@ service Team {
   // add a team via stream
   rpc AddTeamStream(stream TeamInfo) returns (stream AddTeamResponse){}
 
-  // update a team
-  rpc UpdateTeam(TeamInfo) returns (UpdateTeamResponse){}
-  // update a team via stream
-  rpc UpdateTeamSteam(TeamInfo) returns (stream UpdateTeamResponse){}
+//  // update a team
+//  rpc UpdateTeam(TeamInfo) returns (UpdateTeamResponse){}
+//  // update a team via stream
+//  rpc UpdateTeamSteam(TeamInfo) returns (stream UpdateTeamResponse){}
+
+  //set team name
+  rpc SetTeamName(SetTeamNameRequest) returns (SetTeamNameResponse){}
+  ///set team name via stream
+  rpc SetTeamNameSteam(SetTeamNameRequest) returns (stream SetTeamNameResponse){}
+
+  //set team description
+  rpc SetTeamDescription(SetTeamDescriptionRequest) returns (SetTeamDescriptionResponse){}
+  // set team description via stream
+  rpc SetTeamDescriptionSteam(SetTeamDescriptionRequest) returns (stream SetTeamDescriptionResponse){}
+
+  //set team website
+  rpc SetTeamWebsite(SetTeamWebsiteRequest) returns (SetTeamWebsiteResponse){}
+  // set team website via stream
+  rpc SetTeamWebsiteSteam(SetTeamWebsiteRequest) returns (stream SetTeamWebsiteResponse){}
+
+  //set team avatar
+  rpc SetTeamAvatar(SetTeamAvatarRequest) returns (SetTeamAvatarResponse){}
+  // set team avatar via stream
+  rpc SetTeamAvatarSteam(SetTeamAvatarRequest) returns (stream SetTeamAvatarResponse){}
+
+  //set team email
+  rpc SetTeamEmail(SetTeamEmailRequest) returns (SetTeamEmailResponse){}
+  // set team email via stream
+  rpc SetTeamEmailSteam(SetTeamEmailRequest) returns (stream SetTeamEmailResponse){}
+
 
   // delete a team
   rpc DeleteTeam(DeleteTeamRequest) returns (DeleteTeamResponse){}
@@ -101,6 +127,61 @@ message GetTeamsByNameRequest
   string name = 1;
 }
 
+message SetTeamNameRequest
+{
+  uint64 id = 1;
+  string name = 2;
+}
+
+message SetTeamNameResponse
+{
+  Code code = 1;
+}
+message SetTeamDescriptionRequest
+{
+  uint64 id = 1;
+  string description = 2;
+}
+
+message SetTeamDescriptionResponse
+{
+  Code code = 1;
+}
+message SetTeamWebsiteRequest
+{
+  uint64 id = 1;
+  string website = 2;
+}
+
+message SetTeamWebsiteResponse
+{
+  Code code = 1;
+}
+
+message SetTeamAvatarRequest
+{
+  uint64 id = 1;
+  string avatar = 2;
+}
+
+message SetTeamAvatarResponse
+{
+  Code code = 1;
+}
+message SetTeamEmailRequest
+{
+  uint64 id = 1;
+  string email = 2;
+}
+
+message SetTeamEmailResponse
+{
+  Code code = 1;
+}
+
+
+
+
 message GetTeamsResponse
 {
   repeated TeamInfo team = 1;
@@ -113,10 +194,10 @@ message AddTeamResponse
   uint64 id = 2;
 }
 
-message UpdateTeamResponse
-{
-  Code code = 1;
-}
+//message UpdateTeamResponse
+//{
+//  Code code = 1;
+//}
 
 message DeleteTeamRequest
 {
