@@ -30,6 +30,16 @@ func (t TeamService) GetTeamById(ctx context.Context, request *api.GetTeamByIdRe
 
 	}
 
+	var members []*api.TeamMember
+	for _, m := range data.Members {
+		members = append(members, &api.TeamMember{
+			UserId:    m.UserId,
+			IsAdmin:   m.IsAdmin,
+			CreatedAt: m.CreatedAt.Format("2006-01-02 15:04:05"),
+			UpdatedAt: m.UpdatedAt.Format("2006-01-02 15:04:05"),
+		})
+	}
+
 	team := &api.TeamInfo{
 		Id:          data.Id,
 		Name:        data.Name,
@@ -37,6 +47,7 @@ func (t TeamService) GetTeamById(ctx context.Context, request *api.GetTeamByIdRe
 		Website:     data.Website,
 		Avatar:      data.Avatar,
 		Email:       data.Email,
+		Members:     members,
 		CreatedAt:   data.CreatedAt.Format("2006-01-02 15:04:05"),
 		UpdatedAt:   data.UpdatedAt.Format("2006-01-02 15:04:05"),
 	}
@@ -46,7 +57,7 @@ func (t TeamService) GetTeamById(ctx context.Context, request *api.GetTeamByIdRe
 	}, nil
 }
 
-func (t TeamService) GetTeamByIDStream(server api.Team_GetTeamByIdStreamServer) error {
+func (t TeamService) GetTeamByIdStream(server api.Team_GetTeamByIdStreamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
