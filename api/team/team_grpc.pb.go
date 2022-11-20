@@ -23,9 +23,9 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TeamClient interface {
 	// Get a team by id
-	GetTeamByID(ctx context.Context, in *GetTeamByIdRequest, opts ...grpc.CallOption) (*GetTeamResponse, error)
+	GetTeamById(ctx context.Context, in *GetTeamByIdRequest, opts ...grpc.CallOption) (*GetTeamResponse, error)
 	// Get a team by id via stream
-	GetTeamByIDStream(ctx context.Context, opts ...grpc.CallOption) (Team_GetTeamByIDStreamClient, error)
+	GetTeamByIdStream(ctx context.Context, opts ...grpc.CallOption) (Team_GetTeamByIdStreamClient, error)
 	// Get a team by name
 	GetTeamsByName(ctx context.Context, in *GetTeamsByNameRequest, opts ...grpc.CallOption) (*GetTeamsResponse, error)
 	// Get a user by name via stream
@@ -80,39 +80,39 @@ func NewTeamClient(cc grpc.ClientConnInterface) TeamClient {
 	return &teamClient{cc}
 }
 
-func (c *teamClient) GetTeamByID(ctx context.Context, in *GetTeamByIdRequest, opts ...grpc.CallOption) (*GetTeamResponse, error) {
+func (c *teamClient) GetTeamById(ctx context.Context, in *GetTeamByIdRequest, opts ...grpc.CallOption) (*GetTeamResponse, error) {
 	out := new(GetTeamResponse)
-	err := c.cc.Invoke(ctx, "/team.Team/GetTeamByID", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/team.Team/GetTeamById", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *teamClient) GetTeamByIDStream(ctx context.Context, opts ...grpc.CallOption) (Team_GetTeamByIDStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Team_ServiceDesc.Streams[0], "/team.Team/GetTeamByIDStream", opts...)
+func (c *teamClient) GetTeamByIdStream(ctx context.Context, opts ...grpc.CallOption) (Team_GetTeamByIdStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Team_ServiceDesc.Streams[0], "/team.Team/GetTeamByIdStream", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &teamGetTeamByIDStreamClient{stream}
+	x := &teamGetTeamByIdStreamClient{stream}
 	return x, nil
 }
 
-type Team_GetTeamByIDStreamClient interface {
+type Team_GetTeamByIdStreamClient interface {
 	Send(*GetTeamByIdRequest) error
 	Recv() (*GetTeamResponse, error)
 	grpc.ClientStream
 }
 
-type teamGetTeamByIDStreamClient struct {
+type teamGetTeamByIdStreamClient struct {
 	grpc.ClientStream
 }
 
-func (x *teamGetTeamByIDStreamClient) Send(m *GetTeamByIdRequest) error {
+func (x *teamGetTeamByIdStreamClient) Send(m *GetTeamByIdRequest) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *teamGetTeamByIDStreamClient) Recv() (*GetTeamResponse, error) {
+func (x *teamGetTeamByIdStreamClient) Recv() (*GetTeamResponse, error) {
 	m := new(GetTeamResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -565,9 +565,9 @@ func (x *teamAddAdminStreamClient) Recv() (*AddAdminResponse, error) {
 // for forward compatibility
 type TeamServer interface {
 	// Get a team by id
-	GetTeamByID(context.Context, *GetTeamByIdRequest) (*GetTeamResponse, error)
+	GetTeamById(context.Context, *GetTeamByIdRequest) (*GetTeamResponse, error)
 	// Get a team by id via stream
-	GetTeamByIDStream(Team_GetTeamByIDStreamServer) error
+	GetTeamByIdStream(Team_GetTeamByIdStreamServer) error
 	// Get a team by name
 	GetTeamsByName(context.Context, *GetTeamsByNameRequest) (*GetTeamsResponse, error)
 	// Get a user by name via stream
@@ -619,11 +619,11 @@ type TeamServer interface {
 type UnimplementedTeamServer struct {
 }
 
-func (UnimplementedTeamServer) GetTeamByID(context.Context, *GetTeamByIdRequest) (*GetTeamResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetTeamByID not implemented")
+func (UnimplementedTeamServer) GetTeamById(context.Context, *GetTeamByIdRequest) (*GetTeamResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTeamById not implemented")
 }
-func (UnimplementedTeamServer) GetTeamByIDStream(Team_GetTeamByIDStreamServer) error {
-	return status.Errorf(codes.Unimplemented, "method GetTeamByIDStream not implemented")
+func (UnimplementedTeamServer) GetTeamByIdStream(Team_GetTeamByIdStreamServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetTeamByIdStream not implemented")
 }
 func (UnimplementedTeamServer) GetTeamsByName(context.Context, *GetTeamsByNameRequest) (*GetTeamsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTeamsByName not implemented")
@@ -704,43 +704,43 @@ func RegisterTeamServer(s grpc.ServiceRegistrar, srv TeamServer) {
 	s.RegisterService(&Team_ServiceDesc, srv)
 }
 
-func _Team_GetTeamByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Team_GetTeamById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetTeamByIdRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TeamServer).GetTeamByID(ctx, in)
+		return srv.(TeamServer).GetTeamById(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/team.Team/GetTeamByID",
+		FullMethod: "/team.Team/GetTeamById",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TeamServer).GetTeamByID(ctx, req.(*GetTeamByIdRequest))
+		return srv.(TeamServer).GetTeamById(ctx, req.(*GetTeamByIdRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Team_GetTeamByIDStream_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(TeamServer).GetTeamByIDStream(&teamGetTeamByIDStreamServer{stream})
+func _Team_GetTeamByIdStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(TeamServer).GetTeamByIdStream(&teamGetTeamByIdStreamServer{stream})
 }
 
-type Team_GetTeamByIDStreamServer interface {
+type Team_GetTeamByIdStreamServer interface {
 	Send(*GetTeamResponse) error
 	Recv() (*GetTeamByIdRequest, error)
 	grpc.ServerStream
 }
 
-type teamGetTeamByIDStreamServer struct {
+type teamGetTeamByIdStreamServer struct {
 	grpc.ServerStream
 }
 
-func (x *teamGetTeamByIDStreamServer) Send(m *GetTeamResponse) error {
+func (x *teamGetTeamByIdStreamServer) Send(m *GetTeamResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *teamGetTeamByIDStreamServer) Recv() (*GetTeamByIdRequest, error) {
+func (x *teamGetTeamByIdStreamServer) Recv() (*GetTeamByIdRequest, error) {
 	m := new(GetTeamByIdRequest)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -1240,8 +1240,8 @@ var Team_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*TeamServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetTeamByID",
-			Handler:    _Team_GetTeamByID_Handler,
+			MethodName: "GetTeamById",
+			Handler:    _Team_GetTeamById_Handler,
 		},
 		{
 			MethodName: "GetTeamsByName",
@@ -1290,8 +1290,8 @@ var Team_ServiceDesc = grpc.ServiceDesc{
 	},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "GetTeamByIDStream",
-			Handler:       _Team_GetTeamByIDStream_Handler,
+			StreamName:    "GetTeamByIdStream",
+			Handler:       _Team_GetTeamByIdStream_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},

@@ -13,7 +13,7 @@ type TeamService struct {
 	repo data.TeamRepo
 }
 
-func (t TeamService) GetTeamByID(ctx context.Context, request *api.GetTeamByIdRequest) (*api.GetTeamResponse, error) {
+func (t TeamService) GetTeamById(ctx context.Context, request *api.GetTeamByIdRequest) (*api.GetTeamResponse, error) {
 	data, err := t.repo.FindOne(ctx, request.Id)
 
 	switch err {
@@ -46,7 +46,7 @@ func (t TeamService) GetTeamByID(ctx context.Context, request *api.GetTeamByIdRe
 	}, nil
 }
 
-func (t TeamService) GetTeamByIDStream(server api.Team_GetTeamByIDStreamServer) error {
+func (t TeamService) GetTeamByIDStream(server api.Team_GetTeamByIdStreamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
