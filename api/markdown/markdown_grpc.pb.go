@@ -4,7 +4,7 @@
 // - protoc             v3.21.7
 // source: markdown.proto
 
-package api
+package markdown
 
 import (
 	context "context"
