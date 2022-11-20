@@ -17,13 +17,14 @@ import (
 // Injectors from wire.go:
 
 // initApp init kratos application.
-func initApp(configConfig *config.Config) (*kratos.App, func(), error) {
-	db := data.NewDB(configConfig)
+func initApp(conf *config.Config) (*kratos.App, func(), error) {
+	db := data.NewDB(conf)
 	cardRepo := data.NewCardRepoNoCache(db)
 	cardService := service.NewCardService(cardRepo)
-	grpcServer := server.NewGrpcServer(configConfig, cardService)
-	registrar := server.NewRegistrar(configConfig)
-	app := newApp(configConfig, grpcServer, registrar)
+	grpcServer := server.NewGrpcServer(conf, cardService)
+	registrar := server.NewRegistrar(conf)
+	app := newApp(conf, grpcServer, registrar)
+
 	return app, func() {
 	}, nil
 }
