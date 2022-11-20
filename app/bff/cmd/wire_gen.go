@@ -26,5 +26,6 @@ func initRouter(conf *config.Config) *gin.Engine {
 	teamClient := client.NewTeamClinet(conf, discovery)
 	teamController := controller.NewTeamController(teamClient)
 	engine := router.NewApiRouter(userController, cardController, teamController)
+
 	return engine
 }
