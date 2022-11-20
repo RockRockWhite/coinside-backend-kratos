@@ -23,9 +23,9 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TeamClient interface {
 	// Get a team by id
-	GetTeamByID(ctx context.Context, in *GetTeamByIdRequest, opts ...grpc.CallOption) (*GetTeamResponse, error)
+	GetTeamById(ctx context.Context, in *GetTeamByIdRequest, opts ...grpc.CallOption) (*GetTeamResponse, error)
 	// Get a team by id via stream
-	GetTeamByIDStream(ctx context.Context, opts ...grpc.CallOption) (Team_GetTeamByIDStreamClient, error)
+	GetTeamByIdStream(ctx context.Context, opts ...grpc.CallOption) (Team_GetTeamByIdStreamClient, error)
 	// Get a team by name
 	GetTeamsByName(ctx context.Context, in *GetTeamsByNameRequest, opts ...grpc.CallOption) (*GetTeamsResponse, error)
 	// Get a user by name via stream
@@ -37,23 +37,23 @@ type TeamClient interface {
 	// set team name
 	SetTeamName(ctx context.Context, in *SetTeamNameRequest, opts ...grpc.CallOption) (*SetTeamNameResponse, error)
 	// /set team name via stream
-	SetTeamNameSteam(ctx context.Context, in *SetTeamNameRequest, opts ...grpc.CallOption) (Team_SetTeamNameSteamClient, error)
+	SetTeamNameSteam(ctx context.Context, opts ...grpc.CallOption) (Team_SetTeamNameSteamClient, error)
 	// set team description
 	SetTeamDescription(ctx context.Context, in *SetTeamDescriptionRequest, opts ...grpc.CallOption) (*SetTeamDescriptionResponse, error)
 	// set team description via stream
-	SetTeamDescriptionSteam(ctx context.Context, in *SetTeamDescriptionRequest, opts ...grpc.CallOption) (Team_SetTeamDescriptionSteamClient, error)
+	SetTeamDescriptionSteam(ctx context.Context, opts ...grpc.CallOption) (Team_SetTeamDescriptionSteamClient, error)
 	// set team website
 	SetTeamWebsite(ctx context.Context, in *SetTeamWebsiteRequest, opts ...grpc.CallOption) (*SetTeamWebsiteResponse, error)
 	// set team website via stream
-	SetTeamWebsiteSteam(ctx context.Context, in *SetTeamWebsiteRequest, opts ...grpc.CallOption) (Team_SetTeamWebsiteSteamClient, error)
+	SetTeamWebsiteSteam(ctx context.Context, opts ...grpc.CallOption) (Team_SetTeamWebsiteSteamClient, error)
 	// set team avatar
 	SetTeamAvatar(ctx context.Context, in *SetTeamAvatarRequest, opts ...grpc.CallOption) (*SetTeamAvatarResponse, error)
 	// set team avatar via stream
-	SetTeamAvatarSteam(ctx context.Context, in *SetTeamAvatarRequest, opts ...grpc.CallOption) (Team_SetTeamAvatarSteamClient, error)
+	SetTeamAvatarSteam(ctx context.Context, opts ...grpc.CallOption) (Team_SetTeamAvatarSteamClient, error)
 	// set team email
 	SetTeamEmail(ctx context.Context, in *SetTeamEmailRequest, opts ...grpc.CallOption) (*SetTeamEmailResponse, error)
 	// set team email via stream
-	SetTeamEmailSteam(ctx context.Context, in *SetTeamEmailRequest, opts ...grpc.CallOption) (Team_SetTeamEmailSteamClient, error)
+	SetTeamEmailSteam(ctx context.Context, opts ...grpc.CallOption) (Team_SetTeamEmailSteamClient, error)
 	// delete a team
 	DeleteTeam(ctx context.Context, in *DeleteTeamRequest, opts ...grpc.CallOption) (*DeleteTeamResponse, error)
 	// delete a team via stream
@@ -80,39 +80,39 @@ func NewTeamClient(cc grpc.ClientConnInterface) TeamClient {
 	return &teamClient{cc}
 }
 
-func (c *teamClient) GetTeamByID(ctx context.Context, in *GetTeamByIdRequest, opts ...grpc.CallOption) (*GetTeamResponse, error) {
+func (c *teamClient) GetTeamById(ctx context.Context, in *GetTeamByIdRequest, opts ...grpc.CallOption) (*GetTeamResponse, error) {
 	out := new(GetTeamResponse)
-	err := c.cc.Invoke(ctx, "/team.Team/GetTeamByID", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/team.Team/GetTeamById", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *teamClient) GetTeamByIDStream(ctx context.Context, opts ...grpc.CallOption) (Team_GetTeamByIDStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Team_ServiceDesc.Streams[0], "/team.Team/GetTeamByIDStream", opts...)
+func (c *teamClient) GetTeamByIdStream(ctx context.Context, opts ...grpc.CallOption) (Team_GetTeamByIdStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Team_ServiceDesc.Streams[0], "/team.Team/GetTeamByIdStream", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &teamGetTeamByIDStreamClient{stream}
+	x := &teamGetTeamByIdStreamClient{stream}
 	return x, nil
 }
 
-type Team_GetTeamByIDStreamClient interface {
+type Team_GetTeamByIdStreamClient interface {
 	Send(*GetTeamByIdRequest) error
 	Recv() (*GetTeamResponse, error)
 	grpc.ClientStream
 }
 
-type teamGetTeamByIDStreamClient struct {
+type teamGetTeamByIdStreamClient struct {
 	grpc.ClientStream
 }
 
-func (x *teamGetTeamByIDStreamClient) Send(m *GetTeamByIdRequest) error {
+func (x *teamGetTeamByIdStreamClient) Send(m *GetTeamByIdRequest) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *teamGetTeamByIDStreamClient) Recv() (*GetTeamResponse, error) {
+func (x *teamGetTeamByIdStreamClient) Recv() (*GetTeamResponse, error) {
 	m := new(GetTeamResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -209,28 +209,27 @@ func (c *teamClient) SetTeamName(ctx context.Context, in *SetTeamNameRequest, op
 	return out, nil
 }
 
-func (c *teamClient) SetTeamNameSteam(ctx context.Context, in *SetTeamNameRequest, opts ...grpc.CallOption) (Team_SetTeamNameSteamClient, error) {
+func (c *teamClient) SetTeamNameSteam(ctx context.Context, opts ...grpc.CallOption) (Team_SetTeamNameSteamClient, error) {
 	stream, err := c.cc.NewStream(ctx, &Team_ServiceDesc.Streams[3], "/team.Team/SetTeamNameSteam", opts...)
 	if err != nil {
 		return nil, err
 	}
 	x := &teamSetTeamNameSteamClient{stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
 	return x, nil
 }
 
 type Team_SetTeamNameSteamClient interface {
+	Send(*SetTeamNameRequest) error
 	Recv() (*SetTeamNameResponse, error)
 	grpc.ClientStream
 }
 
 type teamSetTeamNameSteamClient struct {
 	grpc.ClientStream
+}
+
+func (x *teamSetTeamNameSteamClient) Send(m *SetTeamNameRequest) error {
+	return x.ClientStream.SendMsg(m)
 }
 
 func (x *teamSetTeamNameSteamClient) Recv() (*SetTeamNameResponse, error) {
@@ -250,28 +249,27 @@ func (c *teamClient) SetTeamDescription(ctx context.Context, in *SetTeamDescript
 	return out, nil
 }
 
-func (c *teamClient) SetTeamDescriptionSteam(ctx context.Context, in *SetTeamDescriptionRequest, opts ...grpc.CallOption) (Team_SetTeamDescriptionSteamClient, error) {
+func (c *teamClient) SetTeamDescriptionSteam(ctx context.Context, opts ...grpc.CallOption) (Team_SetTeamDescriptionSteamClient, error) {
 	stream, err := c.cc.NewStream(ctx, &Team_ServiceDesc.Streams[4], "/team.Team/SetTeamDescriptionSteam", opts...)
 	if err != nil {
 		return nil, err
 	}
 	x := &teamSetTeamDescriptionSteamClient{stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
 	return x, nil
 }
 
 type Team_SetTeamDescriptionSteamClient interface {
+	Send(*SetTeamDescriptionRequest) error
 	Recv() (*SetTeamDescriptionResponse, error)
 	grpc.ClientStream
 }
 
 type teamSetTeamDescriptionSteamClient struct {
 	grpc.ClientStream
+}
+
+func (x *teamSetTeamDescriptionSteamClient) Send(m *SetTeamDescriptionRequest) error {
+	return x.ClientStream.SendMsg(m)
 }
 
 func (x *teamSetTeamDescriptionSteamClient) Recv() (*SetTeamDescriptionResponse, error) {
@@ -291,28 +289,27 @@ func (c *teamClient) SetTeamWebsite(ctx context.Context, in *SetTeamWebsiteReque
 	return out, nil
 }
 
-func (c *teamClient) SetTeamWebsiteSteam(ctx context.Context, in *SetTeamWebsiteRequest, opts ...grpc.CallOption) (Team_SetTeamWebsiteSteamClient, error) {
+func (c *teamClient) SetTeamWebsiteSteam(ctx context.Context, opts ...grpc.CallOption) (Team_SetTeamWebsiteSteamClient, error) {
 	stream, err := c.cc.NewStream(ctx, &Team_ServiceDesc.Streams[5], "/team.Team/SetTeamWebsiteSteam", opts...)
 	if err != nil {
 		return nil, err
 	}
 	x := &teamSetTeamWebsiteSteamClient{stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
 	return x, nil
 }
 
 type Team_SetTeamWebsiteSteamClient interface {
+	Send(*SetTeamWebsiteRequest) error
 	Recv() (*SetTeamWebsiteResponse, error)
 	grpc.ClientStream
 }
 
 type teamSetTeamWebsiteSteamClient struct {
 	grpc.ClientStream
+}
+
+func (x *teamSetTeamWebsiteSteamClient) Send(m *SetTeamWebsiteRequest) error {
+	return x.ClientStream.SendMsg(m)
 }
 
 func (x *teamSetTeamWebsiteSteamClient) Recv() (*SetTeamWebsiteResponse, error) {
@@ -332,28 +329,27 @@ func (c *teamClient) SetTeamAvatar(ctx context.Context, in *SetTeamAvatarRequest
 	return out, nil
 }
 
-func (c *teamClient) SetTeamAvatarSteam(ctx context.Context, in *SetTeamAvatarRequest, opts ...grpc.CallOption) (Team_SetTeamAvatarSteamClient, error) {
+func (c *teamClient) SetTeamAvatarSteam(ctx context.Context, opts ...grpc.CallOption) (Team_SetTeamAvatarSteamClient, error) {
 	stream, err := c.cc.NewStream(ctx, &Team_ServiceDesc.Streams[6], "/team.Team/SetTeamAvatarSteam", opts...)
 	if err != nil {
 		return nil, err
 	}
 	x := &teamSetTeamAvatarSteamClient{stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
 	return x, nil
 }
 
 type Team_SetTeamAvatarSteamClient interface {
+	Send(*SetTeamAvatarRequest) error
 	Recv() (*SetTeamAvatarResponse, error)
 	grpc.ClientStream
 }
 
 type teamSetTeamAvatarSteamClient struct {
 	grpc.ClientStream
+}
+
+func (x *teamSetTeamAvatarSteamClient) Send(m *SetTeamAvatarRequest) error {
+	return x.ClientStream.SendMsg(m)
 }
 
 func (x *teamSetTeamAvatarSteamClient) Recv() (*SetTeamAvatarResponse, error) {
@@ -373,28 +369,27 @@ func (c *teamClient) SetTeamEmail(ctx context.Context, in *SetTeamEmailRequest, 
 	return out, nil
 }
 
-func (c *teamClient) SetTeamEmailSteam(ctx context.Context, in *SetTeamEmailRequest, opts ...grpc.CallOption) (Team_SetTeamEmailSteamClient, error) {
+func (c *teamClient) SetTeamEmailSteam(ctx context.Context, opts ...grpc.CallOption) (Team_SetTeamEmailSteamClient, error) {
 	stream, err := c.cc.NewStream(ctx, &Team_ServiceDesc.Streams[7], "/team.Team/SetTeamEmailSteam", opts...)
 	if err != nil {
 		return nil, err
 	}
 	x := &teamSetTeamEmailSteamClient{stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
 	return x, nil
 }
 
 type Team_SetTeamEmailSteamClient interface {
+	Send(*SetTeamEmailRequest) error
 	Recv() (*SetTeamEmailResponse, error)
 	grpc.ClientStream
 }
 
 type teamSetTeamEmailSteamClient struct {
 	grpc.ClientStream
+}
+
+func (x *teamSetTeamEmailSteamClient) Send(m *SetTeamEmailRequest) error {
+	return x.ClientStream.SendMsg(m)
 }
 
 func (x *teamSetTeamEmailSteamClient) Recv() (*SetTeamEmailResponse, error) {
@@ -570,9 +565,9 @@ func (x *teamAddAdminStreamClient) Recv() (*AddAdminResponse, error) {
 // for forward compatibility
 type TeamServer interface {
 	// Get a team by id
-	GetTeamByID(context.Context, *GetTeamByIdRequest) (*GetTeamResponse, error)
+	GetTeamById(context.Context, *GetTeamByIdRequest) (*GetTeamResponse, error)
 	// Get a team by id via stream
-	GetTeamByIDStream(Team_GetTeamByIDStreamServer) error
+	GetTeamByIdStream(Team_GetTeamByIdStreamServer) error
 	// Get a team by name
 	GetTeamsByName(context.Context, *GetTeamsByNameRequest) (*GetTeamsResponse, error)
 	// Get a user by name via stream
@@ -584,23 +579,23 @@ type TeamServer interface {
 	// set team name
 	SetTeamName(context.Context, *SetTeamNameRequest) (*SetTeamNameResponse, error)
 	// /set team name via stream
-	SetTeamNameSteam(*SetTeamNameRequest, Team_SetTeamNameSteamServer) error
+	SetTeamNameSteam(Team_SetTeamNameSteamServer) error
 	// set team description
 	SetTeamDescription(context.Context, *SetTeamDescriptionRequest) (*SetTeamDescriptionResponse, error)
 	// set team description via stream
-	SetTeamDescriptionSteam(*SetTeamDescriptionRequest, Team_SetTeamDescriptionSteamServer) error
+	SetTeamDescriptionSteam(Team_SetTeamDescriptionSteamServer) error
 	// set team website
 	SetTeamWebsite(context.Context, *SetTeamWebsiteRequest) (*SetTeamWebsiteResponse, error)
 	// set team website via stream
-	SetTeamWebsiteSteam(*SetTeamWebsiteRequest, Team_SetTeamWebsiteSteamServer) error
+	SetTeamWebsiteSteam(Team_SetTeamWebsiteSteamServer) error
 	// set team avatar
 	SetTeamAvatar(context.Context, *SetTeamAvatarRequest) (*SetTeamAvatarResponse, error)
 	// set team avatar via stream
-	SetTeamAvatarSteam(*SetTeamAvatarRequest, Team_SetTeamAvatarSteamServer) error
+	SetTeamAvatarSteam(Team_SetTeamAvatarSteamServer) error
 	// set team email
 	SetTeamEmail(context.Context, *SetTeamEmailRequest) (*SetTeamEmailResponse, error)
 	// set team email via stream
-	SetTeamEmailSteam(*SetTeamEmailRequest, Team_SetTeamEmailSteamServer) error
+	SetTeamEmailSteam(Team_SetTeamEmailSteamServer) error
 	// delete a team
 	DeleteTeam(context.Context, *DeleteTeamRequest) (*DeleteTeamResponse, error)
 	// delete a team via stream
@@ -624,11 +619,11 @@ type TeamServer interface {
 type UnimplementedTeamServer struct {
 }
 
-func (UnimplementedTeamServer) GetTeamByID(context.Context, *GetTeamByIdRequest) (*GetTeamResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetTeamByID not implemented")
+func (UnimplementedTeamServer) GetTeamById(context.Context, *GetTeamByIdRequest) (*GetTeamResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTeamById not implemented")
 }
-func (UnimplementedTeamServer) GetTeamByIDStream(Team_GetTeamByIDStreamServer) error {
-	return status.Errorf(codes.Unimplemented, "method GetTeamByIDStream not implemented")
+func (UnimplementedTeamServer) GetTeamByIdStream(Team_GetTeamByIdStreamServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetTeamByIdStream not implemented")
 }
 func (UnimplementedTeamServer) GetTeamsByName(context.Context, *GetTeamsByNameRequest) (*GetTeamsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTeamsByName not implemented")
@@ -645,31 +640,31 @@ func (UnimplementedTeamServer) AddTeamStream(Team_AddTeamStreamServer) error {
 func (UnimplementedTeamServer) SetTeamName(context.Context, *SetTeamNameRequest) (*SetTeamNameResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetTeamName not implemented")
 }
-func (UnimplementedTeamServer) SetTeamNameSteam(*SetTeamNameRequest, Team_SetTeamNameSteamServer) error {
+func (UnimplementedTeamServer) SetTeamNameSteam(Team_SetTeamNameSteamServer) error {
 	return status.Errorf(codes.Unimplemented, "method SetTeamNameSteam not implemented")
 }
 func (UnimplementedTeamServer) SetTeamDescription(context.Context, *SetTeamDescriptionRequest) (*SetTeamDescriptionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetTeamDescription not implemented")
 }
-func (UnimplementedTeamServer) SetTeamDescriptionSteam(*SetTeamDescriptionRequest, Team_SetTeamDescriptionSteamServer) error {
+func (UnimplementedTeamServer) SetTeamDescriptionSteam(Team_SetTeamDescriptionSteamServer) error {
 	return status.Errorf(codes.Unimplemented, "method SetTeamDescriptionSteam not implemented")
 }
 func (UnimplementedTeamServer) SetTeamWebsite(context.Context, *SetTeamWebsiteRequest) (*SetTeamWebsiteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetTeamWebsite not implemented")
 }
-func (UnimplementedTeamServer) SetTeamWebsiteSteam(*SetTeamWebsiteRequest, Team_SetTeamWebsiteSteamServer) error {
+func (UnimplementedTeamServer) SetTeamWebsiteSteam(Team_SetTeamWebsiteSteamServer) error {
 	return status.Errorf(codes.Unimplemented, "method SetTeamWebsiteSteam not implemented")
 }
 func (UnimplementedTeamServer) SetTeamAvatar(context.Context, *SetTeamAvatarRequest) (*SetTeamAvatarResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetTeamAvatar not implemented")
 }
-func (UnimplementedTeamServer) SetTeamAvatarSteam(*SetTeamAvatarRequest, Team_SetTeamAvatarSteamServer) error {
+func (UnimplementedTeamServer) SetTeamAvatarSteam(Team_SetTeamAvatarSteamServer) error {
 	return status.Errorf(codes.Unimplemented, "method SetTeamAvatarSteam not implemented")
 }
 func (UnimplementedTeamServer) SetTeamEmail(context.Context, *SetTeamEmailRequest) (*SetTeamEmailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetTeamEmail not implemented")
 }
-func (UnimplementedTeamServer) SetTeamEmailSteam(*SetTeamEmailRequest, Team_SetTeamEmailSteamServer) error {
+func (UnimplementedTeamServer) SetTeamEmailSteam(Team_SetTeamEmailSteamServer) error {
 	return status.Errorf(codes.Unimplemented, "method SetTeamEmailSteam not implemented")
 }
 func (UnimplementedTeamServer) DeleteTeam(context.Context, *DeleteTeamRequest) (*DeleteTeamResponse, error) {
@@ -709,43 +704,43 @@ func RegisterTeamServer(s grpc.ServiceRegistrar, srv TeamServer) {
 	s.RegisterService(&Team_ServiceDesc, srv)
 }
 
-func _Team_GetTeamByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Team_GetTeamById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetTeamByIdRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TeamServer).GetTeamByID(ctx, in)
+		return srv.(TeamServer).GetTeamById(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/team.Team/GetTeamByID",
+		FullMethod: "/team.Team/GetTeamById",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TeamServer).GetTeamByID(ctx, req.(*GetTeamByIdRequest))
+		return srv.(TeamServer).GetTeamById(ctx, req.(*GetTeamByIdRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Team_GetTeamByIDStream_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(TeamServer).GetTeamByIDStream(&teamGetTeamByIDStreamServer{stream})
+func _Team_GetTeamByIdStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(TeamServer).GetTeamByIdStream(&teamGetTeamByIdStreamServer{stream})
 }
 
-type Team_GetTeamByIDStreamServer interface {
+type Team_GetTeamByIdStreamServer interface {
 	Send(*GetTeamResponse) error
 	Recv() (*GetTeamByIdRequest, error)
 	grpc.ServerStream
 }
 
-type teamGetTeamByIDStreamServer struct {
+type teamGetTeamByIdStreamServer struct {
 	grpc.ServerStream
 }
 
-func (x *teamGetTeamByIDStreamServer) Send(m *GetTeamResponse) error {
+func (x *teamGetTeamByIdStreamServer) Send(m *GetTeamResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *teamGetTeamByIDStreamServer) Recv() (*GetTeamByIdRequest, error) {
+func (x *teamGetTeamByIdStreamServer) Recv() (*GetTeamByIdRequest, error) {
 	m := new(GetTeamByIdRequest)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -860,15 +855,12 @@ func _Team_SetTeamName_Handler(srv interface{}, ctx context.Context, dec func(in
 }
 
 func _Team_SetTeamNameSteam_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(SetTeamNameRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
-	}
-	return srv.(TeamServer).SetTeamNameSteam(m, &teamSetTeamNameSteamServer{stream})
+	return srv.(TeamServer).SetTeamNameSteam(&teamSetTeamNameSteamServer{stream})
 }
 
 type Team_SetTeamNameSteamServer interface {
 	Send(*SetTeamNameResponse) error
+	Recv() (*SetTeamNameRequest, error)
 	grpc.ServerStream
 }
 
@@ -878,6 +870,14 @@ type teamSetTeamNameSteamServer struct {
 
 func (x *teamSetTeamNameSteamServer) Send(m *SetTeamNameResponse) error {
 	return x.ServerStream.SendMsg(m)
+}
+
+func (x *teamSetTeamNameSteamServer) Recv() (*SetTeamNameRequest, error) {
+	m := new(SetTeamNameRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 func _Team_SetTeamDescription_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -899,15 +899,12 @@ func _Team_SetTeamDescription_Handler(srv interface{}, ctx context.Context, dec 
 }
 
 func _Team_SetTeamDescriptionSteam_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(SetTeamDescriptionRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
-	}
-	return srv.(TeamServer).SetTeamDescriptionSteam(m, &teamSetTeamDescriptionSteamServer{stream})
+	return srv.(TeamServer).SetTeamDescriptionSteam(&teamSetTeamDescriptionSteamServer{stream})
 }
 
 type Team_SetTeamDescriptionSteamServer interface {
 	Send(*SetTeamDescriptionResponse) error
+	Recv() (*SetTeamDescriptionRequest, error)
 	grpc.ServerStream
 }
 
@@ -917,6 +914,14 @@ type teamSetTeamDescriptionSteamServer struct {
 
 func (x *teamSetTeamDescriptionSteamServer) Send(m *SetTeamDescriptionResponse) error {
 	return x.ServerStream.SendMsg(m)
+}
+
+func (x *teamSetTeamDescriptionSteamServer) Recv() (*SetTeamDescriptionRequest, error) {
+	m := new(SetTeamDescriptionRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 func _Team_SetTeamWebsite_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -938,15 +943,12 @@ func _Team_SetTeamWebsite_Handler(srv interface{}, ctx context.Context, dec func
 }
 
 func _Team_SetTeamWebsiteSteam_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(SetTeamWebsiteRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
-	}
-	return srv.(TeamServer).SetTeamWebsiteSteam(m, &teamSetTeamWebsiteSteamServer{stream})
+	return srv.(TeamServer).SetTeamWebsiteSteam(&teamSetTeamWebsiteSteamServer{stream})
 }
 
 type Team_SetTeamWebsiteSteamServer interface {
 	Send(*SetTeamWebsiteResponse) error
+	Recv() (*SetTeamWebsiteRequest, error)
 	grpc.ServerStream
 }
 
@@ -956,6 +958,14 @@ type teamSetTeamWebsiteSteamServer struct {
 
 func (x *teamSetTeamWebsiteSteamServer) Send(m *SetTeamWebsiteResponse) error {
 	return x.ServerStream.SendMsg(m)
+}
+
+func (x *teamSetTeamWebsiteSteamServer) Recv() (*SetTeamWebsiteRequest, error) {
+	m := new(SetTeamWebsiteRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 func _Team_SetTeamAvatar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -977,15 +987,12 @@ func _Team_SetTeamAvatar_Handler(srv interface{}, ctx context.Context, dec func(
 }
 
 func _Team_SetTeamAvatarSteam_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(SetTeamAvatarRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
-	}
-	return srv.(TeamServer).SetTeamAvatarSteam(m, &teamSetTeamAvatarSteamServer{stream})
+	return srv.(TeamServer).SetTeamAvatarSteam(&teamSetTeamAvatarSteamServer{stream})
 }
 
 type Team_SetTeamAvatarSteamServer interface {
 	Send(*SetTeamAvatarResponse) error
+	Recv() (*SetTeamAvatarRequest, error)
 	grpc.ServerStream
 }
 
@@ -995,6 +1002,14 @@ type teamSetTeamAvatarSteamServer struct {
 
 func (x *teamSetTeamAvatarSteamServer) Send(m *SetTeamAvatarResponse) error {
 	return x.ServerStream.SendMsg(m)
+}
+
+func (x *teamSetTeamAvatarSteamServer) Recv() (*SetTeamAvatarRequest, error) {
+	m := new(SetTeamAvatarRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 func _Team_SetTeamEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -1016,15 +1031,12 @@ func _Team_SetTeamEmail_Handler(srv interface{}, ctx context.Context, dec func(i
 }
 
 func _Team_SetTeamEmailSteam_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(SetTeamEmailRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
-	}
-	return srv.(TeamServer).SetTeamEmailSteam(m, &teamSetTeamEmailSteamServer{stream})
+	return srv.(TeamServer).SetTeamEmailSteam(&teamSetTeamEmailSteamServer{stream})
 }
 
 type Team_SetTeamEmailSteamServer interface {
 	Send(*SetTeamEmailResponse) error
+	Recv() (*SetTeamEmailRequest, error)
 	grpc.ServerStream
 }
 
@@ -1034,6 +1046,14 @@ type teamSetTeamEmailSteamServer struct {
 
 func (x *teamSetTeamEmailSteamServer) Send(m *SetTeamEmailResponse) error {
 	return x.ServerStream.SendMsg(m)
+}
+
+func (x *teamSetTeamEmailSteamServer) Recv() (*SetTeamEmailRequest, error) {
+	m := new(SetTeamEmailRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 func _Team_DeleteTeam_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -1220,8 +1240,8 @@ var Team_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*TeamServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetTeamByID",
-			Handler:    _Team_GetTeamByID_Handler,
+			MethodName: "GetTeamById",
+			Handler:    _Team_GetTeamById_Handler,
 		},
 		{
 			MethodName: "GetTeamsByName",
@@ -1270,8 +1290,8 @@ var Team_ServiceDesc = grpc.ServiceDesc{
 	},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "GetTeamByIDStream",
-			Handler:       _Team_GetTeamByIDStream_Handler,
+			StreamName:    "GetTeamByIdStream",
+			Handler:       _Team_GetTeamByIdStream_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},
@@ -1291,26 +1311,31 @@ var Team_ServiceDesc = grpc.ServiceDesc{
 			StreamName:    "SetTeamNameSteam",
 			Handler:       _Team_SetTeamNameSteam_Handler,
 			ServerStreams: true,
+			ClientStreams: true,
 		},
 		{
 			StreamName:    "SetTeamDescriptionSteam",
 			Handler:       _Team_SetTeamDescriptionSteam_Handler,
 			ServerStreams: true,
+			ClientStreams: true,
 		},
 		{
 			StreamName:    "SetTeamWebsiteSteam",
 			Handler:       _Team_SetTeamWebsiteSteam_Handler,
 			ServerStreams: true,
+			ClientStreams: true,
 		},
 		{
 			StreamName:    "SetTeamAvatarSteam",
 			Handler:       _Team_SetTeamAvatarSteam_Handler,
 			ServerStreams: true,
+			ClientStreams: true,
 		},
 		{
 			StreamName:    "SetTeamEmailSteam",
 			Handler:       _Team_SetTeamEmailSteam_Handler,
 			ServerStreams: true,
+			ClientStreams: true,
 		},
 		{
 			StreamName:    "DeleteTeamStream",
