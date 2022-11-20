@@ -20,7 +20,7 @@ func init() {
 		},
 		team.Code_ERROR_TEAM_NOTFOUND: ResponseDto{
 			Code:    "ERROR_TEAM_NOTFOUND",
-			Message: "Card not found.",
+			Message: "Team not found.",
 		},
 	}
 }

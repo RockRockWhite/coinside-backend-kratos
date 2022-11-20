@@ -17,9 +17,9 @@ option go_package = "./;team";
 // The team service definition.
 service Team {
   // Get a team by id
-  rpc GetTeamByID(GetTeamByIdRequest) returns (GetTeamResponse){}
+  rpc GetTeamById(GetTeamByIdRequest) returns (GetTeamResponse){}
   // Get a team by id via stream
-  rpc GetTeamByIDStream(stream GetTeamByIdRequest) returns (stream GetTeamResponse){}
+  rpc GetTeamByIdStream(stream GetTeamByIdRequest) returns (stream GetTeamResponse){}
 
   // Get a team by name
   rpc GetTeamsByName(GetTeamsByNameRequest) returns (GetTeamsResponse){}
@@ -39,27 +39,27 @@ service Team {
   //set team name
   rpc SetTeamName(SetTeamNameRequest) returns (SetTeamNameResponse){}
   ///set team name via stream
-  rpc SetTeamNameSteam(SetTeamNameRequest) returns (stream SetTeamNameResponse){}
+  rpc SetTeamNameSteam(stream SetTeamNameRequest) returns (stream SetTeamNameResponse){}
 
   //set team description
   rpc SetTeamDescription(SetTeamDescriptionRequest) returns (SetTeamDescriptionResponse){}
   // set team description via stream
-  rpc SetTeamDescriptionSteam(SetTeamDescriptionRequest) returns (stream SetTeamDescriptionResponse){}
+  rpc SetTeamDescriptionSteam(stream SetTeamDescriptionRequest) returns (stream SetTeamDescriptionResponse){}
 
   //set team website
   rpc SetTeamWebsite(SetTeamWebsiteRequest) returns (SetTeamWebsiteResponse){}
   // set team website via stream
-  rpc SetTeamWebsiteSteam(SetTeamWebsiteRequest) returns (stream SetTeamWebsiteResponse){}
+  rpc SetTeamWebsiteSteam(stream SetTeamWebsiteRequest) returns (stream SetTeamWebsiteResponse){}
 
   //set team avatar
   rpc SetTeamAvatar(SetTeamAvatarRequest) returns (SetTeamAvatarResponse){}
   // set team avatar via stream
-  rpc SetTeamAvatarSteam(SetTeamAvatarRequest) returns (stream SetTeamAvatarResponse){}
+  rpc SetTeamAvatarSteam(stream SetTeamAvatarRequest) returns (stream SetTeamAvatarResponse){}
 
   //set team email
   rpc SetTeamEmail(SetTeamEmailRequest) returns (SetTeamEmailResponse){}
   // set team email via stream
-  rpc SetTeamEmailSteam(SetTeamEmailRequest) returns (stream SetTeamEmailResponse){}
+  rpc SetTeamEmailSteam(stream SetTeamEmailRequest) returns (stream SetTeamEmailResponse){}
 
 
   // delete a team
