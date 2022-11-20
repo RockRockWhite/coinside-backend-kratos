@@ -6,6 +6,11 @@ var (
 		Message: "Unauthorized.",
 		Data:    nil,
 	}
+	ErrorToken ResponseDto = ResponseDto{
+		Code:    "ERROR_TOKEN",
+		Message: "Token is incorrect or expired.",
+		Data:    nil,
+	}
 	ErrorBadRequest ResponseDto = ResponseDto{
 		Code:    "ERROR_BAD_REQUEST",
 		Message: "Bad request parameters or illegal request.",

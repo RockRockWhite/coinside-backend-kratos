@@ -4,19 +4,21 @@ import (
 	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/ljxsteam/coinside-backend-kratos/api/card"
+	"github.com/ljxsteam/coinside-backend-kratos/api/user"
 	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/dto"
 	"net/http"
 	"strconv"
 )
 
 type CardController struct {
-	client card.CardClient
+	userClient user.UserClient
+	cardClient card.CardClient
 }
 
 func (u *CardController) GetCardInfo(c *gin.Context) {
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 
-	res, err := u.client.GetCardInfo(context.Background(), &card.GetCardInfoRequest{Id: id})
+	res, err := u.cardClient.GetCardInfo(context.Background(), &card.GetCardInfoRequest{Id: id})
 
 	resDto := dto.ResponseDto{
 		Code:    dto.CardErrorCode[res.Code].Code,
@@ -41,7 +43,7 @@ func (u *CardController) CreateCard(c *gin.Context) {
 		return
 	}
 
-	res, err := u.client.CreateCard(context.Background(), &req)
+	res, err := u.cardClient.CreateCard(context.Background(), &req)
 
 	resDto := dto.ResponseDto{
 		Code:    dto.CardErrorCode[res.Code].Code,
@@ -73,7 +75,7 @@ func (u *CardController) SetTitle(c *gin.Context) {
 		return
 	}
 
-	res, err := u.client.UpdateCardTitle(context.Background(), &card.UpdateCardTitleRequest{
+	res, err := u.cardClient.UpdateCardTitle(context.Background(), &card.UpdateCardTitleRequest{
 		Id:    id,
 		Title: reqDto.Title,
 	})
@@ -103,7 +105,7 @@ func (u *CardController) SetContent(c *gin.Context) {
 		return
 	}
 
-	res, err := u.client.UpdateCardContent(context.Background(), &card.UpdateCardContentRequest{
+	res, err := u.cardClient.UpdateCardContent(context.Background(), &card.UpdateCardContentRequest{
 		Id:      id,
 		Content: reqDto.Content,
 	})
@@ -126,7 +128,7 @@ func (u *CardController) AddTag(c *gin.Context) {
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 	tagContent := c.Param("tag_content")
 
-	res, err := u.client.AddCardTag(context.Background(), &card.AddCardTagRequest{
+	res, err := u.cardClient.AddCardTag(context.Background(), &card.AddCardTagRequest{
 		Id:      id,
 		Content: tagContent,
 	})
@@ -149,7 +151,7 @@ func (u *CardController) DeleleTag(c *gin.Context) {
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 	tagContent := c.Param("tag_content")
 
-	res, err := u.client.DeleteCardTag(context.Background(), &card.DeleteCardTagRequest{
+	res, err := u.cardClient.DeleteCardTag(context.Background(), &card.DeleteCardTagRequest{
 		Id:      id,
 		Content: tagContent,
 	})
@@ -180,7 +182,27 @@ func (u *CardController) SetMember(c *gin.Context) {
 		return
 	}
 
-	res, err := u.client.SetCardMember(context.Background(), &card.SetCardMemberRequest{
+	// 判断用户是否存在
+	if res, err := u.userClient.GetUserInfo(context.Background(), &user.GetUserInfoRequest{Id: userId}); res.Code != user.Code_OK {
+		switch res.Code {
+		case user.Code_ERROR_USER_NOTFOUND:
+			c.JSON(http.StatusOK, &dto.ResponseDto{
+				Code:    dto.UserErrorCode[res.Code].Code,
+				Message: dto.UserErrorCode[res.Code].Message,
+				Data:    nil,
+			})
+		default:
+			c.JSON(http.StatusOK, &dto.ResponseDto{
+				Code:    dto.UserErrorCode[user.Code_ERROR_UNKNOWN].Code,
+				Message: dto.UserErrorCode[user.Code_ERROR_UNKNOWN].Message,
+				Data:    err,
+			})
+		}
+		return
+	}
+
+	// 设置团队成员
+	res, err := u.cardClient.SetCardMember(context.Background(), &card.SetCardMemberRequest{
 		Id:      id,
 		UserId:  userId,
 		IsAdmin: reqDto.IsAdmin,
@@ -204,7 +226,7 @@ func (u *CardController) DeleteMember(c *gin.Context) {
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 	userId, _ := strconv.ParseUint(c.Param("user_id"), 10, 64)
 
-	res, err := u.client.DeleteCardMember(context.Background(), &card.DeleteCardMemberRequest{
+	res, err := u.cardClient.DeleteCardMember(context.Background(), &card.DeleteCardMemberRequest{
 		Id:     id,
 		UserId: userId,
 	})
@@ -226,7 +248,7 @@ func (u *CardController) DeleteMember(c *gin.Context) {
 func (u *CardController) DeleteCard(c *gin.Context) {
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 
-	res, err := u.client.DeleteCard(context.Background(), &card.DeleteCardRequest{
+	res, err := u.cardClient.DeleteCard(context.Background(), &card.DeleteCardRequest{
 		Id: id,
 	})
 
@@ -244,6 +266,6 @@ func (u *CardController) DeleteCard(c *gin.Context) {
 	c.JSON(http.StatusOK, resDto)
 }
 
-func NewCardController(client card.CardClient) *CardController {
-	return &CardController{client: client}
+func NewCardController(userClient user.UserClient, cardClient card.CardClient) *CardController {
+	return &CardController{userClient: userClient, cardClient: cardClient}
 }
