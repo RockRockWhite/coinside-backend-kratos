@@ -17,9 +17,9 @@ func TeamRouter(r *gin.Engine, controller *controller.TeamController) *gin.Engin
 	team := r.Group("/teams")
 	{
 		team.GET("/:id", middleware.JwtAuth(nil), controller.GetTeamInfo)
-		team.POST("", controller.CreateTeam)
-		team.POST("/:team_id/mumbers", controller.SetTeamMember)
-		team.POST("/:id", controller.SetTeamAdmin)
+		team.POST("", middleware.JwtAuth(nil), controller.CreateTeam)
+		team.POST("/:id/members/:user_id", controller.SetTeamMember)
+		team.POST("/:id/admins/:user_id", controller.SetTeamAdmin)
 
 		team.PUT(":id/name", middleware.JwtAuth(nil), controller.SetName)
 		team.PUT(":id/avatar", middleware.JwtAuth(nil), controller.SetAvatar)
@@ -28,7 +28,7 @@ func TeamRouter(r *gin.Engine, controller *controller.TeamController) *gin.Engin
 		team.PUT(":id/website", middleware.JwtAuth(nil), controller.SetWebsite)
 
 		team.DELETE("/:id", middleware.JwtAuth(nil), controller.DeleteTeam)
-		team.DELETE("/:team_id/members/:user_id", middleware.JwtAuth(nil), controller.DeleteTeamMember)
+		team.DELETE("/:id/members/:user_id", middleware.JwtAuth(nil), controller.DeleteTeamMember)
 
 	}
 
