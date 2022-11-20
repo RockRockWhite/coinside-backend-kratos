@@ -17,9 +17,9 @@ option go_package = "./;team";
 // The team service definition.
 service Team {
   // Get a team by id
-  rpc GetTeamByID(GetTeamByIdRequest) returns (GetTeamResponse){}
+  rpc GetTeamById(GetTeamByIdRequest) returns (GetTeamResponse){}
   // Get a team by id via stream
-  rpc GetTeamByIDStream(stream GetTeamByIdRequest) returns (stream GetTeamResponse){}
+  rpc GetTeamByIdStream(stream GetTeamByIdRequest) returns (stream GetTeamResponse){}
 
   // Get a team by name
   rpc GetTeamsByName(GetTeamsByNameRequest) returns (GetTeamsResponse){}

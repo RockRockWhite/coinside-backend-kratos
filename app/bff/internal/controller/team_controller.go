@@ -16,7 +16,7 @@ type TeamController struct {
 func (t *TeamController) GetTeamInfo(c *gin.Context) {
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 
-	res, err := t.client.GetTeamByID(context.Background(), &team.GetTeamByIdRequest{Id: id})
+	res, err := t.client.GetTeamById(context.Background(), &team.GetTeamByIdRequest{Id: id})
 
 	resDto := dto.ResponseDto{
 		Code:    dto.TeamErrorCode[res.Code].Code,
