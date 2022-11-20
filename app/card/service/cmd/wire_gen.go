@@ -19,11 +19,12 @@ import (
 // initApp init kratos application.
 func initApp(conf *config.Config) (*kratos.App, func(), error) {
 	db := data.NewDB(conf)
-	markdownRepo := data.NewCardRepoNoCache(db)
-	markdownService := service.NewCardService(markdownRepo)
-	grpcServer := server.NewGrpcServer(conf, markdownService)
+	cardRepo := data.NewCardRepoNoCache(db)
+	cardService := service.NewCardService(cardRepo)
+	grpcServer := server.NewGrpcServer(conf, cardService)
 	registrar := server.NewRegistrar(conf)
 	app := newApp(conf, grpcServer, registrar)
+
 	return app, func() {
 	}, nil
 }

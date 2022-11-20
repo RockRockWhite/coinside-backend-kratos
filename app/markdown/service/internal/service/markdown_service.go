@@ -13,7 +13,7 @@ type MarkdownService struct {
 	repo data.MarkdownRepo
 }
 
-func (m MarkdownService) GetmarkdownById(ctx context.Context, request *api.GetMarkdownByIdRequest) (*api.GetMarkdownResponse, error) {
+func (m MarkdownService) GetMarkdownById(ctx context.Context, request *api.GetMarkdownByIdRequest) (*api.GetMarkdownResponse, error) {
 	data, err := m.repo.FindOne(ctx, request.Id)
 
 	switch err {
@@ -43,22 +43,22 @@ func (m MarkdownService) GetmarkdownById(ctx context.Context, request *api.GetMa
 	}, nil
 }
 
-func (m MarkdownService) GetmarkdownByIdStream(server api.Markdown_GetMarkdownByIdStreamServer) error {
+func (m MarkdownService) GetMarkdownByIdStream(server api.Markdown_GetMarkdownByIdStreamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (m MarkdownService) GetmarkdownsByCardId(ctx context.Context, request *api.GetMarkdownsByCardIdRequest) (*api.GetMarkdownsResponse, error) {
+func (m MarkdownService) GetMarkdownsByCardId(ctx context.Context, request *api.GetMarkdownsByCardIdRequest) (*api.GetMarkdownsResponse, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (m MarkdownService) GetmarkdownsByCardIdStream(server api.Markdown_GetMarkdownsByCardIdStreamServer) error {
+func (m MarkdownService) GetMarkdownsByCardIdStream(server api.Markdown_GetMarkdownsByCardIdStreamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (m MarkdownService) Addmarkdown(ctx context.Context, markdown *api.MarkdownInfo) (*api.AddMarkdownResponse, error) {
+func (m MarkdownService) AddMarkdown(ctx context.Context, markdown *api.MarkdownInfo) (*api.AddMarkdownResponse, error) {
 	id, err := m.repo.Insert(ctx, &data.Markdown{
 		CardId:  markdown.CardId,
 		Content: markdown.Content,
@@ -73,12 +73,12 @@ func (m MarkdownService) Addmarkdown(ctx context.Context, markdown *api.Markdown
 	return &api.AddMarkdownResponse{Id: id}, nil
 }
 
-func (m MarkdownService) AddmarkdownStream(server api.Markdown_AddMarkdownStreamServer) error {
+func (m MarkdownService) AddMarkdownStream(server api.Markdown_AddMarkdownStreamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (m MarkdownService) Updatemarkdown(ctx context.Context, markdown *api.MarkdownInfo) (*api.UpdateMarkdownResponse, error) {
+func (m MarkdownService) UpdateMarkdown(ctx context.Context, markdown *api.MarkdownInfo) (*api.UpdateMarkdownResponse, error) {
 	one, err := m.repo.FindOne(ctx, markdown.Id)
 
 	switch err {
@@ -95,13 +95,18 @@ func (m MarkdownService) Updatemarkdown(ctx context.Context, markdown *api.Markd
 	}
 
 	NewMarkdown := data.Markdown{
-		Id:      one.Id,
-		CardId:  one.CardId,
-		Content: one.Content,
+		Id:        one.Id,
+		CardId:    one.CardId,
+		Content:   one.Content,
+		CreatedAt: one.CreatedAt,
 	}
 
 	if markdown.CardId != 0 && markdown.CardId != NewMarkdown.CardId {
 		NewMarkdown.CardId = markdown.CardId
+	}
+
+	if markdown.Content != "" && markdown.Content != NewMarkdown.Content {
+		NewMarkdown.Content = markdown.Content
 	}
 
 	if error := m.repo.Update(ctx, &NewMarkdown); error != nil {
@@ -116,12 +121,12 @@ func (m MarkdownService) Updatemarkdown(ctx context.Context, markdown *api.Markd
 
 }
 
-func (m MarkdownService) UpdatemarkdownStream(info *api.MarkdownInfo, server api.Markdown_UpdateMarkdownStreamServer) error {
+func (m MarkdownService) UpdateMarkdownStream(info *api.MarkdownInfo, server api.Markdown_UpdateMarkdownStreamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (m MarkdownService) Deletemarkdown(ctx context.Context, request *api.DeleteMarkdownRequest) (*api.DeleteMarkdownResponse, error) {
+func (m MarkdownService) DeleteMarkdown(ctx context.Context, request *api.DeleteMarkdownRequest) (*api.DeleteMarkdownResponse, error) {
 	if err := m.repo.Delete(ctx, request.Id); err != nil {
 		return &api.DeleteMarkdownResponse{
 			Code: api.Code_ERROR_UNKNOWN,
@@ -132,7 +137,7 @@ func (m MarkdownService) Deletemarkdown(ctx context.Context, request *api.Delete
 	}, nil
 }
 
-func (m MarkdownService) DeletemarkdownStream(server api.Markdown_DeleteMarkdownStreamServer) error {
+func (m MarkdownService) DeleteMarkdownStream(server api.Markdown_DeleteMarkdownStreamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
