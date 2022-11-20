@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/ljxsteam/coinside-backend-kratos/api/markdown"
-	"github.com/ljxsteam/coinside-backend-kratos/api/user"
 	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/dto"
 	"net/http"
 	"strconv"
@@ -114,6 +113,6 @@ func (m *MarkdownController) DeleteMarkdown(c *gin.Context) {
 	c.JSON(http.StatusOK, resDto)
 }
 
-func NewMarkdownController(client user.UserClient) *UserController {
-	return &UserController{client: client}
+func NewMarkdownController(client markdown.MarkdownClient) *MarkdownController {
+	return &MarkdownController{client: client}
 }
