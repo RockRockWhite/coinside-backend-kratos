@@ -34,6 +34,10 @@ type CardClient interface {
 	UpdateCardContentStream(ctx context.Context, opts ...grpc.CallOption) (Card_UpdateCardContentStreamClient, error)
 	DeleteCard(ctx context.Context, in *DeleteCardRequest, opts ...grpc.CallOption) (*DeleteCardResponse, error)
 	DeleteCardStream(ctx context.Context, opts ...grpc.CallOption) (Card_DeleteCardStreamClient, error)
+	SetCardDeadline(ctx context.Context, in *SetCardDeadlineRequest, opts ...grpc.CallOption) (*SetCardDeadlineResponse, error)
+	SetCardDeadlineStream(ctx context.Context, opts ...grpc.CallOption) (Card_SetCardDeadlineStreamClient, error)
+	SetCardStatus(ctx context.Context, in *SetCardStatusRequest, opts ...grpc.CallOption) (*SetCardStatusResponse, error)
+	SetCardStatusStream(ctx context.Context, opts ...grpc.CallOption) (Card_SetCardStatusStreamClient, error)
 	AddCardTag(ctx context.Context, in *AddCardTagRequest, opts ...grpc.CallOption) (*AddCardTagResponse, error)
 	AddCardTagStream(ctx context.Context, opts ...grpc.CallOption) (Card_AddCardTagStreamClient, error)
 	DeleteCardTag(ctx context.Context, in *DeleteCardTagRequest, opts ...grpc.CallOption) (*DeleteCardTagResponse, error)
@@ -310,6 +314,92 @@ func (x *cardDeleteCardStreamClient) CloseAndRecv() (*DeleteCardResponse, error)
 	return m, nil
 }
 
+func (c *cardClient) SetCardDeadline(ctx context.Context, in *SetCardDeadlineRequest, opts ...grpc.CallOption) (*SetCardDeadlineResponse, error) {
+	out := new(SetCardDeadlineResponse)
+	err := c.cc.Invoke(ctx, "/card.Card/SetCardDeadline", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cardClient) SetCardDeadlineStream(ctx context.Context, opts ...grpc.CallOption) (Card_SetCardDeadlineStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Card_ServiceDesc.Streams[6], "/card.Card/SetCardDeadlineStream", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &cardSetCardDeadlineStreamClient{stream}
+	return x, nil
+}
+
+type Card_SetCardDeadlineStreamClient interface {
+	Send(*SetCardDeadlineRequest) error
+	CloseAndRecv() (*SetCardDeadlineResponse, error)
+	grpc.ClientStream
+}
+
+type cardSetCardDeadlineStreamClient struct {
+	grpc.ClientStream
+}
+
+func (x *cardSetCardDeadlineStreamClient) Send(m *SetCardDeadlineRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *cardSetCardDeadlineStreamClient) CloseAndRecv() (*SetCardDeadlineResponse, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(SetCardDeadlineResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *cardClient) SetCardStatus(ctx context.Context, in *SetCardStatusRequest, opts ...grpc.CallOption) (*SetCardStatusResponse, error) {
+	out := new(SetCardStatusResponse)
+	err := c.cc.Invoke(ctx, "/card.Card/SetCardStatus", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cardClient) SetCardStatusStream(ctx context.Context, opts ...grpc.CallOption) (Card_SetCardStatusStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Card_ServiceDesc.Streams[7], "/card.Card/SetCardStatusStream", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &cardSetCardStatusStreamClient{stream}
+	return x, nil
+}
+
+type Card_SetCardStatusStreamClient interface {
+	Send(*SetCardStatusRequest) error
+	CloseAndRecv() (*SetCardStatusResponse, error)
+	grpc.ClientStream
+}
+
+type cardSetCardStatusStreamClient struct {
+	grpc.ClientStream
+}
+
+func (x *cardSetCardStatusStreamClient) Send(m *SetCardStatusRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *cardSetCardStatusStreamClient) CloseAndRecv() (*SetCardStatusResponse, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(SetCardStatusResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 func (c *cardClient) AddCardTag(ctx context.Context, in *AddCardTagRequest, opts ...grpc.CallOption) (*AddCardTagResponse, error) {
 	out := new(AddCardTagResponse)
 	err := c.cc.Invoke(ctx, "/card.Card/AddCardTag", in, out, opts...)
@@ -320,7 +410,7 @@ func (c *cardClient) AddCardTag(ctx context.Context, in *AddCardTagRequest, opts
 }
 
 func (c *cardClient) AddCardTagStream(ctx context.Context, opts ...grpc.CallOption) (Card_AddCardTagStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Card_ServiceDesc.Streams[6], "/card.Card/AddCardTagStream", opts...)
+	stream, err := c.cc.NewStream(ctx, &Card_ServiceDesc.Streams[8], "/card.Card/AddCardTagStream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -363,7 +453,7 @@ func (c *cardClient) DeleteCardTag(ctx context.Context, in *DeleteCardTagRequest
 }
 
 func (c *cardClient) DeleteCardTagStream(ctx context.Context, opts ...grpc.CallOption) (Card_DeleteCardTagStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Card_ServiceDesc.Streams[7], "/card.Card/DeleteCardTagStream", opts...)
+	stream, err := c.cc.NewStream(ctx, &Card_ServiceDesc.Streams[9], "/card.Card/DeleteCardTagStream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -406,7 +496,7 @@ func (c *cardClient) SetCardMember(ctx context.Context, in *SetCardMemberRequest
 }
 
 func (c *cardClient) SetCardMemberStream(ctx context.Context, opts ...grpc.CallOption) (Card_SetCardMemberStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Card_ServiceDesc.Streams[8], "/card.Card/SetCardMemberStream", opts...)
+	stream, err := c.cc.NewStream(ctx, &Card_ServiceDesc.Streams[10], "/card.Card/SetCardMemberStream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -449,7 +539,7 @@ func (c *cardClient) DeleteCardMember(ctx context.Context, in *DeleteCardMemberR
 }
 
 func (c *cardClient) DeleteCardMemberStream(ctx context.Context, opts ...grpc.CallOption) (Card_DeleteCardMemberStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Card_ServiceDesc.Streams[9], "/card.Card/DeleteCardMemberStream", opts...)
+	stream, err := c.cc.NewStream(ctx, &Card_ServiceDesc.Streams[11], "/card.Card/DeleteCardMemberStream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -498,6 +588,10 @@ type CardServer interface {
 	UpdateCardContentStream(Card_UpdateCardContentStreamServer) error
 	DeleteCard(context.Context, *DeleteCardRequest) (*DeleteCardResponse, error)
 	DeleteCardStream(Card_DeleteCardStreamServer) error
+	SetCardDeadline(context.Context, *SetCardDeadlineRequest) (*SetCardDeadlineResponse, error)
+	SetCardDeadlineStream(Card_SetCardDeadlineStreamServer) error
+	SetCardStatus(context.Context, *SetCardStatusRequest) (*SetCardStatusResponse, error)
+	SetCardStatusStream(Card_SetCardStatusStreamServer) error
 	AddCardTag(context.Context, *AddCardTagRequest) (*AddCardTagResponse, error)
 	AddCardTagStream(Card_AddCardTagStreamServer) error
 	DeleteCardTag(context.Context, *DeleteCardTagRequest) (*DeleteCardTagResponse, error)
@@ -548,6 +642,18 @@ func (UnimplementedCardServer) DeleteCard(context.Context, *DeleteCardRequest) (
 }
 func (UnimplementedCardServer) DeleteCardStream(Card_DeleteCardStreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method DeleteCardStream not implemented")
+}
+func (UnimplementedCardServer) SetCardDeadline(context.Context, *SetCardDeadlineRequest) (*SetCardDeadlineResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetCardDeadline not implemented")
+}
+func (UnimplementedCardServer) SetCardDeadlineStream(Card_SetCardDeadlineStreamServer) error {
+	return status.Errorf(codes.Unimplemented, "method SetCardDeadlineStream not implemented")
+}
+func (UnimplementedCardServer) SetCardStatus(context.Context, *SetCardStatusRequest) (*SetCardStatusResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetCardStatus not implemented")
+}
+func (UnimplementedCardServer) SetCardStatusStream(Card_SetCardStatusStreamServer) error {
+	return status.Errorf(codes.Unimplemented, "method SetCardStatusStream not implemented")
 }
 func (UnimplementedCardServer) AddCardTag(context.Context, *AddCardTagRequest) (*AddCardTagResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddCardTag not implemented")
@@ -850,6 +956,94 @@ func (x *cardDeleteCardStreamServer) Recv() (*DeleteCardRequest, error) {
 	return m, nil
 }
 
+func _Card_SetCardDeadline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetCardDeadlineRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CardServer).SetCardDeadline(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/card.Card/SetCardDeadline",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CardServer).SetCardDeadline(ctx, req.(*SetCardDeadlineRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Card_SetCardDeadlineStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(CardServer).SetCardDeadlineStream(&cardSetCardDeadlineStreamServer{stream})
+}
+
+type Card_SetCardDeadlineStreamServer interface {
+	SendAndClose(*SetCardDeadlineResponse) error
+	Recv() (*SetCardDeadlineRequest, error)
+	grpc.ServerStream
+}
+
+type cardSetCardDeadlineStreamServer struct {
+	grpc.ServerStream
+}
+
+func (x *cardSetCardDeadlineStreamServer) SendAndClose(m *SetCardDeadlineResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *cardSetCardDeadlineStreamServer) Recv() (*SetCardDeadlineRequest, error) {
+	m := new(SetCardDeadlineRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func _Card_SetCardStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetCardStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CardServer).SetCardStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/card.Card/SetCardStatus",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CardServer).SetCardStatus(ctx, req.(*SetCardStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Card_SetCardStatusStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(CardServer).SetCardStatusStream(&cardSetCardStatusStreamServer{stream})
+}
+
+type Card_SetCardStatusStreamServer interface {
+	SendAndClose(*SetCardStatusResponse) error
+	Recv() (*SetCardStatusRequest, error)
+	grpc.ServerStream
+}
+
+type cardSetCardStatusStreamServer struct {
+	grpc.ServerStream
+}
+
+func (x *cardSetCardStatusStreamServer) SendAndClose(m *SetCardStatusResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *cardSetCardStatusStreamServer) Recv() (*SetCardStatusRequest, error) {
+	m := new(SetCardStatusRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 func _Card_AddCardTag_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddCardTagRequest)
 	if err := dec(in); err != nil {
@@ -1058,6 +1252,14 @@ var Card_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Card_DeleteCard_Handler,
 		},
 		{
+			MethodName: "SetCardDeadline",
+			Handler:    _Card_SetCardDeadline_Handler,
+		},
+		{
+			MethodName: "SetCardStatus",
+			Handler:    _Card_SetCardStatus_Handler,
+		},
+		{
 			MethodName: "AddCardTag",
 			Handler:    _Card_AddCardTag_Handler,
 		},
@@ -1103,6 +1305,16 @@ var Card_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "DeleteCardStream",
 			Handler:       _Card_DeleteCardStream_Handler,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "SetCardDeadlineStream",
+			Handler:       _Card_SetCardDeadlineStream_Handler,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "SetCardStatusStream",
+			Handler:       _Card_SetCardStatusStream_Handler,
 			ClientStreams: true,
 		},
 		{

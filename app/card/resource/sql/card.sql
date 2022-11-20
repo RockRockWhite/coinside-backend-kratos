@@ -6,6 +6,7 @@ CREATE TABLE
     `title`      varchar(255) NOT NULL COMMENT '卡片标题',
     `content`    text         NOT NULL COMMENT '卡片详细内容，以标记语言存储',
     `status`     tinyint      NOT NULL DEFAULT '0' COMMENT '卡片状态, 0：进行中，1：已完成',
+    `deadline`   timestamp    NOT NULL COMMENT '删除时间，软删除支持字段',
     `created_at` timestamp    NOT NULL COMMENT '创建时间',
     `updated_at` timestamp    NULL COMMENT '更新时间',
     `deleted_at` timestamp    NULL COMMENT '删除时间，软删除支持字段',
@@ -47,9 +48,9 @@ CREATE TABLE
 CREATE TABLE
     IF NOT EXISTS `c_card_tag`
 (
-    `id`         int       NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT 'id',
-    `card_id`    int       NULL COMMENT '卡片id',
-    `tag_id`     int       NOT NULL COMMENT '标签id',
+    `id`      int NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT 'id',
+    `card_id` int NULL COMMENT '卡片id',
+    `tag_id`  int NOT NULL COMMENT '标签id',
     INDEX `idx_card_id` (`card_id`),
     INDEX `idx_tag_id` (`tag_id`),
     UNIQUE `idx_card_tag` (`card_id`, `tag_id`)
