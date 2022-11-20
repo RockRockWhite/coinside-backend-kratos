@@ -85,7 +85,7 @@ func (t TeamService) AddTeamStream(server api.Team_AddTeamStreamServer) error {
 	panic("implement me")
 }
 
-func (t TeamService) SetTeamNameTeam(ctx context.Context, req *api.SetTeamNameRequest) (*api.SetTeamNameResponse, error) {
+func (t TeamService) SetTeamName(ctx context.Context, req *api.SetTeamNameRequest) (*api.SetTeamNameResponse, error) {
 	one, err := t.repo.FindOne(ctx, req.Id)
 
 	switch err {
@@ -115,7 +115,7 @@ func (t TeamService) SetTeamNameTeam(ctx context.Context, req *api.SetTeamNameRe
 
 }
 
-func (t TeamService) SetTeamDescriptionTeam(ctx context.Context, req *api.SetTeamDescriptionRequest) (*api.SetTeamDescriptionResponse, error) {
+func (t TeamService) SetTeamDescription(ctx context.Context, req *api.SetTeamDescriptionRequest) (*api.SetTeamDescriptionResponse, error) {
 	one, err := t.repo.FindOne(ctx, req.Id)
 
 	switch err {
@@ -144,7 +144,7 @@ func (t TeamService) SetTeamDescriptionTeam(ctx context.Context, req *api.SetTea
 	}, nil
 
 }
-func (t TeamService) SetTeamAvatarTeam(ctx context.Context, req *api.SetTeamAvatarRequest) (*api.SetTeamAvatarResponse, error) {
+func (t TeamService) SetTeamAvatar(ctx context.Context, req *api.SetTeamAvatarRequest) (*api.SetTeamAvatarResponse, error) {
 	one, err := t.repo.FindOne(ctx, req.Id)
 
 	switch err {
@@ -172,7 +172,7 @@ func (t TeamService) SetTeamAvatarTeam(ctx context.Context, req *api.SetTeamAvat
 	}, nil
 
 }
-func (t TeamService) SetTeamEmailTeam(ctx context.Context, req *api.SetTeamEmailRequest) (*api.SetTeamEmailResponse, error) {
+func (t TeamService) SetTeamEmail(ctx context.Context, req *api.SetTeamEmailRequest) (*api.SetTeamEmailResponse, error) {
 	one, err := t.repo.FindOne(ctx, req.Id)
 
 	switch err {
@@ -200,7 +200,7 @@ func (t TeamService) SetTeamEmailTeam(ctx context.Context, req *api.SetTeamEmail
 	}, nil
 
 }
-func (t TeamService) SetTeamWebsiteTeam(ctx context.Context, req *api.SetTeamWebsiteRequest) (*api.SetTeamWebsiteResponse, error) {
+func (t TeamService) SetTeamWebsite(ctx context.Context, req *api.SetTeamWebsiteRequest) (*api.SetTeamWebsiteResponse, error) {
 	one, err := t.repo.FindOne(ctx, req.Id)
 
 	switch err {
@@ -229,23 +229,23 @@ func (t TeamService) SetTeamWebsiteTeam(ctx context.Context, req *api.SetTeamWeb
 
 }
 
-func (t TeamService) SetTeamNameSteam(team *api.TeamInfo, server api.Team_SetTeamNameSteamServer) error {
+func (t TeamService) SetTeamNameSteam(server api.Team_SetTeamNameSteamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
-func (t TeamService) SetTeamDescriptionSteam(team *api.TeamInfo, server api.Team_SetTeamDescriptionSteamServer) error {
+func (t TeamService) SetTeamDescriptionSteam(server api.Team_SetTeamDescriptionSteamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
-func (t TeamService) SetTeamWebsiteSteam(team *api.TeamInfo, server api.Team_SetTeamWebsiteSteamServer) error {
+func (t TeamService) SetTeamWebsiteSteam(server api.Team_SetTeamWebsiteSteamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
-func (t TeamService) SetTeamAvatarSteam(team *api.TeamInfo, server api.Team_SetTeamAvatarSteamServer) error {
+func (t TeamService) SetTeamAvatarSteam(server api.Team_SetTeamAvatarSteamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
-func (t TeamService) SetTeamEmailSteam(team *api.TeamInfo, server api.Team_SetTeamEmailSteamServer) error {
+func (t TeamService) SetTeamEmailSteam(server api.Team_SetTeamEmailSteamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
