@@ -191,18 +191,16 @@ func (u *CardController) SetDeadline(c *gin.Context) {
 		Deadline: reqDto.Deadline,
 	})
 
-	resDto := dto.ResponseDto{
+	if err != nil {
+		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, &dto.ResponseDto{
 		Code:    dto.CardErrorCode[res.Code].Code,
 		Message: dto.CardErrorCode[res.Code].Message,
 		Data:    nil,
-	}
-
-	if res.Code != card.Code_OK {
-		resDto.Data = err
-	} else {
-	}
-
-	c.JSON(http.StatusOK, resDto)
+	})
 }
 
 func (u *CardController) SetStatus(c *gin.Context) {
@@ -221,18 +219,16 @@ func (u *CardController) SetStatus(c *gin.Context) {
 		Status: reqDto.Status,
 	})
 
-	resDto := dto.ResponseDto{
+	if err != nil {
+		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, &dto.ResponseDto{
 		Code:    dto.CardErrorCode[res.Code].Code,
 		Message: dto.CardErrorCode[res.Code].Message,
 		Data:    nil,
-	}
-
-	if res.Code != card.Code_OK {
-		resDto.Data = err
-	} else {
-	}
-
-	c.JSON(http.StatusOK, resDto)
+	})
 }
 
 func (u *CardController) AddTag(c *gin.Context) {
