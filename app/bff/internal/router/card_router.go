@@ -22,6 +22,8 @@ func CardRouter(r *gin.Engine, controller *controller.CardController) *gin.Engin
 
 		card.PUT(":id/title", middleware.JwtAuth(nil), controller.SetTitle)
 		card.PUT(":id/content", middleware.JwtAuth(nil), controller.SetContent)
+		card.PUT(":id/deadline", middleware.JwtAuth(nil), controller.SetDeadline)
+		card.PUT(":id/status", middleware.JwtAuth(nil), controller.SetStatus)
 		card.PUT(":id/members/:user_id", middleware.JwtAuth(nil), controller.SetMember)
 		card.DELETE(":id/members/:user_id", middleware.JwtAuth(nil), controller.DeleteMember)
 		card.PUT(":id/tags/:tag_content", middleware.JwtAuth(nil), controller.AddTag)
