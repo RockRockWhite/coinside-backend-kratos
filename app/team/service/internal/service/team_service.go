@@ -85,60 +85,167 @@ func (t TeamService) AddTeamStream(server api.Team_AddTeamStreamServer) error {
 	panic("implement me")
 }
 
-func (t TeamService) UpdateTeam(ctx context.Context, team *api.TeamInfo) (*api.UpdateTeamResponse, error) {
-	one, err := t.repo.FindOne(ctx, team.Id)
+func (t TeamService) SetTeamNameTeam(ctx context.Context, req *api.SetTeamNameRequest) (*api.SetTeamNameResponse, error) {
+	one, err := t.repo.FindOne(ctx, req.Id)
 
 	switch err {
 	case nil:
 	case gorm.ErrRecordNotFound:
-		return &api.UpdateTeamResponse{
+		return &api.SetTeamNameResponse{
 			Code: api.Code_ERROR_TEAM_NOTFOUND,
 		}, nil
 	default:
-		return &api.UpdateTeamResponse{
+		return &api.SetTeamNameResponse{
 			Code: api.Code_ERROR_UNKNOWN,
 		}, err
 
 	}
 
-	NewTeam := data.Team{
-		Id:          one.Id,
-		Name:        one.Name,
-		Description: one.Description,
-		Website:     one.Website,
-		Avatar:      one.Avatar,
-		Email:       one.Email,
-	}
+	one.Name = req.Name
 
-	if team.Name != "" && team.Name != NewTeam.Name {
-		NewTeam.Name = team.Name
-	}
-	if team.Description != "" && team.Description != NewTeam.Description {
-		NewTeam.Description = team.Description
-	}
-	if team.Website != "" && team.Website != NewTeam.Website {
-		NewTeam.Website = team.Website
-	}
-	if team.Avatar != "" && team.Avatar != NewTeam.Avatar {
-		NewTeam.Avatar = team.Avatar
-	}
-	if team.Email != "" && team.Email != NewTeam.Email {
-		NewTeam.Email = team.Email
-	}
-
-	if error := t.repo.Update(ctx, &NewTeam); error != nil {
-		return &api.UpdateTeamResponse{
+	if error := t.repo.Update(ctx, one); error != nil {
+		return &api.SetTeamNameResponse{
 			Code: api.Code_ERROR_UNKNOWN,
 		}, error
 	}
 
-	return &api.UpdateTeamResponse{
+	return &api.SetTeamNameResponse{
 		Code: api.Code_OK,
 	}, nil
 
 }
 
-func (t TeamService) UpdateTeamSteam(team *api.TeamInfo, server api.Team_UpdateTeamSteamServer) error {
+func (t TeamService) SetTeamDescriptionTeam(ctx context.Context, req *api.SetTeamDescriptionRequest) (*api.SetTeamDescriptionResponse, error) {
+	one, err := t.repo.FindOne(ctx, req.Id)
+
+	switch err {
+	case nil:
+	case gorm.ErrRecordNotFound:
+		return &api.SetTeamDescriptionResponse{
+			Code: api.Code_ERROR_TEAM_NOTFOUND,
+		}, nil
+	default:
+		return &api.SetTeamDescriptionResponse{
+			Code: api.Code_ERROR_UNKNOWN,
+		}, err
+
+	}
+
+	one.Description = req.Description
+
+	if error := t.repo.Update(ctx, one); error != nil {
+		return &api.SetTeamDescriptionResponse{
+			Code: api.Code_ERROR_UNKNOWN,
+		}, error
+	}
+
+	return &api.SetTeamDescriptionResponse{
+		Code: api.Code_OK,
+	}, nil
+
+}
+func (t TeamService) SetTeamAvatarTeam(ctx context.Context, req *api.SetTeamAvatarRequest) (*api.SetTeamAvatarResponse, error) {
+	one, err := t.repo.FindOne(ctx, req.Id)
+
+	switch err {
+	case nil:
+	case gorm.ErrRecordNotFound:
+		return &api.SetTeamAvatarResponse{
+			Code: api.Code_ERROR_TEAM_NOTFOUND,
+		}, nil
+	default:
+		return &api.SetTeamAvatarResponse{
+			Code: api.Code_ERROR_UNKNOWN,
+		}, err
+
+	}
+	one.Avatar = req.Avatar
+
+	if error := t.repo.Update(ctx, one); error != nil {
+		return &api.SetTeamAvatarResponse{
+			Code: api.Code_ERROR_UNKNOWN,
+		}, error
+	}
+
+	return &api.SetTeamAvatarResponse{
+		Code: api.Code_OK,
+	}, nil
+
+}
+func (t TeamService) SetTeamEmailTeam(ctx context.Context, req *api.SetTeamEmailRequest) (*api.SetTeamEmailResponse, error) {
+	one, err := t.repo.FindOne(ctx, req.Id)
+
+	switch err {
+	case nil:
+	case gorm.ErrRecordNotFound:
+		return &api.SetTeamEmailResponse{
+			Code: api.Code_ERROR_TEAM_NOTFOUND,
+		}, nil
+	default:
+		return &api.SetTeamEmailResponse{
+			Code: api.Code_ERROR_UNKNOWN,
+		}, err
+
+	}
+	one.Email = req.Email
+
+	if error := t.repo.Update(ctx, one); error != nil {
+		return &api.SetTeamEmailResponse{
+			Code: api.Code_ERROR_UNKNOWN,
+		}, error
+	}
+
+	return &api.SetTeamEmailResponse{
+		Code: api.Code_OK,
+	}, nil
+
+}
+func (t TeamService) SetTeamWebsiteTeam(ctx context.Context, req *api.SetTeamWebsiteRequest) (*api.SetTeamWebsiteResponse, error) {
+	one, err := t.repo.FindOne(ctx, req.Id)
+
+	switch err {
+	case nil:
+	case gorm.ErrRecordNotFound:
+		return &api.SetTeamWebsiteResponse{
+			Code: api.Code_ERROR_TEAM_NOTFOUND,
+		}, nil
+	default:
+		return &api.SetTeamWebsiteResponse{
+			Code: api.Code_ERROR_UNKNOWN,
+		}, err
+
+	}
+	one.Website = req.Website
+
+	if error := t.repo.Update(ctx, one); error != nil {
+		return &api.SetTeamWebsiteResponse{
+			Code: api.Code_ERROR_UNKNOWN,
+		}, error
+	}
+
+	return &api.SetTeamWebsiteResponse{
+		Code: api.Code_OK,
+	}, nil
+
+}
+
+func (t TeamService) SetTeamNameSteam(team *api.TeamInfo, server api.Team_SetTeamNameSteamServer) error {
+	//TODO implement me
+	panic("implement me")
+}
+func (t TeamService) SetTeamDescriptionSteam(team *api.TeamInfo, server api.Team_SetTeamDescriptionSteamServer) error {
+	//TODO implement me
+	panic("implement me")
+}
+func (t TeamService) SetTeamWebsiteSteam(team *api.TeamInfo, server api.Team_SetTeamWebsiteSteamServer) error {
+	//TODO implement me
+	panic("implement me")
+}
+func (t TeamService) SetTeamAvatarSteam(team *api.TeamInfo, server api.Team_SetTeamAvatarSteamServer) error {
+	//TODO implement me
+	panic("implement me")
+}
+func (t TeamService) SetTeamEmailSteam(team *api.TeamInfo, server api.Team_SetTeamEmailSteamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
