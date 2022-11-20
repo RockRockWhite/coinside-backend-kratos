@@ -6,6 +6,7 @@ import (
 	"github.com/ljxsteam/coinside-backend-kratos/api/team"
 	"github.com/ljxsteam/coinside-backend-kratos/api/user"
 	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/dto"
+	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/util"
 	"net/http"
 	"strconv"
 )
@@ -102,12 +103,13 @@ func (t *TeamController) GetTeamInfo(c *gin.Context) {
 }
 
 func (t *TeamController) CreateTeam(c *gin.Context) {
-	var req team.TeamInfo
+	var req team.AddTeamRequest
 
 	if err := c.ShouldBind(&req); err != nil {
 		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
 		return
 	}
+	req.CreatorId = c.MustGet("claims").(*util.JwtClaims).Id
 
 	res, err := t.teamClient.AddTeam(context.Background(), &req)
 
