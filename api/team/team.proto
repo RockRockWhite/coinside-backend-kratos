@@ -11,9 +11,8 @@
 // limitations under the License.
 syntax = "proto3";
 
-option go_package = "./;api";
 package team;
-
+option go_package = "./;team";
 
 // The team service definition.
 service Team {
