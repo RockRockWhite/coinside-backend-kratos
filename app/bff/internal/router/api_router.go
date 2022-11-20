@@ -6,7 +6,7 @@ import (
 	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/middleware"
 )
 
-func NewApiRouter(userController *controller.UserController, cardController *controller.CardController) *gin.Engine {
+func NewApiRouter(userController *controller.UserController, cardController *controller.CardController, teamController *controller.TeamController) *gin.Engine {
 	// 初始化Controllers
 	router := gin.Default()
 
@@ -16,7 +16,7 @@ func NewApiRouter(userController *controller.UserController, cardController *con
 	// 配置路由
 	router = UserRouter(router, userController)
 	router = CardRouter(router, cardController)
-
+	router = TeamRouter(router, teamController)
 	//user := router.Group("/users")
 	//{
 	//	user.GET("/:username", controllers.GetUser)

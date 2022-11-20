@@ -10,7 +10,7 @@ import (
 	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/client"
 	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/controller"
 	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/router"
-	"github.com/ljxsteam/coinside-backend-kratos/app/user/service/config"
+	"github.com/ljxsteam/coinside-backend-kratos/pkg/config"
 )
 
 // initRouter init gin router.
