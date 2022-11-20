@@ -2,19 +2,18 @@ package service
 
 import (
 	"context"
-	api "github.com/ljxsteam/coinside-backend-kratos/api/card"
+	"github.com/ljxsteam/coinside-backend-kratos/api/card"
 	"github.com/ljxsteam/coinside-backend-kratos/app/card/service/internal/data"
 	"gorm.io/gorm"
 )
 
 type CardService struct {
-	api.UnimplementedCardServiceServer
+	card.UnimplementedCardServer
 
 	repo data.CardRepo
 }
 
-func (c CardService) CreateCard(ctx context.Context, request *api.CreateCardRequest) (*api.CreateCardResponse, error) {
-
+func (c CardService) CreateCard(ctx context.Context, request *card.CreateCardRequest) (*card.CreateCardResponse, error) {
 	id, err := c.repo.Insert(ctx, &data.Card{
 		TeamId:  request.TeamId,
 		Title:   request.Title,
@@ -23,212 +22,238 @@ func (c CardService) CreateCard(ctx context.Context, request *api.CreateCardRequ
 	})
 
 	if err != nil {
-		return &api.CreateCardResponse{
-			Code: api.Code_ERROR_UNKNOWN,
+		return &card.CreateCardResponse{
+			Code: card.Code_ERROR_UNKNOWN,
 		}, err
 	}
 
-	return &api.CreateCardResponse{Id: id}, nil
+	return &card.CreateCardResponse{Id: id}, nil
 }
 
-func (c CardService) CreateCardStream(server api.CardService_CreateCardStreamServer) error {
+func (c CardService) CreateCardStream(server card.Card_CreateCardStreamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (c CardService) GetCardInfo(ctx context.Context, request *api.GetCardInfoRequest) (*api.GetCardInfoResponse, error) {
-	//one, err := c.repo.FindOne(ctx, request.Id)
-	//
-	//switch err {
-	//case nil:
-	//case gorm.ErrRecordNotFound:
-	//	return &api.GetCardInfoResponse{
-	//		//: nil,
-	//		Code: api.Code_ERROR_CARD_NOTFOUND,
-	//	}, nil
-	//
-	//default:
-	//	return &api.GetCardInfoResponse{
-	//		Code: api.Code_ERROR_UNKNOWN,
-	//	}, err
-	//}
-	//
-	//info := &api.CardInfo{
-	//	Id:      one.Id,
-	//	TeamId:  one.TeamId,
-	//	Title:   one.Title,
-	//	Content: one.Content,
-	//	//todo:这个bug
-	//	Status:    api.CardStatus(one.Status),
-	//	Members:   one.Members,
-	//	Tags:      one.Tags,
-	//	CreatedAt: one.CreatedAt.Format("2006-01-02 15:04:05"),
-	//	UpdatedAt: one.UpdatedAt.Format("2006-01-02 15:04:05"),
-	//}
-	//
-	//return &api.GetCardInfoResponse{
-	//	Card: info,
-	//	Code: api.Code_OK,
-	//}, nil
-
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c CardService) GetCardInfoStream(server api.CardService_GetCardInfoStreamServer) error {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c CardService) GetCardList(ctx context.Context, request *api.GetCardListRequest) (*api.GetCardListResponse, error) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c CardService) GetCardListStream(server api.CardService_GetCardListStreamServer) error {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (c CardService) UpdateCard(ctx context.Context, request *api.UpdateCardRequest) (*api.UpdateCardResponse, error) {
+func (c CardService) GetCardInfo(ctx context.Context, request *card.GetCardInfoRequest) (*card.GetCardInfoResponse, error) {
 	one, err := c.repo.FindOne(ctx, request.Id)
 
 	switch err {
 	case nil:
 	case gorm.ErrRecordNotFound:
-		return &api.UpdateCardResponse{
-			Code: api.Code_ERROR_CARD_NOTFOUND,
+		return &card.GetCardInfoResponse{
+			Code: card.Code_ERROR_CARD_NOTFOUND,
+			Info: nil,
+		}, nil
+
+	default:
+		return &card.GetCardInfoResponse{
+			Code: card.Code_ERROR_UNKNOWN,
+			Info: nil,
+		}, err
+	}
+
+	var members []*card.CardMember
+	for _, m := range one.Members {
+		members = append(members, &card.CardMember{
+			UserId:    m.UserId,
+			IsAdmin:   m.IsAdmin,
+			CreatedAt: m.CreatedAt.Format("2006-01-02 15:04:05"),
+			UpdatedAt: m.UpdatedAt.Format("2006-01-02 15:04:05"),
+		})
+	}
+
+	var tags []*card.CardTag
+	for _, t := range one.Tags {
+		tags = append(tags, &card.CardTag{
+			Content:   t.Content,
+			CreatedAt: t.CreatedAt.Format("2006-01-02 15:04:05"),
+			UpdatedAt: t.UpdatedAt.Format("2006-01-02 15:04:05"),
+		})
+	}
+
+	info := &card.CardInfo{
+		Id:        one.Id,
+		TeamId:    one.TeamId,
+		Title:     one.Title,
+		Content:   one.Content,
+		Status:    one.Status,
+		Members:   members,
+		Tags:      tags,
+		CreatedAt: one.CreatedAt.Format("2006-01-02 15:04:05"),
+		UpdatedAt: one.UpdatedAt.Format("2006-01-02 15:04:05"),
+	}
+
+	return &card.GetCardInfoResponse{
+		Info: info,
+		Code: card.Code_OK,
+	}, nil
+}
+
+func (c CardService) GetCardInfoStream(server card.Card_GetCardInfoStreamServer) error {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c CardService) GetCardInfoList(ctx context.Context, request *card.GetCardInfoListRequest) (*card.GetCardInfoListResponse, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c CardService) GetCardInfoListStream(server card.Card_GetCardInfoListStreamServer) error {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c CardService) UpdateCardTitle(ctx context.Context, request *card.UpdateCardTitleRequest) (*card.UpdateCardTitleResponse, error) {
+	one, err := c.repo.FindOne(ctx, request.Id)
+
+	switch err {
+	case nil:
+	case gorm.ErrRecordNotFound:
+		return &card.UpdateCardTitleResponse{
+			Code: card.Code_ERROR_CARD_NOTFOUND,
 		}, nil
 	default:
-		return &api.UpdateCardResponse{
-			Code: api.Code_ERROR_UNKNOWN,
+		return &card.UpdateCardTitleResponse{
+			Code: card.Code_ERROR_UNKNOWN,
 		}, err
-
 	}
 
-	// todo: to be changed.
+	one.Title = request.Title
 
-	NewCard := data.Card{
-		Id:      one.Id,
-		TeamId:  one.TeamId,
-		Title:   one.Title,
-		Content: one.Content,
-		Status:  one.Status,
+	if err = c.repo.Update(ctx, one); err != nil {
+		return &card.UpdateCardTitleResponse{
+			Code: card.Code_ERROR_UNKNOWN,
+		}, err
 	}
 
-	if request.Title != "" && request.Title != NewCard.Title {
-		NewCard.Title = request.Title
-	}
-	if request.Content != "" && request.Content != NewCard.Content {
-		NewCard.Content = request.Content
-	}
-
-	if request.Status != 0 && request.Status != api.CardStatus(NewCard.Status) {
-		NewCard.Status = data.CardStatus(request.Status)
-	}
-
-	if error := c.repo.Update(ctx, &NewCard); error != nil {
-		return &api.UpdateCardResponse{
-			Code: api.Code_ERROR_UNKNOWN,
-		}, error
-	}
-
-	return &api.UpdateCardResponse{
-		Code: api.Code_OK,
+	return &card.UpdateCardTitleResponse{
+		Code: card.Code_OK,
 	}, nil
-
 }
 
-func (c CardService) UpdateCardStream(server api.CardService_UpdateCardStreamServer) error {
+func (c CardService) UpdateCardTitleStream(server card.Card_UpdateCardTitleStreamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (c CardService) DeleteCard(ctx context.Context, request *api.DeleteCardRequest) (*api.DeleteCardResponse, error) {
+func (c CardService) UpdateCardContent(ctx context.Context, request *card.UpdateCardContentRequest) (*card.UpdateCardContentResponse, error) {
+	one, err := c.repo.FindOne(ctx, request.Id)
+
+	switch err {
+	case nil:
+	case gorm.ErrRecordNotFound:
+		return &card.UpdateCardContentResponse{
+			Code: card.Code_ERROR_CARD_NOTFOUND,
+		}, nil
+	default:
+		return &card.UpdateCardContentResponse{
+			Code: card.Code_ERROR_UNKNOWN,
+		}, err
+	}
+
+	one.Content = request.Content
+
+	if err = c.repo.Update(ctx, one); err != nil {
+		return &card.UpdateCardContentResponse{
+			Code: card.Code_ERROR_UNKNOWN,
+		}, err
+	}
+
+	return &card.UpdateCardContentResponse{
+		Code: card.Code_OK,
+	}, nil
+}
+
+func (c CardService) UpdateCardContentStream(server card.Card_UpdateCardContentStreamServer) error {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c CardService) DeleteCard(ctx context.Context, request *card.DeleteCardRequest) (*card.DeleteCardResponse, error) {
 	if err := c.repo.Delete(ctx, request.Id); err != nil {
-		return &api.DeleteCardResponse{
-			Code: api.Code_ERROR_UNKNOWN,
+		return &card.DeleteCardResponse{
+			Code: card.Code_ERROR_UNKNOWN,
 		}, err
 	}
-	return &api.DeleteCardResponse{
-		Code: api.Code_OK,
+	return &card.DeleteCardResponse{
+		Code: card.Code_OK,
 	}, nil
 }
 
-func (c CardService) DeleteCardStream(server api.CardService_DeleteCardStreamServer) error {
+func (c CardService) DeleteCardStream(server card.Card_DeleteCardStreamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (c CardService) AddCardTag(ctx context.Context, request *api.AddCardTagRequest) (*api.AddCardTagResponse, error) {
-
+func (c CardService) AddCardTag(ctx context.Context, request *card.AddCardTagRequest) (*card.AddCardTagResponse, error) {
 	err := c.repo.InsertTag(ctx, request.Id, request.Content)
 
 	if err != nil {
-		return &api.AddCardTagResponse{
-			Code: api.Code_ERROR_UNKNOWN,
+		return &card.AddCardTagResponse{
+			Code: card.Code_ERROR_UNKNOWN,
 		}, err
 	}
 
-	return &api.AddCardTagResponse{Code: api.Code_OK}, nil
+	return &card.AddCardTagResponse{Code: card.Code_OK}, nil
 }
 
-func (c CardService) AddCardTagStream(server api.CardService_AddCardTagStreamServer) error {
+func (c CardService) AddCardTagStream(server card.Card_AddCardTagStreamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (c CardService) DeleteCardTag(ctx context.Context, request *api.DeleteCardTagRequest) (*api.DeleteCardTagResponse, error) {
+func (c CardService) DeleteCardTag(ctx context.Context, request *card.DeleteCardTagRequest) (*card.DeleteCardTagResponse, error) {
 	if err := c.repo.DeleteTag(ctx, request.Id, request.Content); err != nil {
-		return &api.DeleteCardTagResponse{
-			Code: api.Code_ERROR_UNKNOWN,
+		return &card.DeleteCardTagResponse{
+			Code: card.Code_ERROR_UNKNOWN,
 		}, err
 	}
-	return &api.DeleteCardTagResponse{
-		Code: api.Code_OK,
+	return &card.DeleteCardTagResponse{
+		Code: card.Code_OK,
 	}, nil
 }
 
-func (c CardService) DeleteCardTagStream(server api.CardService_DeleteCardTagStreamServer) error {
+func (c CardService) DeleteCardTagStream(server card.Card_DeleteCardTagStreamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (c CardService) AddCardMember(ctx context.Context, request *api.AddCardMemberRequest) (*api.AddCardMemberResponse, error) {
-
+func (c CardService) SetCardMember(ctx context.Context, request *card.SetCardMemberRequest) (*card.SetCardMemberResponse, error) {
 	err := c.repo.SetMember(ctx, request.Id, request.UserId, request.IsAdmin)
 
 	if err != nil {
-		return &api.AddCardMemberResponse{
-			Code: api.Code_ERROR_UNKNOWN,
+		return &card.SetCardMemberResponse{
+			Code: card.Code_ERROR_UNKNOWN,
 		}, err
 	}
 
-	return &api.AddCardMemberResponse{Code: api.Code_OK}, nil
+	return &card.SetCardMemberResponse{Code: card.Code_OK}, nil
 }
 
-func (c CardService) AddCardMemberStream(server api.CardService_AddCardMemberStreamServer) error {
+func (c CardService) SetCardMemberStream(server card.Card_SetCardMemberStreamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (c CardService) DeleteCardMember(ctx context.Context, request *api.DeleteCardMemberRequest) (*api.DeleteCardMemberResponse, error) {
+func (c CardService) DeleteCardMember(ctx context.Context, request *card.DeleteCardMemberRequest) (*card.DeleteCardMemberResponse, error) {
 	if err := c.repo.DeleteMember(ctx, request.Id, request.UserId); err != nil {
-		return &api.DeleteCardMemberResponse{
-			Code: api.Code_ERROR_UNKNOWN,
+		return &card.DeleteCardMemberResponse{
+			Code: card.Code_ERROR_UNKNOWN,
 		}, err
 	}
-	return &api.DeleteCardMemberResponse{
-		Code: api.Code_OK,
+	return &card.DeleteCardMemberResponse{
+		Code: card.Code_OK,
 	}, nil
 }
 
-func (c CardService) DeleteCardMemberStream(server api.CardService_DeleteCardMemberStreamServer) error {
+func (c CardService) DeleteCardMemberStream(server card.Card_DeleteCardMemberStreamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (c CardService) mustEmbedUnimplementedCardServiceServer() {
+func (c CardService) mustEmbedUnimplementedCardServer() {
 	//TODO implement me
 	panic("implement me")
 }

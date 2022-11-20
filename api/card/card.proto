@@ -1,12 +1,12 @@
 syntax = "proto3";
-package api;
+package card;
 
-option go_package = "./;api";
+option go_package = "./;card";
 
 enum Code {
   OK = 0;
-  ERROR_UNKNOWN = 2;
-  ERROR_CARD_NOTFOUND = 3;
+  ERROR_UNKNOWN = 1;
+  ERROR_CARD_NOTFOUND = 2;
 }
 
 message CreateCardRequest{
@@ -26,7 +26,7 @@ message GetCardInfoRequest{
 
 message GetCardInfoResponse{
   Code code = 1;
-  CardInfo card = 2;
+  CardInfo info = 2;
 }
 
 message CardInfo{
@@ -54,28 +54,34 @@ message CardMember{
 }
 
 message CardTag{
-  uint64 id = 1;
-  string content = 2;
-  string created_at = 3;
-  string updated_at = 4;
+  string content = 1;
+  string created_at = 2;
+  string updated_at = 3;
 }
 
-message GetCardListRequest{
+message GetCardInfoListRequest{
 }
 
-message GetCardListResponse{
+message GetCardInfoListResponse{
   Code code = 1;
   repeated CardInfo cards = 2;
 }
 
-message UpdateCardRequest{
+message UpdateCardTitleRequest{
   uint64 id = 1;
   string title = 2;
-  string content = 3;
-  CardStatus status = 4;
 }
 
-message UpdateCardResponse{
+message UpdateCardTitleResponse{
+  Code code = 1;
+}
+
+message UpdateCardContentRequest{
+  uint64 id = 1;
+  string content = 2;
+}
+
+message UpdateCardContentResponse{
   Code code = 1;
 }
 
@@ -105,13 +111,13 @@ message DeleteCardTagResponse{
   Code code = 1;
 }
 
-message AddCardMemberRequest{
+message SetCardMemberRequest{
   uint64 id = 1;
   uint64 user_id = 2;
   bool is_admin = 3;
 }
 
-message AddCardMemberResponse{
+message SetCardMemberResponse{
   Code code = 1;
 }
 
@@ -124,18 +130,21 @@ message DeleteCardMemberResponse{
   Code code = 1;
 }
 
-service CardService {
+service Card {
   rpc CreateCard(CreateCardRequest) returns (CreateCardResponse);
   rpc CreateCardStream (stream CreateCardRequest) returns (CreateCardResponse);
 
   rpc GetCardInfo(GetCardInfoRequest) returns (GetCardInfoResponse);
   rpc GetCardInfoStream (stream GetCardInfoRequest) returns (GetCardInfoResponse);
 
-  rpc GetCardList(GetCardListRequest) returns (GetCardListResponse);
-  rpc GetCardListStream (stream GetCardListRequest) returns (GetCardListResponse);
+  rpc GetCardInfoList(GetCardInfoListRequest) returns (GetCardInfoListResponse);
+  rpc GetCardInfoListStream (stream GetCardInfoListRequest) returns (GetCardInfoListResponse);
 
-  rpc UpdateCard(UpdateCardRequest) returns (UpdateCardResponse);
-  rpc UpdateCardStream (stream UpdateCardRequest) returns (UpdateCardResponse);
+  rpc UpdateCardTitle(UpdateCardTitleRequest) returns (UpdateCardTitleResponse);
+  rpc UpdateCardTitleStream (stream UpdateCardTitleRequest) returns (UpdateCardTitleResponse);
+
+  rpc UpdateCardContent(UpdateCardContentRequest) returns (UpdateCardContentResponse);
+  rpc UpdateCardContentStream (stream UpdateCardContentRequest) returns (UpdateCardContentResponse);
 
   rpc DeleteCard(DeleteCardRequest) returns (DeleteCardResponse);
   rpc DeleteCardStream (stream DeleteCardRequest) returns (DeleteCardResponse);
@@ -146,8 +155,8 @@ service CardService {
   rpc DeleteCardTag(DeleteCardTagRequest) returns (DeleteCardTagResponse);
   rpc DeleteCardTagStream (stream DeleteCardTagRequest) returns (DeleteCardResponse);
 
-  rpc AddCardMember(AddCardMemberRequest) returns (AddCardMemberResponse);
-  rpc AddCardMemberStream (stream AddCardMemberRequest) returns (AddCardMemberResponse);
+  rpc SetCardMember(SetCardMemberRequest) returns (SetCardMemberResponse);
+  rpc SetCardMemberStream (stream SetCardMemberRequest) returns (SetCardMemberResponse);
 
   rpc DeleteCardMember(DeleteCardMemberRequest) returns (DeleteCardMemberResponse);
   rpc DeleteCardMemberStream (stream DeleteCardMemberRequest) returns (DeleteCardMemberResponse);

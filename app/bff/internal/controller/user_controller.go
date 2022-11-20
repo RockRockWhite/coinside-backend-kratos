@@ -3,7 +3,7 @@ package controller
 import (
 	"context"
 	"github.com/gin-gonic/gin"
-	api "github.com/ljxsteam/coinside-backend-kratos/api/user"
+	"github.com/ljxsteam/coinside-backend-kratos/api/user"
 	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/dto"
 	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/util"
 	"net/http"
@@ -11,13 +11,13 @@ import (
 )
 
 type UserController struct {
-	client api.UserClient
+	client user.UserClient
 }
 
 func (u *UserController) GetUserInfo(c *gin.Context) {
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 
-	res, err := u.client.GetUserInfo(context.Background(), &api.GetUserInfoRequest{Id: id})
+	res, err := u.client.GetUserInfo(context.Background(), &user.GetUserInfoRequest{Id: id})
 
 	resDto := dto.ResponseDto{
 		Code:    dto.UserErrorCode[res.Code].Code,
@@ -25,7 +25,7 @@ func (u *UserController) GetUserInfo(c *gin.Context) {
 		Data:    nil,
 	}
 
-	if res.Code != api.Code_OK {
+	if res.Code != user.Code_OK {
 		resDto.Data = err
 	} else {
 		resDto.Data = res.Info
@@ -35,7 +35,7 @@ func (u *UserController) GetUserInfo(c *gin.Context) {
 }
 
 func (u *UserController) CreateUser(c *gin.Context) {
-	var req api.CreateUserRequest
+	var req user.CreateUserRequest
 
 	if err := c.ShouldBind(&req); err != nil {
 		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
@@ -50,7 +50,7 @@ func (u *UserController) CreateUser(c *gin.Context) {
 		Data:    nil,
 	}
 
-	if res.Code != api.Code_OK {
+	if res.Code != user.Code_OK {
 		resDto.Data = err
 	} else {
 		resDto.Data = struct {
@@ -66,7 +66,7 @@ func (u *UserController) CreateUser(c *gin.Context) {
 func (u *UserController) GetUserId(c *gin.Context) {
 	nickname := c.Query("nickname")
 	if nickname != "" {
-		res, err := u.client.GetUserInfoByNickname(context.Background(), &api.GetUserInfoByNicknameRequest{Nickname: nickname})
+		res, err := u.client.GetUserInfoByNickname(context.Background(), &user.GetUserInfoByNicknameRequest{Nickname: nickname})
 
 		resDto := dto.ResponseDto{
 			Code:    dto.UserErrorCode[res.Code].Code,
@@ -74,7 +74,7 @@ func (u *UserController) GetUserId(c *gin.Context) {
 			Data:    nil,
 		}
 
-		if res.Code != api.Code_OK {
+		if res.Code != user.Code_OK {
 			resDto.Data = err
 		} else {
 			resDto.Data = struct {
@@ -90,7 +90,7 @@ func (u *UserController) GetUserId(c *gin.Context) {
 
 	email := c.Query("email")
 	if email != "" {
-		res, err := u.client.GetUserInfoByEmail(context.Background(), &api.GetUserInfoByEmailRequest{Email: email})
+		res, err := u.client.GetUserInfoByEmail(context.Background(), &user.GetUserInfoByEmailRequest{Email: email})
 
 		resDto := dto.ResponseDto{
 			Code:    dto.UserErrorCode[res.Code].Code,
@@ -98,7 +98,7 @@ func (u *UserController) GetUserId(c *gin.Context) {
 			Data:    nil,
 		}
 
-		if res.Code != api.Code_OK {
+		if res.Code != user.Code_OK {
 			resDto.Data = err
 		} else {
 			resDto.Data = struct {
@@ -114,7 +114,7 @@ func (u *UserController) GetUserId(c *gin.Context) {
 
 	mobile := c.Query("mobile")
 	if mobile != "" {
-		res, err := u.client.GetUserInfoByMobile(context.Background(), &api.GetUserInfoByMobileRequest{Mobile: mobile})
+		res, err := u.client.GetUserInfoByMobile(context.Background(), &user.GetUserInfoByMobileRequest{Mobile: mobile})
 
 		resDto := dto.ResponseDto{
 			Code:    dto.UserErrorCode[res.Code].Code,
@@ -122,7 +122,7 @@ func (u *UserController) GetUserId(c *gin.Context) {
 			Data:    nil,
 		}
 
-		if res.Code != api.Code_OK {
+		if res.Code != user.Code_OK {
 			resDto.Data = err
 		} else {
 			resDto.Data = struct {
@@ -151,7 +151,7 @@ func (u *UserController) SetFullname(c *gin.Context) {
 		return
 	}
 
-	res, err := u.client.SetFullname(context.Background(), &api.SetFullnameRequest{
+	res, err := u.client.SetFullname(context.Background(), &user.SetFullnameRequest{
 		Id:       id,
 		Fullname: reqDto.Fullname,
 	})
@@ -162,7 +162,7 @@ func (u *UserController) SetFullname(c *gin.Context) {
 		Data:    nil,
 	}
 
-	if res.Code != api.Code_OK {
+	if res.Code != user.Code_OK {
 		resDto.Data = err
 	} else {
 	}
@@ -181,7 +181,7 @@ func (u *UserController) SetAvatar(c *gin.Context) {
 		return
 	}
 
-	res, err := u.client.SetAvatar(context.Background(), &api.SetAvatarRequest{
+	res, err := u.client.SetAvatar(context.Background(), &user.SetAvatarRequest{
 		Id:     id,
 		Avatar: reqDto.Avatar,
 	})
@@ -192,7 +192,7 @@ func (u *UserController) SetAvatar(c *gin.Context) {
 		Data:    nil,
 	}
 
-	if res.Code != api.Code_OK {
+	if res.Code != user.Code_OK {
 		resDto.Data = err
 	} else {
 	}
@@ -211,7 +211,7 @@ func (u *UserController) SetConfig(c *gin.Context) {
 		return
 	}
 
-	res, err := u.client.SetConfig(context.Background(), &api.SetConfigRequest{
+	res, err := u.client.SetConfig(context.Background(), &user.SetConfigRequest{
 		Id:     id,
 		Config: reqDto.Config,
 	})
@@ -222,7 +222,7 @@ func (u *UserController) SetConfig(c *gin.Context) {
 		Data:    nil,
 	}
 
-	if res.Code != api.Code_OK {
+	if res.Code != user.Code_OK {
 		resDto.Data = err
 	} else {
 	}
@@ -242,7 +242,7 @@ func (u *UserController) SetEmail(c *gin.Context) {
 		return
 	}
 
-	res, err := u.client.SetEmail(context.Background(), &api.SetEmailRequest{
+	res, err := u.client.SetEmail(context.Background(), &user.SetEmailRequest{
 		Id:         id,
 		Email:      reqDto.Email,
 		VerifyCode: reqDto.VerifyCode,
@@ -254,7 +254,7 @@ func (u *UserController) SetEmail(c *gin.Context) {
 		Data:    nil,
 	}
 
-	if res.Code != api.Code_OK {
+	if res.Code != user.Code_OK {
 		resDto.Data = err
 	} else {
 	}
@@ -274,7 +274,7 @@ func (u *UserController) SetMobile(c *gin.Context) {
 		return
 	}
 
-	res, err := u.client.SetMobile(context.Background(), &api.SetMobileRequest{
+	res, err := u.client.SetMobile(context.Background(), &user.SetMobileRequest{
 		Id:         id,
 		Mobile:     reqDto.Mobile,
 		VerifyCode: reqDto.VerifyCode,
@@ -286,7 +286,7 @@ func (u *UserController) SetMobile(c *gin.Context) {
 		Data:    nil,
 	}
 
-	if res.Code != api.Code_OK {
+	if res.Code != user.Code_OK {
 		resDto.Data = err
 	} else {
 	}
@@ -300,7 +300,7 @@ func (u *UserController) SetPassword(c *gin.Context) {
 func (u *UserController) DeleteUser(c *gin.Context) {
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 
-	res, err := u.client.DeleteUser(context.Background(), &api.DeleteUserRequest{
+	res, err := u.client.DeleteUser(context.Background(), &user.DeleteUserRequest{
 		Id: id,
 	})
 
@@ -310,7 +310,7 @@ func (u *UserController) DeleteUser(c *gin.Context) {
 		Data:    nil,
 	}
 
-	if res.Code != api.Code_OK {
+	if res.Code != user.Code_OK {
 		resDto.Data = err
 	} else {
 	}
@@ -330,7 +330,7 @@ func (u *UserController) Login(c *gin.Context) {
 	}
 
 	// rpc请求登陆
-	res, err := u.client.Login(context.Background(), &api.LoginRequest{
+	res, err := u.client.Login(context.Background(), &user.LoginRequest{
 		Id:       reqDto.Id,
 		Password: reqDto.Password,
 	})
@@ -341,7 +341,7 @@ func (u *UserController) Login(c *gin.Context) {
 		Data:    nil,
 	}
 
-	if res.Code != api.Code_OK {
+	if res.Code != user.Code_OK {
 		resDto.Data = err
 	} else {
 		// 登陆成功，派发token
@@ -354,8 +354,8 @@ func (u *UserController) Login(c *gin.Context) {
 				Token: token,
 			}
 		} else {
-			resDto.Code = dto.UserErrorCode[api.Code_ERROR_UNKNOWN].Code
-			resDto.Message = dto.UserErrorCode[api.Code_ERROR_UNKNOWN].Message
+			resDto.Code = dto.UserErrorCode[user.Code_ERROR_UNKNOWN].Code
+			resDto.Message = dto.UserErrorCode[user.Code_ERROR_UNKNOWN].Message
 			resDto.Data = err
 		}
 	}
@@ -363,6 +363,6 @@ func (u *UserController) Login(c *gin.Context) {
 	c.JSON(http.StatusOK, resDto)
 }
 
-func NewUserController(client api.UserClient) *UserController {
+func NewUserController(client user.UserClient) *UserController {
 	return &UserController{client: client}
 }

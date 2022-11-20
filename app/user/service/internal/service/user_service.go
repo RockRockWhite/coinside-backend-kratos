@@ -2,38 +2,39 @@ package service
 
 import (
 	"context"
-	api "github.com/ljxsteam/coinside-backend-kratos/api/user"
+	"github.com/ljxsteam/coinside-backend-kratos/api/user"
 	"github.com/ljxsteam/coinside-backend-kratos/app/user/service/internal/data"
-	utils "github.com/ljxsteam/coinside-backend-kratos/pkg/util"
+	"github.com/ljxsteam/coinside-backend-kratos/pkg/util"
 	"gorm.io/gorm"
+	"io"
 	"time"
 )
 
 type UserService struct {
-	api.UnimplementedUserServer
+	user.UnimplementedUserServer
 
 	repo data.UserRepo
 }
 
-func (u UserService) CreateUser(ctx context.Context, request *api.CreateUserRequest) (*api.CreateUserResponse, error) {
-	salt := utils.GenerateSalt()
-	passwordHash := utils.EncryptPasswordHash(request.Password, salt)
+func (u UserService) CreateUser(ctx context.Context, request *user.CreateUserRequest) (*user.CreateUserResponse, error) {
+	salt := util.GenerateSalt()
+	passwordHash := util.EncryptPasswordHash(request.Password, salt)
 
 	if _, err := u.repo.FindOneByNickname(ctx, request.Nickname); err != gorm.ErrRecordNotFound {
-		return &api.CreateUserResponse{
-			Code: api.Code_ERROR_USER_NICKNAME_EXISTS,
+		return &user.CreateUserResponse{
+			Code: user.Code_ERROR_USER_NICKNAME_EXISTS,
 		}, nil
 	}
 
 	if _, err := u.repo.FindOneByEmail(ctx, request.Email); err != gorm.ErrRecordNotFound {
-		return &api.CreateUserResponse{
-			Code: api.Code_ERROR_USER_EMAIL_EXISTS,
+		return &user.CreateUserResponse{
+			Code: user.Code_ERROR_USER_EMAIL_EXISTS,
 		}, nil
 	}
 
 	if _, err := u.repo.FindOneByMobile(ctx, request.Mobile); err != gorm.ErrRecordNotFound {
-		return &api.CreateUserResponse{
-			Code: api.Code_ERROR_USER_MOBILE_EXISTS,
+		return &user.CreateUserResponse{
+			Code: user.Code_ERROR_USER_MOBILE_EXISTS,
 		}, nil
 	}
 
@@ -46,37 +47,37 @@ func (u UserService) CreateUser(ctx context.Context, request *api.CreateUserRequ
 	})
 
 	if err != nil {
-		return &api.CreateUserResponse{
-			Code: api.Code_ERROR_UNKNOWN,
+		return &user.CreateUserResponse{
+			Code: user.Code_ERROR_UNKNOWN,
 		}, err
 	}
 
-	return &api.CreateUserResponse{Id: id}, nil
+	return &user.CreateUserResponse{Id: id}, nil
 }
 
-func (u UserService) CreateUserStream(server api.User_CreateUserStreamServer) error {
+func (u UserService) CreateUserStream(server user.User_CreateUserStreamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (u UserService) GetUserInfo(ctx context.Context, request *api.GetUserInfoRequest) (*api.GetUserInfoResponse, error) {
+func (u UserService) GetUserInfo(ctx context.Context, request *user.GetUserInfoRequest) (*user.GetUserInfoResponse, error) {
 	one, err := u.repo.FindOne(ctx, request.Id)
 
 	switch err {
 	case nil:
 	case gorm.ErrRecordNotFound:
-		return &api.GetUserInfoResponse{
+		return &user.GetUserInfoResponse{
 			Info: nil,
-			Code: api.Code_ERROR_USER_NOTFOUND,
+			Code: user.Code_ERROR_USER_NOTFOUND,
 		}, nil
 
 	default:
-		return &api.GetUserInfoResponse{
-			Code: api.Code_ERROR_UNKNOWN,
+		return &user.GetUserInfoResponse{
+			Code: user.Code_ERROR_UNKNOWN,
 		}, err
 	}
 
-	info := &api.UserInfo{
+	info := &user.UserInfo{
 		Id:            one.Id,
 		Nickname:      one.Nickname,
 		Fullname:      one.Fullname,
@@ -90,35 +91,88 @@ func (u UserService) GetUserInfo(ctx context.Context, request *api.GetUserInfoRe
 		UpdatedAt:     one.UpdatedAt.Format("2006-01-02 15:04:05"),
 	}
 
-	return &api.GetUserInfoResponse{
+	return &user.GetUserInfoResponse{
 		Info: info,
-		Code: api.Code_OK,
+		Code: user.Code_OK,
 	}, nil
 }
 
-func (u UserService) GetUserInfoStream(server api.User_GetUserInfoStreamServer) error {
-	//TODO implement me
-	panic("implement me")
+func (u UserService) GetUserInfoStream(server user.User_GetUserInfoStreamServer) error {
+	for {
+		// todo： 还可以优化成异步的
+		// 从客户端接收数据
+		req, err := server.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return err
+		}
+
+		// 从数据库中查询数据
+		one, err := u.repo.FindOne(context.Background(), req.Id)
+
+		var res *user.GetUserInfoResponse
+
+		switch err {
+		case nil:
+			info := &user.UserInfo{
+				Id:            one.Id,
+				Nickname:      one.Nickname,
+				Fullname:      one.Fullname,
+				Avatar:        one.Avatar,
+				Email:         one.Email,
+				EmailVerified: one.EmailVerified,
+				Mobile:        one.Mobile,
+				Config:        one.Config,
+				LoginedAt:     one.LoginedAt.Format("2006-01-02 15:04:05"),
+				CreatedAt:     one.CreatedAt.Format("2006-01-02 15:04:05"),
+				UpdatedAt:     one.UpdatedAt.Format("2006-01-02 15:04:05"),
+			}
+
+			res = &user.GetUserInfoResponse{
+				Info: info,
+				Code: user.Code_OK,
+			}
+
+		case gorm.ErrRecordNotFound:
+			res = &user.GetUserInfoResponse{
+				Info: nil,
+				Code: user.Code_ERROR_USER_NOTFOUND,
+			}
+		default:
+			res = &user.GetUserInfoResponse{
+				Code: user.Code_ERROR_UNKNOWN,
+			}
+		}
+
+		// 将数据回复给客户端
+		err = server.Send(res)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
-func (u UserService) GetUserInfoByNickname(ctx context.Context, request *api.GetUserInfoByNicknameRequest) (*api.GetUserInfoResponse, error) {
+func (u UserService) GetUserInfoByNickname(ctx context.Context, request *user.GetUserInfoByNicknameRequest) (*user.GetUserInfoResponse, error) {
 	one, err := u.repo.FindOneByNickname(ctx, request.Nickname)
 
 	switch err {
 	case nil:
 	case gorm.ErrRecordNotFound:
-		return &api.GetUserInfoResponse{
+		return &user.GetUserInfoResponse{
 			Info: nil,
-			Code: api.Code_ERROR_USER_NOTFOUND,
+			Code: user.Code_ERROR_USER_NOTFOUND,
 		}, nil
 
 	default:
-		return &api.GetUserInfoResponse{
-			Code: api.Code_ERROR_UNKNOWN,
+		return &user.GetUserInfoResponse{
+			Code: user.Code_ERROR_UNKNOWN,
 		}, err
 	}
 
-	info := &api.UserInfo{
+	info := &user.UserInfo{
 		Id:            one.Id,
 		Nickname:      one.Nickname,
 		Fullname:      one.Fullname,
@@ -132,36 +186,36 @@ func (u UserService) GetUserInfoByNickname(ctx context.Context, request *api.Get
 		UpdatedAt:     one.UpdatedAt.Format("2006-01-02 15:04:05"),
 	}
 
-	return &api.GetUserInfoResponse{
+	return &user.GetUserInfoResponse{
 		Info: info,
-		Code: api.Code_OK,
+		Code: user.Code_OK,
 	}, nil
 }
 
-func (u UserService) GetUserInfoByNicknameStream(server api.User_GetUserInfoByNicknameStreamServer) error {
+func (u UserService) GetUserInfoByNicknameStream(server user.User_GetUserInfoByNicknameStreamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (u UserService) GetUserInfoByEmail(ctx context.Context, request *api.GetUserInfoByEmailRequest) (*api.GetUserInfoResponse, error) {
+func (u UserService) GetUserInfoByEmail(ctx context.Context, request *user.GetUserInfoByEmailRequest) (*user.GetUserInfoResponse, error) {
 
 	one, err := u.repo.FindOneByEmail(ctx, request.Email)
 
 	switch err {
 	case nil:
 	case gorm.ErrRecordNotFound:
-		return &api.GetUserInfoResponse{
+		return &user.GetUserInfoResponse{
 			Info: nil,
-			Code: api.Code_ERROR_USER_NOTFOUND,
+			Code: user.Code_ERROR_USER_NOTFOUND,
 		}, nil
 
 	default:
-		return &api.GetUserInfoResponse{
-			Code: api.Code_ERROR_UNKNOWN,
+		return &user.GetUserInfoResponse{
+			Code: user.Code_ERROR_UNKNOWN,
 		}, err
 	}
 
-	info := &api.UserInfo{
+	info := &user.UserInfo{
 		Id:            one.Id,
 		Nickname:      one.Nickname,
 		Fullname:      one.Fullname,
@@ -175,35 +229,35 @@ func (u UserService) GetUserInfoByEmail(ctx context.Context, request *api.GetUse
 		UpdatedAt:     one.UpdatedAt.Format("2006-01-02 15:04:05"),
 	}
 
-	return &api.GetUserInfoResponse{
+	return &user.GetUserInfoResponse{
 		Info: info,
-		Code: api.Code_OK,
+		Code: user.Code_OK,
 	}, nil
 }
 
-func (u UserService) GetUserInfoByEmailStream(server api.User_GetUserInfoByEmailStreamServer) error {
+func (u UserService) GetUserInfoByEmailStream(server user.User_GetUserInfoByEmailStreamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (u UserService) GetUserInfoByMobile(ctx context.Context, request *api.GetUserInfoByMobileRequest) (*api.GetUserInfoResponse, error) {
+func (u UserService) GetUserInfoByMobile(ctx context.Context, request *user.GetUserInfoByMobileRequest) (*user.GetUserInfoResponse, error) {
 	one, err := u.repo.FindOneByMobile(ctx, request.Mobile)
 
 	switch err {
 	case nil:
 	case gorm.ErrRecordNotFound:
-		return &api.GetUserInfoResponse{
+		return &user.GetUserInfoResponse{
 			Info: nil,
-			Code: api.Code_ERROR_USER_NOTFOUND,
+			Code: user.Code_ERROR_USER_NOTFOUND,
 		}, nil
 
 	default:
-		return &api.GetUserInfoResponse{
-			Code: api.Code_ERROR_UNKNOWN,
+		return &user.GetUserInfoResponse{
+			Code: user.Code_ERROR_UNKNOWN,
 		}, err
 	}
 
-	info := &api.UserInfo{
+	info := &user.UserInfo{
 		Id:            one.Id,
 		Nickname:      one.Nickname,
 		Fullname:      one.Fullname,
@@ -217,242 +271,242 @@ func (u UserService) GetUserInfoByMobile(ctx context.Context, request *api.GetUs
 		UpdatedAt:     one.UpdatedAt.Format("2006-01-02 15:04:05"),
 	}
 
-	return &api.GetUserInfoResponse{
+	return &user.GetUserInfoResponse{
 		Info: info,
-		Code: api.Code_OK,
+		Code: user.Code_OK,
 	}, nil
 }
 
-func (u UserService) GetUserInfoByMobileStream(server api.User_GetUserInfoByMobileStreamServer) error {
+func (u UserService) GetUserInfoByMobileStream(server user.User_GetUserInfoByMobileStreamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (u UserService) SetFullname(ctx context.Context, request *api.SetFullnameRequest) (*api.SetFullnameResponse, error) {
+func (u UserService) SetFullname(ctx context.Context, request *user.SetFullnameRequest) (*user.SetFullnameResponse, error) {
 
 	one, err := u.repo.FindOne(ctx, request.Id)
 	switch err {
 	case nil:
 	case gorm.ErrRecordNotFound:
-		return &api.SetFullnameResponse{
-			Code: api.Code_ERROR_USER_NOTFOUND,
+		return &user.SetFullnameResponse{
+			Code: user.Code_ERROR_USER_NOTFOUND,
 		}, nil
 
 	default:
-		return &api.SetFullnameResponse{
-			Code: api.Code_ERROR_UNKNOWN,
+		return &user.SetFullnameResponse{
+			Code: user.Code_ERROR_UNKNOWN,
 		}, err
 	}
 
 	one.Fullname = request.Fullname
 	if err = u.repo.Update(ctx, one); err != nil {
-		return &api.SetFullnameResponse{
-			Code: api.Code_ERROR_UNKNOWN,
+		return &user.SetFullnameResponse{
+			Code: user.Code_ERROR_UNKNOWN,
 		}, err
 	}
 
-	return &api.SetFullnameResponse{
-		Code: api.Code_OK,
+	return &user.SetFullnameResponse{
+		Code: user.Code_OK,
 	}, nil
 }
 
-func (u UserService) SetFullnameStream(server api.User_SetFullnameStreamServer) error {
+func (u UserService) SetFullnameStream(server user.User_SetFullnameStreamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (u UserService) SetAvatar(ctx context.Context, request *api.SetAvatarRequest) (*api.SetAvatarResponse, error) {
+func (u UserService) SetAvatar(ctx context.Context, request *user.SetAvatarRequest) (*user.SetAvatarResponse, error) {
 	one, err := u.repo.FindOne(ctx, request.Id)
 
 	switch err {
 	case nil:
 	case gorm.ErrRecordNotFound:
-		return &api.SetAvatarResponse{
-			Code: api.Code_ERROR_USER_NOTFOUND,
+		return &user.SetAvatarResponse{
+			Code: user.Code_ERROR_USER_NOTFOUND,
 		}, nil
 
 	default:
-		return &api.SetAvatarResponse{
-			Code: api.Code_ERROR_UNKNOWN,
+		return &user.SetAvatarResponse{
+			Code: user.Code_ERROR_UNKNOWN,
 		}, err
 	}
 
 	one.Avatar = request.Avatar
 	if err = u.repo.Update(ctx, one); err != nil {
-		return &api.SetAvatarResponse{
-			Code: api.Code_ERROR_UNKNOWN,
+		return &user.SetAvatarResponse{
+			Code: user.Code_ERROR_UNKNOWN,
 		}, err
 	}
-	return &api.SetAvatarResponse{
-		Code: api.Code_OK,
+	return &user.SetAvatarResponse{
+		Code: user.Code_OK,
 	}, nil
 }
 
-func (u UserService) SetAvatarStream(server api.User_SetAvatarStreamServer) error {
+func (u UserService) SetAvatarStream(server user.User_SetAvatarStreamServer) error {
 
 	//TODO implement me
 	panic("implement me")
 }
 
-func (u UserService) SetConfig(ctx context.Context, request *api.SetConfigRequest) (*api.SetConfigResponse, error) {
+func (u UserService) SetConfig(ctx context.Context, request *user.SetConfigRequest) (*user.SetConfigResponse, error) {
 	one, err := u.repo.FindOne(ctx, request.Id)
 
 	switch err {
 	case nil:
 	case gorm.ErrRecordNotFound:
-		return &api.SetConfigResponse{
-			Code: api.Code_ERROR_USER_NOTFOUND,
+		return &user.SetConfigResponse{
+			Code: user.Code_ERROR_USER_NOTFOUND,
 		}, nil
 
 	default:
-		return &api.SetConfigResponse{
-			Code: api.Code_ERROR_UNKNOWN,
+		return &user.SetConfigResponse{
+			Code: user.Code_ERROR_UNKNOWN,
 		}, err
 	}
 
 	one.Config = request.Config
 	if err = u.repo.Update(ctx, one); err != nil {
-		return &api.SetConfigResponse{
-			Code: api.Code_ERROR_UNKNOWN,
+		return &user.SetConfigResponse{
+			Code: user.Code_ERROR_UNKNOWN,
 		}, err
 	}
-	return &api.SetConfigResponse{
-		Code: api.Code_OK,
+	return &user.SetConfigResponse{
+		Code: user.Code_OK,
 	}, nil
 }
 
-func (u UserService) SetConfigStream(server api.User_SetConfigStreamServer) error {
+func (u UserService) SetConfigStream(server user.User_SetConfigStreamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (u UserService) SetEmail(ctx context.Context, request *api.SetEmailRequest) (*api.SetEmailResponse, error) {
+func (u UserService) SetEmail(ctx context.Context, request *user.SetEmailRequest) (*user.SetEmailResponse, error) {
 	one, err := u.repo.FindOne(ctx, request.Id)
 	switch err {
 	case nil:
 	case gorm.ErrRecordNotFound:
-		return &api.SetEmailResponse{
-			Code: api.Code_ERROR_USER_NOTFOUND,
+		return &user.SetEmailResponse{
+			Code: user.Code_ERROR_USER_NOTFOUND,
 		}, nil
 
 	default:
-		return &api.SetEmailResponse{
-			Code: api.Code_ERROR_UNKNOWN,
+		return &user.SetEmailResponse{
+			Code: user.Code_ERROR_UNKNOWN,
 		}, err
 	}
 
 	// todo: check verify_code
 	verifyCode := "123456"
 	if request.VerifyCode != verifyCode {
-		return &api.SetEmailResponse{
-			Code: api.Code_ERROR_VERIFY_CODE,
+		return &user.SetEmailResponse{
+			Code: user.Code_ERROR_VERIFY_CODE,
 		}, nil
 	}
 
 	// check email is exists
 	if _, err = u.repo.FindOneByEmail(ctx, request.Email); err != gorm.ErrRecordNotFound {
-		return &api.SetEmailResponse{
-			Code: api.Code_ERROR_USER_EMAIL_EXISTS,
+		return &user.SetEmailResponse{
+			Code: user.Code_ERROR_USER_EMAIL_EXISTS,
 		}, nil
 	}
 
 	one.Email = request.Email
 	if err = u.repo.Update(ctx, one); err != nil {
-		return &api.SetEmailResponse{
-			Code: api.Code_ERROR_UNKNOWN,
+		return &user.SetEmailResponse{
+			Code: user.Code_ERROR_UNKNOWN,
 		}, err
 	}
-	return &api.SetEmailResponse{
-		Code: api.Code_OK,
+	return &user.SetEmailResponse{
+		Code: user.Code_OK,
 	}, nil
 }
 
-func (u UserService) SetEmailStream(server api.User_SetEmailStreamServer) error {
+func (u UserService) SetEmailStream(server user.User_SetEmailStreamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (u UserService) SetMobile(ctx context.Context, request *api.SetMobileRequest) (*api.SetMobileResponse, error) {
+func (u UserService) SetMobile(ctx context.Context, request *user.SetMobileRequest) (*user.SetMobileResponse, error) {
 	one, err := u.repo.FindOne(ctx, request.Id)
 	switch err {
 	case nil:
 	case gorm.ErrRecordNotFound:
-		return &api.SetMobileResponse{
-			Code: api.Code_ERROR_USER_NOTFOUND,
+		return &user.SetMobileResponse{
+			Code: user.Code_ERROR_USER_NOTFOUND,
 		}, nil
 
 	default:
-		return &api.SetMobileResponse{
-			Code: api.Code_ERROR_UNKNOWN,
+		return &user.SetMobileResponse{
+			Code: user.Code_ERROR_UNKNOWN,
 		}, err
 	}
 
 	// todo: check verify_code
 	verifyCode := "123456"
 	if request.VerifyCode != verifyCode {
-		return &api.SetMobileResponse{
-			Code: api.Code_ERROR_VERIFY_CODE,
+		return &user.SetMobileResponse{
+			Code: user.Code_ERROR_VERIFY_CODE,
 		}, nil
 	}
 
 	// check mobile is exists
 	if _, err = u.repo.FindOneByMobile(ctx, request.Mobile); err != gorm.ErrRecordNotFound {
-		return &api.SetMobileResponse{
-			Code: api.Code_ERROR_USER_MOBILE_EXISTS,
+		return &user.SetMobileResponse{
+			Code: user.Code_ERROR_USER_MOBILE_EXISTS,
 		}, nil
 	}
 
 	one.Mobile = request.Mobile
 	if err = u.repo.Update(ctx, one); err != nil {
-		return &api.SetMobileResponse{
-			Code: api.Code_ERROR_UNKNOWN,
+		return &user.SetMobileResponse{
+			Code: user.Code_ERROR_UNKNOWN,
 		}, err
 	}
-	return &api.SetMobileResponse{
-		Code: api.Code_OK,
+	return &user.SetMobileResponse{
+		Code: user.Code_OK,
 	}, nil
 }
 
-func (u UserService) SetMobileStream(server api.User_SetMobileStreamServer) error {
+func (u UserService) SetMobileStream(server user.User_SetMobileStreamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (u UserService) DeleteUser(ctx context.Context, request *api.DeleteUserRequest) (*api.DeleteUserResponse, error) {
+func (u UserService) DeleteUser(ctx context.Context, request *user.DeleteUserRequest) (*user.DeleteUserResponse, error) {
 	if err := u.repo.Delete(ctx, request.Id); err != nil {
-		return &api.DeleteUserResponse{
-			Code: api.Code_ERROR_UNKNOWN,
+		return &user.DeleteUserResponse{
+			Code: user.Code_ERROR_UNKNOWN,
 		}, err
 	}
-	return &api.DeleteUserResponse{
-		Code: api.Code_OK,
+	return &user.DeleteUserResponse{
+		Code: user.Code_OK,
 	}, nil
 }
 
-func (u UserService) DeleteUserStream(server api.User_DeleteUserStreamServer) error {
+func (u UserService) DeleteUserStream(server user.User_DeleteUserStreamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (u UserService) Login(ctx context.Context, request *api.LoginRequest) (*api.LoginResponse, error) {
+func (u UserService) Login(ctx context.Context, request *user.LoginRequest) (*user.LoginResponse, error) {
 	one, err := u.repo.FindOne(ctx, request.Id)
 	switch err {
 	case nil:
 	case gorm.ErrRecordNotFound:
-		return &api.LoginResponse{
-			Code: api.Code_ERROR_USER_NOTFOUND,
+		return &user.LoginResponse{
+			Code: user.Code_ERROR_USER_NOTFOUND,
 		}, nil
 
 	default:
-		return &api.LoginResponse{
-			Code: api.Code_ERROR_UNKNOWN,
+		return &user.LoginResponse{
+			Code: user.Code_ERROR_UNKNOWN,
 		}, err
 	}
 
 	// check password
-	if !utils.ValifyPasswordHash(request.Password, one.PasswdSalt, one.PasswdHash) {
-		return &api.LoginResponse{
-			Code: api.Code_ERROR_USER_PASSWORD,
+	if !util.ValifyPasswordHash(request.Password, one.PasswdSalt, one.PasswdHash) {
+		return &user.LoginResponse{
+			Code: user.Code_ERROR_USER_PASSWORD,
 		}, nil
 	}
 
@@ -460,13 +514,13 @@ func (u UserService) Login(ctx context.Context, request *api.LoginRequest) (*api
 	one.LoginedAt = time.Now()
 	err = u.repo.Update(ctx, one)
 	if err != nil {
-		return &api.LoginResponse{
-			Code: api.Code_ERROR_UNKNOWN,
+		return &user.LoginResponse{
+			Code: user.Code_ERROR_UNKNOWN,
 		}, err
 	}
 
-	return &api.LoginResponse{
-		Code: api.Code_OK,
+	return &user.LoginResponse{
+		Code: user.Code_OK,
 	}, nil
 }
 
