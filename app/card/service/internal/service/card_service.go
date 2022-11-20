@@ -15,11 +15,25 @@ type CardService struct {
 }
 
 func (c CardService) CreateCard(ctx context.Context, request *card.CreateCardRequest) (*card.CreateCardResponse, error) {
+	deadline, err := time.Parse("2006-01-02 15:04:05", request.Deadline)
+	if err != nil {
+		return &card.CreateCardResponse{
+			Code: card.Code_ERROR_UNKNOWN,
+		}, err
+	}
+
 	id, err := c.repo.Insert(ctx, &data.Card{
-		TeamId:  request.TeamId,
-		Title:   request.Title,
-		Content: request.Content,
-		Status:  0,
+		TeamId:   request.TeamId,
+		Title:    request.Title,
+		Content:  request.Content,
+		Deadline: deadline,
+		Status:   card.CardStatus_CARD_STATUS_DOING,
+		Members: []data.Member{
+			{
+				UserId:  request.CreatorId,
+				IsAdmin: true,
+			},
+		},
 	})
 
 	if err != nil {
@@ -79,6 +93,7 @@ func (c CardService) GetCardInfo(ctx context.Context, request *card.GetCardInfoR
 		Title:     one.Title,
 		Content:   one.Content,
 		Status:    one.Status,
+		Deadline:  one.Deadline.Format("2006-01-02 15:04:05"),
 		Members:   members,
 		Tags:      tags,
 		CreatedAt: one.CreatedAt.Format("2006-01-02 15:04:05"),

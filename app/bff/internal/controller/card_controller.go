@@ -6,6 +6,7 @@ import (
 	"github.com/ljxsteam/coinside-backend-kratos/api/card"
 	"github.com/ljxsteam/coinside-backend-kratos/api/user"
 	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/dto"
+	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/util"
 	"net/http"
 	"strconv"
 )
@@ -16,74 +17,58 @@ type CardController struct {
 }
 
 func (u *CardController) GetCardInfo(c *gin.Context) {
-	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
+	cardInfo := c.MustGet("card_info").(*card.CardInfo)
 
-	res, err := u.cardClient.GetCardInfo(context.Background(), &card.GetCardInfoRequest{Id: id})
+	// 获取冗余用户信息
+	type MemberInfo struct {
+		*card.CardMember
+		Nickname string `json:"nickname"`
+		Fullname string `json:"fullname"`
+		Email    string `json:"email"`
+		Avatar   string `json:"avatar"`
+	}
+
+	var members []MemberInfo
+	// 获取成员信息
+	stream, err := u.userClient.GetUserInfoStream(context.Background())
+	defer stream.CloseSend()
 	if err != nil {
 		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
 		return
 	}
 
-	switch res.Code {
-	case card.Code_OK:
-		// 获取冗余用户信息
-		type MemberInfo struct {
-			*card.CardMember
-			Nickname string `json:"nickname"`
-			Fullname string `json:"fullname"`
-			Email    string `json:"email"`
-			Avatar   string `json:"avatar"`
+	for _, m := range cardInfo.Members {
+		if err := stream.Send(&user.GetUserInfoRequest{Id: m.UserId}); err != nil {
+			c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+			return
 		}
 
-		var members []MemberInfo
-		// 获取成员信息
-		stream, err := u.userClient.GetUserInfoStream(context.Background())
-		defer stream.CloseSend()
+		userInfo, err := stream.Recv()
 		if err != nil {
 			c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
 			return
 		}
 
-		for _, m := range res.Info.Members {
-			if err := stream.Send(&user.GetUserInfoRequest{Id: m.UserId}); err != nil {
-				c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
-				return
-			}
-
-			userInfo, err := stream.Recv()
-			if err != nil {
-				c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
-				return
-			}
-
-			members = append(members, MemberInfo{
-				CardMember: m,
-				Nickname:   userInfo.Info.Nickname,
-				Fullname:   userInfo.Info.Fullname,
-				Email:      userInfo.Info.Email,
-				Avatar:     userInfo.Info.Avatar,
-			})
-		}
-
-		c.JSON(http.StatusOK, &dto.ResponseDto{
-			Code:    dto.CardErrorCode[res.Code].Code,
-			Message: dto.CardErrorCode[res.Code].Message,
-			Data: struct {
-				*card.CardInfo
-				Members []MemberInfo `json:"members"`
-			}{
-				CardInfo: res.Info,
-				Members:  members,
-			},
-		})
-
-	default:
-		c.JSON(http.StatusOK, &dto.ResponseDto{
-			Code:    dto.CardErrorCode[res.Code].Code,
-			Message: dto.CardErrorCode[res.Code].Message,
-			Data:    nil,
+		members = append(members, MemberInfo{
+			CardMember: m,
+			Nickname:   userInfo.Info.Nickname,
+			Fullname:   userInfo.Info.Fullname,
+			Email:      userInfo.Info.Email,
+			Avatar:     userInfo.Info.Avatar,
 		})
 	}
+
+	c.JSON(http.StatusOK, &dto.ResponseDto{
+		Code:    dto.CardErrorCode[card.Code_OK].Code,
+		Message: dto.CardErrorCode[card.Code_OK].Message,
+		Data: struct {
+			*card.CardInfo
+			Members []MemberInfo `json:"members"`
+		}{
+			CardInfo: cardInfo,
+			Members:  members,
+		},
+	})
 }
 
 func (u *CardController) CreateCard(c *gin.Context) {
@@ -93,6 +78,7 @@ func (u *CardController) CreateCard(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
 		return
 	}
+	req.CreatorId = c.MustGet("claims").(*util.JwtClaims).Id
 
 	res, err := u.cardClient.CreateCard(context.Background(), &req)
 
@@ -191,18 +177,16 @@ func (u *CardController) SetDeadline(c *gin.Context) {
 		Deadline: reqDto.Deadline,
 	})
 
-	resDto := dto.ResponseDto{
+	if err != nil {
+		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, &dto.ResponseDto{
 		Code:    dto.CardErrorCode[res.Code].Code,
 		Message: dto.CardErrorCode[res.Code].Message,
 		Data:    nil,
-	}
-
-	if res.Code != card.Code_OK {
-		resDto.Data = err
-	} else {
-	}
-
-	c.JSON(http.StatusOK, resDto)
+	})
 }
 
 func (u *CardController) SetStatus(c *gin.Context) {
@@ -221,18 +205,16 @@ func (u *CardController) SetStatus(c *gin.Context) {
 		Status: reqDto.Status,
 	})
 
-	resDto := dto.ResponseDto{
+	if err != nil {
+		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+		return
+	}
+
+	c.JSON(http.StatusOK, &dto.ResponseDto{
 		Code:    dto.CardErrorCode[res.Code].Code,
 		Message: dto.CardErrorCode[res.Code].Message,
 		Data:    nil,
-	}
-
-	if res.Code != card.Code_OK {
-		resDto.Data = err
-	} else {
-	}
-
-	c.JSON(http.StatusOK, resDto)
+	})
 }
 
 func (u *CardController) AddTag(c *gin.Context) {
@@ -380,6 +362,42 @@ func (u *CardController) DeleteCard(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, resDto)
+}
+
+func (u *CardController) IsCardMember(c *gin.Context) {
+	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
+	userId := c.MustGet("claims").(*util.JwtClaims).Id
+
+	// 获取当前用户
+	cardInfo, err := u.cardClient.GetCardInfo(context.Background(), &card.GetCardInfoRequest{
+		Id: id,
+	})
+	if err != nil {
+		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+		c.Abort()
+		return
+	}
+
+	switch cardInfo.Code {
+	case card.Code_OK:
+		// 判断是否是团队成员
+		for _, m := range cardInfo.Info.Members {
+			if m.UserId == userId {
+				// Claims写入上下文
+				c.Set("card_info", cardInfo.Info)
+				return
+			}
+		}
+		c.JSON(http.StatusOK, &dto.ErrorForbidden)
+		c.Abort()
+	default:
+		c.JSON(http.StatusOK, &dto.ResponseDto{
+			Code:    dto.CardErrorCode[cardInfo.Code].Code,
+			Message: dto.CardErrorCode[cardInfo.Code].Message,
+			Data:    nil,
+		})
+		c.Abort()
+	}
 }
 
 func NewCardController(userClient user.UserClient, cardClient card.CardClient) *CardController {
