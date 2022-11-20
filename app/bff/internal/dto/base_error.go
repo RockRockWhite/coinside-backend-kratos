@@ -21,4 +21,17 @@ var (
 		Message: "Cannot not access this resource.",
 		Data:    nil,
 	}
+	ErrorInternal ResponseDto = ResponseDto{
+		Code:    "ERROR_INTERNAL",
+		Message: "Internal server error.",
+		Data:    nil,
+	}
 )
+
+func NewErrorInternalDto(data interface{}) ResponseDto {
+	return ResponseDto{
+		Code:    ErrorInternal.Code,
+		Message: ErrorInternal.Message,
+		Data:    data,
+	}
+}
