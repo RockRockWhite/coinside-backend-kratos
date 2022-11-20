@@ -22,7 +22,7 @@ func initRouter(conf *config.Config) *gin.Engine {
 	userClient := client.NewUserClinet(conf, discovery)
 	userController := controller.NewUserController(userClient)
 	cardClient := client.NewCardClinet(conf, discovery)
-	cardController := controller.NewCardController(cardClient)
+	cardController := controller.NewCardController(userClient, cardClient)
 	engine := router.NewApiRouter(userController, cardController)
 	return engine
 }
