@@ -28,6 +28,12 @@ func (c CardService) CreateCard(ctx context.Context, request *card.CreateCardReq
 		Content:  request.Content,
 		Deadline: deadline,
 		Status:   card.CardStatus_CARD_STATUS_DOING,
+		Members: []data.Member{
+			{
+				UserId:  request.CreatorId,
+				IsAdmin: true,
+			},
+		},
 	})
 
 	if err != nil {
