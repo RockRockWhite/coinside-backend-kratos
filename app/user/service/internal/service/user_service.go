@@ -6,6 +6,7 @@ import (
 	"github.com/ljxsteam/coinside-backend-kratos/app/user/service/internal/data"
 	"github.com/ljxsteam/coinside-backend-kratos/pkg/util"
 	"gorm.io/gorm"
+	"io"
 	"time"
 )
 
@@ -97,8 +98,61 @@ func (u UserService) GetUserInfo(ctx context.Context, request *user.GetUserInfoR
 }
 
 func (u UserService) GetUserInfoStream(server user.User_GetUserInfoStreamServer) error {
-	//TODO implement me
-	panic("implement me")
+	for {
+		// todo： 还可以优化成异步的
+		// 从客户端接收数据
+		req, err := server.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return err
+		}
+
+		// 从数据库中查询数据
+		one, err := u.repo.FindOne(context.Background(), req.Id)
+
+		var res *user.GetUserInfoResponse
+
+		switch err {
+		case nil:
+			info := &user.UserInfo{
+				Id:            one.Id,
+				Nickname:      one.Nickname,
+				Fullname:      one.Fullname,
+				Avatar:        one.Avatar,
+				Email:         one.Email,
+				EmailVerified: one.EmailVerified,
+				Mobile:        one.Mobile,
+				Config:        one.Config,
+				LoginedAt:     one.LoginedAt.Format("2006-01-02 15:04:05"),
+				CreatedAt:     one.CreatedAt.Format("2006-01-02 15:04:05"),
+				UpdatedAt:     one.UpdatedAt.Format("2006-01-02 15:04:05"),
+			}
+
+			res = &user.GetUserInfoResponse{
+				Info: info,
+				Code: user.Code_OK,
+			}
+
+		case gorm.ErrRecordNotFound:
+			res = &user.GetUserInfoResponse{
+				Info: nil,
+				Code: user.Code_ERROR_USER_NOTFOUND,
+			}
+		default:
+			res = &user.GetUserInfoResponse{
+				Code: user.Code_ERROR_UNKNOWN,
+			}
+		}
+
+		// 将数据回复给客户端
+		err = server.Send(res)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (u UserService) GetUserInfoByNickname(ctx context.Context, request *user.GetUserInfoByNicknameRequest) (*user.GetUserInfoResponse, error) {
