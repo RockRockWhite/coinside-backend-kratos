@@ -15,7 +15,8 @@ service:
     name: "card-service"
   team:
     name: "team-service"
-
+  markdown:
+    name: "markdown-service"
 
 jwt:
   secret: "zRwhJ8AHxEBVx27uEivF5f6heZcz3g1Vtj60IT83Kwg"
