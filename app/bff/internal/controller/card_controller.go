@@ -175,6 +175,66 @@ func (u *CardController) SetContent(c *gin.Context) {
 	c.JSON(http.StatusOK, resDto)
 }
 
+func (u *CardController) SetDeadline(c *gin.Context) {
+	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
+
+	reqDto := struct {
+		Deadline string `json:"deadline"`
+	}{}
+	if err := c.ShouldBind(&reqDto); err != nil {
+		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
+		return
+	}
+
+	res, err := u.cardClient.SetCardDeadline(context.Background(), &card.SetCardDeadlineRequest{
+		Id:       id,
+		Deadline: reqDto.Deadline,
+	})
+
+	resDto := dto.ResponseDto{
+		Code:    dto.CardErrorCode[res.Code].Code,
+		Message: dto.CardErrorCode[res.Code].Message,
+		Data:    nil,
+	}
+
+	if res.Code != card.Code_OK {
+		resDto.Data = err
+	} else {
+	}
+
+	c.JSON(http.StatusOK, resDto)
+}
+
+func (u *CardController) SetStatus(c *gin.Context) {
+	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
+
+	reqDto := struct {
+		Status card.CardStatus `json:"status"`
+	}{}
+	if err := c.ShouldBind(&reqDto); err != nil {
+		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
+		return
+	}
+
+	res, err := u.cardClient.SetCardStatus(context.Background(), &card.SetCardStatusRequest{
+		Id:     id,
+		Status: reqDto.Status,
+	})
+
+	resDto := dto.ResponseDto{
+		Code:    dto.CardErrorCode[res.Code].Code,
+		Message: dto.CardErrorCode[res.Code].Message,
+		Data:    nil,
+	}
+
+	if res.Code != card.Code_OK {
+		resDto.Data = err
+	} else {
+	}
+
+	c.JSON(http.StatusOK, resDto)
+}
+
 func (u *CardController) AddTag(c *gin.Context) {
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 	tagContent := c.Param("tag_content")

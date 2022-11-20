@@ -12,6 +12,7 @@ type Card struct {
 	Title     string          `gorm:"column:title"`          // 卡片标题
 	Content   string          `gorm:"column:content"`        // 卡片详细内容，以标记语言存储
 	Status    card.CardStatus `gorm:"column:status"`         // 卡片状态, 0：进行中，1：已完成
+	Deadline  time.Time       `gorm:"column:deadline"`       // 截止时间
 	CreatedAt time.Time       `gorm:"column:created_at"`     // 创建时间
 	UpdatedAt time.Time       `gorm:"column:updated_at"`     // 更新时间
 	DeletedAt gorm.DeletedAt  `gorm:"column:deleted_at"`     // 删除时间

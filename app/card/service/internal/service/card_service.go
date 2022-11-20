@@ -5,6 +5,7 @@ import (
 	"github.com/ljxsteam/coinside-backend-kratos/api/card"
 	"github.com/ljxsteam/coinside-backend-kratos/app/card/service/internal/data"
 	"gorm.io/gorm"
+	"time"
 )
 
 type CardService struct {
@@ -183,6 +184,77 @@ func (c CardService) DeleteCard(ctx context.Context, request *card.DeleteCardReq
 }
 
 func (c CardService) DeleteCardStream(server card.Card_DeleteCardStreamServer) error {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c CardService) SetCardDeadline(ctx context.Context, request *card.SetCardDeadlineRequest) (*card.SetCardDeadlineResponse, error) {
+	one, err := c.repo.FindOne(ctx, request.Id)
+
+	switch err {
+	case nil:
+	case gorm.ErrRecordNotFound:
+		return &card.SetCardDeadlineResponse{
+			Code: card.Code_ERROR_CARD_NOTFOUND,
+		}, nil
+	default:
+		return &card.SetCardDeadlineResponse{
+			Code: card.Code_ERROR_UNKNOWN,
+		}, err
+	}
+
+	one.Deadline, err = time.Parse("2006-01-02 15:04:05", request.Deadline)
+	if err != nil {
+		return &card.SetCardDeadlineResponse{
+			Code: card.Code_ERROR_UNKNOWN,
+		}, err
+	}
+
+	if err = c.repo.Update(ctx, one); err != nil {
+		return &card.SetCardDeadlineResponse{
+			Code: card.Code_ERROR_UNKNOWN,
+		}, err
+	}
+
+	return &card.SetCardDeadlineResponse{
+		Code: card.Code_OK,
+	}, nil
+}
+
+func (c CardService) SetCardDeadlineStream(server card.Card_SetCardDeadlineStreamServer) error {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c CardService) SetCardStatus(ctx context.Context, request *card.SetCardStatusRequest) (*card.SetCardStatusResponse, error) {
+	one, err := c.repo.FindOne(ctx, request.Id)
+
+	switch err {
+	case nil:
+	case gorm.ErrRecordNotFound:
+		return &card.SetCardStatusResponse{
+			Code: card.Code_ERROR_CARD_NOTFOUND,
+		}, nil
+	default:
+		return &card.SetCardStatusResponse{
+			Code: card.Code_ERROR_UNKNOWN,
+		}, err
+	}
+
+	one.Status = request.Status
+
+	if err = c.repo.Update(ctx, one); err != nil {
+		return &card.SetCardStatusResponse{
+			Code: card.Code_ERROR_UNKNOWN,
+		}, err
+	}
+
+	return &card.SetCardStatusResponse{
+		Code: card.Code_OK,
+	}, nil
+}
+
+func (c CardService) SetCardStatusStream(server card.Card_SetCardStatusStreamServer) error {
 	//TODO implement me
 	panic("implement me")
 }

@@ -93,6 +93,24 @@ message DeleteCardResponse{
   Code code = 1;
 }
 
+message SetCardDeadlineRequest{
+  uint64 id = 1;
+  string deadline = 2;
+}
+
+message SetCardDeadlineResponse{
+  Code code = 1;
+}
+
+message SetCardStatusRequest{
+  uint64 id = 1;
+  CardStatus status = 2;
+}
+
+message SetCardStatusResponse{
+  Code code = 1;
+}
+
 message AddCardTagRequest{
   uint64 id = 1;
   string content = 2;
@@ -148,6 +166,12 @@ service Card {
 
   rpc DeleteCard(DeleteCardRequest) returns (DeleteCardResponse);
   rpc DeleteCardStream (stream DeleteCardRequest) returns (DeleteCardResponse);
+
+  rpc SetCardDeadline(SetCardDeadlineRequest) returns (SetCardDeadlineResponse);
+  rpc SetCardDeadlineStream (stream SetCardDeadlineRequest) returns (SetCardDeadlineResponse);
+
+  rpc SetCardStatus(SetCardStatusRequest) returns (SetCardStatusResponse);
+  rpc SetCardStatusStream (stream SetCardStatusRequest) returns (SetCardStatusResponse);
 
   rpc AddCardTag(AddCardTagRequest) returns (AddCardTagResponse);
   rpc AddCardTagStream (stream AddCardTagRequest) returns (AddCardTagResponse);
