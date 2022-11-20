@@ -7,7 +7,7 @@ import (
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/ljxsteam/coinside-backend-kratos/api/card"
-	"github.com/ljxsteam/coinside-backend-kratos/app/user/service/config"
+	"github.com/ljxsteam/coinside-backend-kratos/pkg/config"
 )
 
 func NewCardClinet(conf *config.Config, dis registry.Discovery) card.CardClient {

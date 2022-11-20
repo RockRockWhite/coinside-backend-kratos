@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/util"
-	"github.com/ljxsteam/coinside-backend-kratos/app/user/service/config"
+	"github.com/ljxsteam/coinside-backend-kratos/pkg/config"
 	"log"
 )
 
