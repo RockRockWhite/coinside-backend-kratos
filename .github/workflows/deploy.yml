@@ -1,0 +1,11 @@
+name: deploy to tencent cloud
+on:
+  push:
+    branches:
+      - deploy
+    paths-ignore:
+      - README.md
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
