@@ -15,4 +15,4 @@ jobs:
       - name: cat
         run: cat SSH_RAS
       - name: rsync over SSH
-        run: rsync  -e "ssh -i SSH_RAS" -r ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USER }}/coinside-backend/
+        run: rsync  -e "ssh -i SSH_RAS" -r ./ github@106.55.188.212:/home/github/coinside-backend/
