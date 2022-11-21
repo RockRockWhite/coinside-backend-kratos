@@ -19,4 +19,4 @@ jobs:
       - name: rsync over SSH
         run: rsync -r ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USER }}/coinside-backend/
       - name: docker compose up
-        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cat /etc/os_release && cd coinside-backend && docker compose build --no-cache && docker compose up -d"
+        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd coinside-backend && docker compose build --no-cache && docker compose up -d"
