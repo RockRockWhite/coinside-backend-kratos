@@ -2,7 +2,7 @@ name: deploy to tencent cloud
 on:
   push:
     branches:
-      - main
+      - deploy
     paths-ignore:
       - README.md
 jobs:
