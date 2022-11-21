@@ -17,4 +17,4 @@ jobs:
             name: id_rsa # optional
             known_hosts: ${{ secrets.KNOWN_HOSTS }}
       - name: rsync over SSH
-        run: rsync -r ./ github@106.55.188.212:/home/github/coinside-backend/
+        run: rsync -r ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USET }}/coinside-backend/
