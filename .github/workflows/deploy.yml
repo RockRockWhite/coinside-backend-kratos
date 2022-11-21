@@ -18,3 +18,5 @@ jobs:
             known_hosts: ${{ secrets.KNOWN_HOSTS }}
       - name: rsync over SSH
         run: rsync -r ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USER }}/coinside-backend/
+      - name: docker compose up
+        run: ssh${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} cd coinside-backend && docker compose build --nocache && docekr compose up -d
