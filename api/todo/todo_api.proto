@@ -1,0 +1,189 @@
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+syntax = "proto3";
+
+option go_package = "./;todo";
+package todo;
+
+// The todo service definition.
+service TodoService {
+  // Get a todo by id
+  rpc GetTodoById(GetTodoByIdRequest) returns (GetTodoResponse){}
+  // Get a Todo by id via stream
+  rpc GetTodoByIdStream(stream GetTodoByIdRequest) returns (stream GetTodoResponse){}
+
+//  // Get  Todos by card_id
+//  rpc GetTodoByCardId(GetTodoByCardIdRequest) returns (GetTodosResponse){}
+//  // Get   Todos by card_id via stream
+//  rpc GetTodoByCardIdStream(stream GetTodoByCardIdRequest) returns (stream GetTodosResponse){}
+
+  // add a Todo
+  rpc AddTodo(Todo) returns (AddTodoResponse){}
+  // add a Todo via stream
+  rpc AddTodoStream(stream Todo) returns (stream AddTodoResponse){}
+
+  // set Todo title
+  rpc SetTodoTitle(SetTodoTitleRequest) returns (SetTodoTitleResponse){}
+  // set Todo title via stream
+  rpc SetTodoTitleStream(SetTodoTitleRequest) returns (stream SetTodoTitleResponse){}
+
+  // delete a Todo
+  rpc DeleteTodo(DeleteTodoRequest) returns (DeleteTodoResponse){}
+  // delete a Todo via stream
+  rpc DeleteTodoStream(stream DeleteTodoRequest) returns (stream DeleteTodoResponse){}
+
+  //add  a  todoitem
+  rpc AddItem(TodoItem) returns (AddItemResponse){}
+  // add a todoitem  via stream
+  rpc AddItemStream(stream TodoItem) returns (stream AddItemResponse){}
+
+  //set todoitem content
+  rpc SetItemContent(SetContentRequest) returns (SetContentResponse){}
+  // set todoitem content via stream
+  rpc SetItemContentStream(stream SetContentRequest) returns (stream SetContentResponse){}
+
+  //set todoitem finished
+  rpc SetItemFinished(SetFinishedRequest) returns (SetFinishedResponse){}
+  // set todoitem finished via stream
+  rpc SetItemFinishedStream(stream SetFinishedRequest) returns (stream SetFinishedResponse){}
+
+  // delete a todoitem
+  rpc DeleteTodoItem(DeleteTodoItemRequest) returns (DeleteTodoItemResponse){}
+  // delete a todoitem via stream
+  rpc DeleteTodoItemStream(stream DeleteTodoItemRequest) returns (stream DeleteTodoItemResponse){}
+
+
+}
+
+enum Code {
+  OK = 0;
+  ERROR_UNKNOWN = 1;
+  ERROR_TODO_NOTFOUND = 2;
+}
+// The response message containing the greetings
+message Todo {
+  int64 id = 1; // 待办id
+  int64 card_id = 2; // 所属卡片id
+  string title = 3; // 待办标题
+  repeated TodoItem items = 4; //待办项
+  string created_at = 5; // 待办创建时间
+  string updated_at = 6; // 待办更新时间
+}
+
+message TodoItem{
+  int64 id = 1;//id
+  int64 todo_id = 2;   //所属待办的id
+  string content = 3;//具体内容
+  int64 is_finished = 4;//是否完成
+  int64 finished_user_id = 5;//完成人
+  string created_at = 6; // 待办项目创建时间
+  string updated_at = 7; // 待办项目更新时间
+}
+
+message GetTodoResponse {
+  Todo todo = 1;
+}
+
+message GetTodoByIdRequest
+{
+  uint64 id = 1;
+}
+
+//message GetTodosResponse{
+//  repeated Todo todo = 1;
+//}
+//
+//message GetTodoByCardIdRequest
+//{
+//  uint64 card_id = 1;
+//}
+
+message AddTodoResponse
+{
+  bool success = 1;
+  string message = 2;
+  int64 id = 3;
+}
+
+message SetTodoTitleRequest
+{
+  uint64 id = 1;
+  string title = 2;
+}
+
+message SetTodoTitleResponse
+{
+  Code code = 1;
+}
+
+message SetContentRequest
+{
+  uint64 id = 1;
+  string content = 2;
+}
+message SetContentResponse
+{
+  Code code = 1;
+}
+message SetFinishedRequest
+{
+  uint64 id = 1;
+  bool is_finished = 2;
+  uint64 user_id = 3;
+}
+
+message SetFinishedResponse
+{
+  Code code = 1;
+}
+//message UpdateTodoResponse
+//{
+//  bool success = 1;
+//  string message = 2;
+//}
+
+message DeleteTodoRequest
+{
+  uint64 id = 1;
+}
+
+message DeleteTodoResponse
+{
+  bool success = 1;
+  string message = 2;
+}
+
+message AddItemResponse
+{
+  bool success = 1;
+  string message = 2;
+  int64 id = 3;
+}
+//
+//message UpdateItemResponse
+//{
+//  bool success = 1;
+//  string message = 2;
+//}
+
+
+message DeleteTodoItemRequest
+{
+  int64 todo_item_id = 1;
+
+}
+
+message DeleteTodoItemResponse
+{
+  bool success = 1;
+  string message = 2;
+}
