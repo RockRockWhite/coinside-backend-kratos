@@ -11,6 +11,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install SSH Key
-        run: echo ${{ secrets.SSH_KEY }} >> ~/.ssh/authorized_keys
+        run: echo  "${{ secrets.SSH_KEY }}" >> ~/.ssh/authorized_keys
       - name: rsync over SSH
         run: rsync -r ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USER }}/coinside-backend/
