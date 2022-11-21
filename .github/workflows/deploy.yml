@@ -14,7 +14,8 @@ jobs:
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.SSH_KEY }}
-          known_hosts: ${{ secrets.SSH_HOST }}
-      - name: Deploy with rsync
-        run: rsync -avz ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USER }}/coinside-backend
+          name: id_rsa
+          if_key_exists: replace
+      - name: rsync over SSH
+        run: rsync -r ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USER }}/coinside-backend/
     
