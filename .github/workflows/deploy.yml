@@ -15,6 +15,7 @@ jobs:
         with:
           key: ${{ secrets.SSH_KEY }}
           name: id_rsa
+          known_hosts: unnecessary
           if_key_exists: replace
       - name: rsync over SSH
         run: rsync -r ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/${{ secrets.SSH_USER }}/coinside-backend/
