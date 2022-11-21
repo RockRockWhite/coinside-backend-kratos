@@ -10,6 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: make .ssh
+        run: |
+          mkdir ~/.ssh
+          chomd 700 ~/.ssh
       - name: Install SSH Key
         run: echo  "${{ secrets.SSH_KEY }}" >> ~/.ssh/authorized_keys
       - name: rsync over SSH
