@@ -11,6 +11,7 @@ type TodoRepo interface {
 	Update(ctx context.Context, newData *Todo) error
 	Delete(ctx context.Context, id uint64) error
 
-	SetItem(ctx context.Context, data *Item) error
-	DeleteItem(ctx context.Context, id uint64) error
+	InsertItem(ctx context.Context, data *Item) error
+	UpdateItem(ctx context.Context, data *Item) error
+	DeleteItem(ctx context.Context, item_id uint64) error
 }
