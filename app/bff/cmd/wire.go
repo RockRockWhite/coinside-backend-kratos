@@ -10,10 +10,11 @@ import (
 	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/client"
 	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/controller"
 	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/router"
+	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/util"
 	"github.com/ljxsteam/coinside-backend-kratos/pkg/config"
 )
 
 // initRouter init gin router.
 func initRouter(conf *config.Config) *gin.Engine {
-	panic(wire.Build(client.ProviderSet, controller.ProviderSet, router.ProviderSet))
+	panic(wire.Build(client.ProviderSet, controller.ProviderSet, router.ProviderSet, util.ProviderSet))
 }

@@ -11,6 +11,7 @@ import (
 	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/client"
 	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/controller"
 	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/router"
+	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/util"
 	"github.com/ljxsteam/coinside-backend-kratos/pkg/config"
 )
 
@@ -25,6 +26,8 @@ func initRouter(conf *config.Config) *gin.Engine {
 	cardController := controller.NewCardController(userClient, cardClient)
 	teamClient := client.NewTeamClinet(conf, discovery)
 	teamController := controller.NewTeamController(teamClient)
-	engine := router.NewApiRouter(userController, cardController, teamController)
+	cosClient := util.NewCOSClinet(conf)
+	objectController := controller.NewObjectController(cosClient)
+	engine := router.NewApiRouter(userController, cardController, teamController, objectController)
 	return engine
 }
