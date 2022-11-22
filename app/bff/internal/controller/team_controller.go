@@ -4,44 +4,114 @@ import (
 	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/ljxsteam/coinside-backend-kratos/api/team"
+	"github.com/ljxsteam/coinside-backend-kratos/api/user"
 	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/dto"
+	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/util"
 	"net/http"
 	"strconv"
 )
 
 type TeamController struct {
-	client team.TeamClient
+	userClient user.UserClient
+	teamClient team.TeamClient
 }
 
 func (t *TeamController) GetTeamInfo(c *gin.Context) {
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 
-	res, err := t.client.GetTeamById(context.Background(), &team.GetTeamByIdRequest{Id: id})
+	res, err := t.teamClient.GetTeamById(context.Background(), &team.GetTeamByIdRequest{Id: id})
 
-	resDto := dto.ResponseDto{
-		Code:    dto.TeamErrorCode[res.Code].Code,
-		Message: dto.TeamErrorCode[res.Code].Message,
-		Data:    nil,
+	//resDto := dto.ResponseDto{
+	//	Code:    dto.TeamErrorCode[res.Code].Code,
+	//	Message: dto.TeamErrorCode[res.Code].Message,
+	//	Data:    nil,
+	//}
+	//
+	if err != nil {
+		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+		return
 	}
 
-	if res.Code != team.Code_OK {
-		resDto.Data = err
-	} else {
-		resDto.Data = res.Team
-	}
+	switch res.Code {
+	case team.Code_OK:
+		// 获取冗余用户信息
+		type MemberInfo struct {
+			*team.TeamMember
+			Nickname string `json:"nickname"`
+			Fullname string `json:"fullname"`
+			Email    string `json:"email"`
+			Avatar   string `json:"avatar"`
+		}
 
-	c.JSON(http.StatusOK, resDto)
+		var members []MemberInfo
+		// 获取成员信息
+		stream, err := t.userClient.GetUserInfoStream(context.Background())
+		defer stream.CloseSend()
+		if err != nil {
+			c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+			return
+		}
+
+		for _, m := range res.Team.Members {
+			if err := stream.Send(&user.GetUserInfoRequest{Id: m.UserId}); err != nil {
+				c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+				return
+			}
+
+			userInfo, err := stream.Recv()
+			if err != nil {
+				c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+				return
+			}
+
+			members = append(members, MemberInfo{
+				TeamMember: m,
+				Nickname:   userInfo.Info.Nickname,
+				Fullname:   userInfo.Info.Fullname,
+				Email:      userInfo.Info.Email,
+				Avatar:     userInfo.Info.Avatar,
+			})
+		}
+
+		c.JSON(http.StatusOK, &dto.ResponseDto{
+			Code:    dto.TeamErrorCode[res.Code].Code,
+			Message: dto.TeamErrorCode[res.Code].Message,
+			Data: struct {
+				*team.TeamInfo
+				Members []MemberInfo `json:"members"`
+			}{
+				TeamInfo: res.Team,
+				Members:  members,
+			},
+		})
+
+	default:
+		c.JSON(http.StatusOK, &dto.ResponseDto{
+			Code:    dto.TeamErrorCode[res.Code].Code,
+			Message: dto.TeamErrorCode[res.Code].Message,
+			Data:    nil,
+		})
+	}
+	//
+	//if res.Code != team.Code_OK {
+	//	resDto.Data = err
+	//} else {
+	//	resDto.Data = res.Team
+	//}
+	//
+	//c.JSON(http.StatusOK, resDto)
 }
 
 func (t *TeamController) CreateTeam(c *gin.Context) {
-	var req team.TeamInfo
+	var req team.AddTeamRequest
 
 	if err := c.ShouldBind(&req); err != nil {
 		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
 		return
 	}
+	req.CreatorId = c.MustGet("claims").(*util.JwtClaims).Id
 
-	res, err := t.client.AddTeam(context.Background(), &req)
+	res, err := t.teamClient.AddTeam(context.Background(), &req)
 
 	resDto := dto.ResponseDto{
 		Code:    dto.TeamErrorCode[res.Code].Code,
@@ -73,7 +143,7 @@ func (t *TeamController) SetName(c *gin.Context) {
 		return
 	}
 
-	res, err := t.client.SetTeamName(context.Background(), &team.SetTeamNameRequest{
+	res, err := t.teamClient.SetTeamName(context.Background(), &team.SetTeamNameRequest{
 		Id:   id,
 		Name: reqDto.Name,
 	})
@@ -102,7 +172,7 @@ func (t *TeamController) SetDescription(c *gin.Context) {
 		return
 	}
 
-	res, err := t.client.SetTeamDescription(context.Background(), &team.SetTeamDescriptionRequest{
+	res, err := t.teamClient.SetTeamDescription(context.Background(), &team.SetTeamDescriptionRequest{
 		Id:          id,
 		Description: reqDto.Description,
 	})
@@ -132,7 +202,7 @@ func (t *TeamController) SetWebsite(c *gin.Context) {
 		return
 	}
 
-	res, err := t.client.SetTeamWebsite(context.Background(), &team.SetTeamWebsiteRequest{
+	res, err := t.teamClient.SetTeamWebsite(context.Background(), &team.SetTeamWebsiteRequest{
 		Id:      id,
 		Website: reqDto.Website,
 	})
@@ -162,7 +232,7 @@ func (t *TeamController) SetAvatar(c *gin.Context) {
 		return
 	}
 
-	res, err := t.client.SetTeamAvatar(context.Background(), &team.SetTeamAvatarRequest{
+	res, err := t.teamClient.SetTeamAvatar(context.Background(), &team.SetTeamAvatarRequest{
 		Id:     id,
 		Avatar: reqDto.Avatar,
 	})
@@ -192,7 +262,7 @@ func (t *TeamController) SetEmail(c *gin.Context) {
 		return
 	}
 
-	res, err := t.client.SetTeamEmail(context.Background(), &team.SetTeamEmailRequest{
+	res, err := t.teamClient.SetTeamEmail(context.Background(), &team.SetTeamEmailRequest{
 		Id:    id,
 		Email: reqDto.Email,
 	})
@@ -214,7 +284,7 @@ func (t *TeamController) SetEmail(c *gin.Context) {
 func (t *TeamController) DeleteTeam(c *gin.Context) {
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 
-	res, err := t.client.DeleteTeam(context.Background(), &team.DeleteTeamRequest{
+	res, err := t.teamClient.DeleteTeam(context.Background(), &team.DeleteTeamRequest{
 		Id: id,
 	})
 
@@ -244,7 +314,33 @@ func (t *TeamController) SetTeamMember(c *gin.Context) {
 		return
 	}
 
-	res, err := t.client.AddMember(context.Background(), &team.AddMemberRequest{
+	// 判断用户是否存在
+	if res, err := t.userClient.GetUserInfo(context.Background(), &user.GetUserInfoRequest{Id: userId}); err != nil {
+		// error
+		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+		return
+	} else {
+		// no error
+		switch res.Code {
+		case user.Code_OK:
+		case user.Code_ERROR_USER_NOTFOUND:
+			c.JSON(http.StatusOK, &dto.ResponseDto{
+				Code:    dto.UserErrorCode[res.Code].Code,
+				Message: dto.UserErrorCode[res.Code].Message,
+				Data:    nil,
+			})
+			return
+		default:
+			c.JSON(http.StatusOK, &dto.ResponseDto{
+				Code:    dto.UserErrorCode[user.Code_ERROR_UNKNOWN].Code,
+				Message: dto.UserErrorCode[user.Code_ERROR_UNKNOWN].Message,
+				Data:    err,
+			})
+			return
+		}
+	}
+
+	res, err := t.teamClient.AddMember(context.Background(), &team.AddMemberRequest{
 		TeamId:  id,
 		UserId:  userId,
 		IsAdmin: reqDto.IsAdmin,
@@ -268,7 +364,7 @@ func (t *TeamController) DeleteTeamMember(c *gin.Context) {
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 	userId, _ := strconv.ParseUint(c.Param("user_id"), 10, 64)
 
-	res, err := t.client.DeleteMember(context.Background(), &team.DeleteMemberRequest{
+	res, err := t.teamClient.DeleteMember(context.Background(), &team.DeleteMemberRequest{
 		TeamId: id,
 		UserId: userId,
 	})
@@ -299,7 +395,7 @@ func (t *TeamController) SetTeamAdmin(c *gin.Context) {
 		return
 	}
 
-	res, err := t.client.AddAdmin(context.Background(), &team.AddAdminRequest{
+	res, err := t.teamClient.AddAdmin(context.Background(), &team.AddAdminRequest{
 		TeamId: id,
 		UserId: userId,
 	})
@@ -318,6 +414,6 @@ func (t *TeamController) SetTeamAdmin(c *gin.Context) {
 	c.JSON(http.StatusOK, resDto)
 }
 
-func NewTeamController(client team.TeamClient) *TeamController {
-	return &TeamController{client: client}
+func NewTeamController(userClient user.UserClient, client team.TeamClient) *TeamController {
+	return &TeamController{userClient: userClient, teamClient: client}
 }

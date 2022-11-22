@@ -25,9 +25,11 @@ func initRouter(conf *config.Config) *gin.Engine {
 	cardClient := client.NewCardClinet(conf, discovery)
 	cardController := controller.NewCardController(userClient, cardClient)
 	teamClient := client.NewTeamClinet(conf, discovery)
-	teamController := controller.NewTeamController(teamClient)
+	teamController := controller.NewTeamController(userClient, teamClient)
+	markdownClient := client.NewMarkdownClinet(conf, discovery)
+	markdownController := controller.NewMarkdownController(markdownClient)
 	cosClient := util.NewCOSClinet(conf)
 	objectController := controller.NewObjectController(cosClient)
-	engine := router.NewApiRouter(userController, cardController, teamController, objectController)
+	engine := router.NewApiRouter(userController, cardController, teamController, markdownController, objectController)
 	return engine
 }

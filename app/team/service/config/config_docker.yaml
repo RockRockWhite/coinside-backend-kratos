@@ -1,0 +1,15 @@
+server:
+  addr: ":9000"
+  name: "team-service"
+
+zookeeper:
+  address: "zookeeper:2181"
+  timeout: 3
+
+data:
+  mariadb:
+    host: "teamdb"
+    port: "3306"
+    username: "ljx"
+    password: "ljxljxljxljx"
+    db_name: "coinside"

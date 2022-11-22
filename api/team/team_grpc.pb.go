@@ -31,7 +31,7 @@ type TeamClient interface {
 	// Get a user by name via stream
 	GetTeamsByNameStream(ctx context.Context, opts ...grpc.CallOption) (Team_GetTeamsByNameStreamClient, error)
 	// add a team
-	AddTeam(ctx context.Context, in *TeamInfo, opts ...grpc.CallOption) (*AddTeamResponse, error)
+	AddTeam(ctx context.Context, in *AddTeamRequest, opts ...grpc.CallOption) (*AddTeamResponse, error)
 	// add a team via stream
 	AddTeamStream(ctx context.Context, opts ...grpc.CallOption) (Team_AddTeamStreamClient, error)
 	// set team name
@@ -160,7 +160,7 @@ func (x *teamGetTeamsByNameStreamClient) Recv() (*GetTeamsResponse, error) {
 	return m, nil
 }
 
-func (c *teamClient) AddTeam(ctx context.Context, in *TeamInfo, opts ...grpc.CallOption) (*AddTeamResponse, error) {
+func (c *teamClient) AddTeam(ctx context.Context, in *AddTeamRequest, opts ...grpc.CallOption) (*AddTeamResponse, error) {
 	out := new(AddTeamResponse)
 	err := c.cc.Invoke(ctx, "/team.Team/AddTeam", in, out, opts...)
 	if err != nil {
@@ -179,7 +179,7 @@ func (c *teamClient) AddTeamStream(ctx context.Context, opts ...grpc.CallOption)
 }
 
 type Team_AddTeamStreamClient interface {
-	Send(*TeamInfo) error
+	Send(*AddTeamRequest) error
 	Recv() (*AddTeamResponse, error)
 	grpc.ClientStream
 }
@@ -188,7 +188,7 @@ type teamAddTeamStreamClient struct {
 	grpc.ClientStream
 }
 
-func (x *teamAddTeamStreamClient) Send(m *TeamInfo) error {
+func (x *teamAddTeamStreamClient) Send(m *AddTeamRequest) error {
 	return x.ClientStream.SendMsg(m)
 }
 
@@ -573,7 +573,7 @@ type TeamServer interface {
 	// Get a user by name via stream
 	GetTeamsByNameStream(Team_GetTeamsByNameStreamServer) error
 	// add a team
-	AddTeam(context.Context, *TeamInfo) (*AddTeamResponse, error)
+	AddTeam(context.Context, *AddTeamRequest) (*AddTeamResponse, error)
 	// add a team via stream
 	AddTeamStream(Team_AddTeamStreamServer) error
 	// set team name
@@ -631,7 +631,7 @@ func (UnimplementedTeamServer) GetTeamsByName(context.Context, *GetTeamsByNameRe
 func (UnimplementedTeamServer) GetTeamsByNameStream(Team_GetTeamsByNameStreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetTeamsByNameStream not implemented")
 }
-func (UnimplementedTeamServer) AddTeam(context.Context, *TeamInfo) (*AddTeamResponse, error) {
+func (UnimplementedTeamServer) AddTeam(context.Context, *AddTeamRequest) (*AddTeamResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddTeam not implemented")
 }
 func (UnimplementedTeamServer) AddTeamStream(Team_AddTeamStreamServer) error {
@@ -793,7 +793,7 @@ func (x *teamGetTeamsByNameStreamServer) Recv() (*GetTeamsByNameRequest, error) 
 }
 
 func _Team_AddTeam_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TeamInfo)
+	in := new(AddTeamRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -805,7 +805,7 @@ func _Team_AddTeam_Handler(srv interface{}, ctx context.Context, dec func(interf
 		FullMethod: "/team.Team/AddTeam",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TeamServer).AddTeam(ctx, req.(*TeamInfo))
+		return srv.(TeamServer).AddTeam(ctx, req.(*AddTeamRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -816,7 +816,7 @@ func _Team_AddTeamStream_Handler(srv interface{}, stream grpc.ServerStream) erro
 
 type Team_AddTeamStreamServer interface {
 	Send(*AddTeamResponse) error
-	Recv() (*TeamInfo, error)
+	Recv() (*AddTeamRequest, error)
 	grpc.ServerStream
 }
 
@@ -828,8 +828,8 @@ func (x *teamAddTeamStreamServer) Send(m *AddTeamResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *teamAddTeamStreamServer) Recv() (*TeamInfo, error) {
-	m := new(TeamInfo)
+func (x *teamAddTeamStreamServer) Recv() (*AddTeamRequest, error) {
+	m := new(AddTeamRequest)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}

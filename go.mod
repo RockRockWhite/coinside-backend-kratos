@@ -11,11 +11,11 @@ require (
 	github.com/google/wire v0.5.0
 	github.com/spf13/viper v1.14.0
 	github.com/stretchr/testify v1.8.1
+	google.golang.org/grpc v1.51.0
 	github.com/tencentyun/cos-go-sdk-v5 v0.7.40
-	google.golang.org/grpc v1.50.1
 	google.golang.org/protobuf v1.28.1
 	gorm.io/driver/mysql v1.4.4
-	gorm.io/gorm v1.24.1
+	gorm.io/gorm v1.24.2
 )
 
 require (

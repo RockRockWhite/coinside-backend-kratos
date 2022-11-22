@@ -21,7 +21,7 @@ func (m MarkdownService) GetMarkdownById(ctx context.Context, request *api.GetMa
 	case gorm.ErrRecordNotFound:
 		return &api.GetMarkdownResponse{
 			Markdown: nil,
-			Code:     api.Code_ERROR_TEAM_NOTFOUND,
+			Code:     api.Code_ERROR_MARKDOWN_NOTFOUND,
 		}, nil
 	default:
 		return &api.GetMarkdownResponse{
@@ -85,7 +85,7 @@ func (m MarkdownService) UpdateMarkdown(ctx context.Context, markdown *api.Markd
 	case nil:
 	case gorm.ErrRecordNotFound:
 		return &api.UpdateMarkdownResponse{
-			Code: api.Code_ERROR_TEAM_NOTFOUND,
+			Code: api.Code_ERROR_MARKDOWN_NOTFOUND,
 		}, nil
 	default:
 		return &api.UpdateMarkdownResponse{
