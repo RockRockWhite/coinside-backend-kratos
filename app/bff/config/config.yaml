@@ -1,0 +1,24 @@
+server:
+  addr: ":8080"
+
+zookeeper:
+  address: "localhost:2181"
+  timeout: 3
+
+logger:
+  file: "bff.log"
+
+service:
+  user:
+    name: "user-service"
+  card:
+    name: "card-service"
+  team:
+    name: "team-service"
+  markdown:
+    name: "markdown-service"
+
+jwt:
+  secret: "zRwhJ8AHxEBVx27uEivF5f6heZcz3g1Vtj60IT83Kwg"
+  issuer: "ljxsteam"
+  expire_days: 14

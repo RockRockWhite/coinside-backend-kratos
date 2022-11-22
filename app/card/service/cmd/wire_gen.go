@@ -8,10 +8,10 @@ package main
 
 import (
 	"github.com/go-kratos/kratos/v2"
-	"github.com/ljxsteam/coinside-backend-kratos/pkg/config"
 	"github.com/ljxsteam/coinside-backend-kratos/app/card/service/internal/data"
 	"github.com/ljxsteam/coinside-backend-kratos/app/card/service/internal/server"
 	"github.com/ljxsteam/coinside-backend-kratos/app/card/service/internal/service"
+	"github.com/ljxsteam/coinside-backend-kratos/pkg/config"
 )
 
 // Injectors from wire.go:
