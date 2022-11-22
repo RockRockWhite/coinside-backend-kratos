@@ -1,6 +1,8 @@
 syntax = "proto3";
-package card;
 
+import "google/protobuf/wrappers.proto";
+
+package card;
 option go_package = "./;card";
 
 enum Code {
