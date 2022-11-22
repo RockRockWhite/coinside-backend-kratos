@@ -18,6 +18,12 @@ service:
   markdown:
     name: "markdown-service"
 
+cos:
+  bucket: "{{ COS_BUCKET}}"
+  region: "{{ COS_REGION }}"
+  secret_id: "{{ COS_SECRET_ID }}"
+  secret_key: "{{ COS_SECRET_KEY }}"
+
 jwt:
   secret: "zRwhJ8AHxEBVx27uEivF5f6heZcz3g1Vtj60IT83Kwg"
   issuer: "ljxsteam"

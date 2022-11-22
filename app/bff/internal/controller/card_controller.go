@@ -73,7 +73,6 @@ func (u *CardController) GetCardInfo(c *gin.Context) {
 
 func (u *CardController) CreateCard(c *gin.Context) {
 	var req card.CreateCardRequest
-
 	if err := c.ShouldBind(&req); err != nil {
 		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
 		return

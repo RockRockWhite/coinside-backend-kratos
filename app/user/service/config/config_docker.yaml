@@ -8,8 +8,13 @@ zookeeper:
 
 data:
   mariadb:
+<<<<<<<< HEAD:app/user/service/config/config_docker.yaml
     host: "userdb"
     port: "3306"
+========
+    host: "localhost"
+    port: "3305"
+>>>>>>>> main:app/user/service/config/config.yaml
     username: "ljx"
     password: "ljxljxljxljx"
     db_name: "coinside"
