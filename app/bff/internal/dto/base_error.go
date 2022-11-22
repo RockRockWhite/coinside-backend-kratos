@@ -35,3 +35,11 @@ func NewErrorInternalDto(data interface{}) ResponseDto {
 		Data:    data,
 	}
 }
+
+func NewOkDto(data interface{}) ResponseDto {
+	return ResponseDto{
+		Code:    "OK",
+		Message: "Success.",
+		Data:    data,
+	}
+}

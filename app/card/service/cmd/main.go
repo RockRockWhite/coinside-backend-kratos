@@ -4,7 +4,7 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/registry"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
-	"github.com/ljxsteam/coinside-backend-kratos/app/card/service/config"
+	"github.com/ljxsteam/coinside-backend-kratos/pkg/config"
 )
 
 func newApp(conf *config.Config, srv *grpc.Server, r registry.Registrar) *kratos.App {

@@ -2,7 +2,7 @@ package data
 
 import (
 	"context"
-	"github.com/ljxsteam/coinside-backend-kratos/app/card/service/config"
+	"github.com/ljxsteam/coinside-backend-kratos/pkg/config"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

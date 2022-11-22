@@ -314,6 +314,32 @@ func (t *TeamController) SetTeamMember(c *gin.Context) {
 		return
 	}
 
+	// 判断用户是否存在
+	if res, err := t.userClient.GetUserInfo(context.Background(), &user.GetUserInfoRequest{Id: userId}); err != nil {
+		// error
+		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+		return
+	} else {
+		// no error
+		switch res.Code {
+		case user.Code_OK:
+		case user.Code_ERROR_USER_NOTFOUND:
+			c.JSON(http.StatusOK, &dto.ResponseDto{
+				Code:    dto.UserErrorCode[res.Code].Code,
+				Message: dto.UserErrorCode[res.Code].Message,
+				Data:    nil,
+			})
+			return
+		default:
+			c.JSON(http.StatusOK, &dto.ResponseDto{
+				Code:    dto.UserErrorCode[user.Code_ERROR_UNKNOWN].Code,
+				Message: dto.UserErrorCode[user.Code_ERROR_UNKNOWN].Message,
+				Data:    err,
+			})
+			return
+		}
+	}
+
 	res, err := t.teamClient.AddMember(context.Background(), &team.AddMemberRequest{
 		TeamId:  id,
 		UserId:  userId,
