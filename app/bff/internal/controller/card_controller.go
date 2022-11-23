@@ -323,23 +323,26 @@ func (u *CardController) DeleteMember(c *gin.Context) {
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 	userId, _ := strconv.ParseUint(c.Param("user_id"), 10, 64)
 
+	// 如果只剩一个Card Member，则拒绝
+	cardInfo := c.MustGet("card_info").(*card.CardInfo)
+	if len(cardInfo.Members) <= 1 {
+		c.JSON(http.StatusOK, &dto.CardOnlyOneMember)
+		return
+	}
+
 	res, err := u.cardClient.DeleteCardMember(context.Background(), &card.DeleteCardMemberRequest{
 		Id:     id,
 		UserId: userId,
 	})
+	if err != nil {
+		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+	}
 
-	resDto := dto.ResponseDto{
+	c.JSON(http.StatusOK, &dto.ResponseDto{
 		Code:    dto.CardErrorCode[res.Code].Code,
 		Message: dto.CardErrorCode[res.Code].Message,
 		Data:    nil,
-	}
-
-	if res.Code != card.Code_OK {
-		resDto.Data = err
-	} else {
-	}
-
-	c.JSON(http.StatusOK, resDto)
+	})
 }
 
 func (u *CardController) DeleteCard(c *gin.Context) {
