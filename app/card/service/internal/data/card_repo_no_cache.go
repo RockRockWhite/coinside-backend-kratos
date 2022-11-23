@@ -21,9 +21,17 @@ func (u CardRepoNoCache) FindOne(ctx context.Context, id uint64) (*Card, error) 
 	return &data, res.Error
 }
 
-func (u CardRepoNoCache) FindAll(ctx context.Context, filter string) ([]*Card, error) {
-	//TODO implement me
-	panic("implement me")
+// FindAll 批量查询卡片信息
+func (u CardRepoNoCache) FindAll(ctx context.Context, limit uint64, offset uint64, filters []Filter) ([]Card, error) {
+	var datas []Card
+	db := u.db.Model(&Card{})
+
+	for _, f := range filters {
+		db = f.Filter(db)
+	}
+
+	res := db.Preload("Members").Preload("Tags").Find(&datas)
+	return datas, res.Error
 }
 
 func (u CardRepoNoCache) Update(ctx context.Context, newData *Card) error {
