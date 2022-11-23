@@ -3,15 +3,15 @@ package data
 import (
 	"context"
 	"fmt"
-	"github.com/ljxsteam/coinside-backend-kratos/app/team/service/config"
+	"github.com/ljxsteam/coinside-backend-kratos/app/todo/service/config"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
-var teamRepo TeamRepo
+var todoRepo TodoRepo
 
 func init() {
-	teamRepo = NewTeamRepoNoCache(NewDB(config.NewConfig()))
+	todoRepo = NewTodoRepoNoCache(NewDB(config.NewConfig()))
 }
 
 func TestUserModelDefault_Insert(t *testing.T) {

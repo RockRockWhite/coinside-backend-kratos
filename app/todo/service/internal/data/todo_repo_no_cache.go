@@ -37,53 +37,41 @@ func (t TodoRepoNoCache) Delete(ctx context.Context, id uint64) error {
 	return res.Error
 }
 
-func (t TodoRepoNoCache) SetItem(ctx context.Context, id uint64, content string, isFinished bool, finishedUsedId uint64) (uint64, error) {
+func (t TodoRepoNoCache) InsertItem(ctx context.Context, id uint64, content string, isFinished bool, finishedUsedId uint64) (uint64, error) {
 	data, err := t.FindOne(ctx, id)
 	if err != nil {
-		return nil, err
+		return -1,err
 	}
 	//
-	var items []Item
-	if err = t.db.Model(&data).Association("Items").Find(&items, "todo_id = ?", userId); err != nil {
-		return err
-	}
-
-	// add a item
-	if len(items) == 0 {
-		err = t.db.Model(&data).Association("Items").Append(
-			&Item{
-				Content:        content,
-				IsFinished:     isFinished,
-				FinishedUsedId: finishedUsedId,
-			})
-		return err
-	}
-
-	// update a item
-	items[0].Content = content
-	items[0].IsFinished = isFinished
-	items[0].FinishedUsedId = finishedUsedId
-	res := t.db.Save(items[0])
-	return res.Error
+	res := t.db.Model(&data).Association("Items").Append(
+		&Item{
+			Content:        content,
+			IsFinished:     isFinished,
+			FinishedUsedId: finishedUsedId,
+		})
+	return ,err
 }
 
-func (t TodoRepoNoCache) DeleteItem(ctx context.Context, id uint64) error {
-	data, err := t.FindOne(ctx, id)
-	if err != nil {
-		return err
-	}
+func (t TodoRepoNoCache) DeleteItem(ctx context.Context, item_id uint64) error {
+	//data, err := t.FindOne(ctx, id)
+	//if err != nil {
+	//	return err
+	//}
+	//
+	//var todos []Todo
+	//if err = t.db.Model(&data).Association("Todos").Find(&todos, "content = ?", content); err != nil {
+	//	return err
+	//}
+	//
+	//if len(todos) == 0 {
+	//	return nil
+	//}
+	//
+	//err = t.db.Model(&data).Association("Todos").Delete(todos[0])
+	//return err
+}
+func (t TodoRepoNoCache) UpdateItem(ctx context.Context, data *Item) error {
 
-	var members []TeamMember
-	if err = u.db.Model(&data).Association("Members").Find(&members, "user_id = ?", userId); err != nil {
-		return err
-	}
-
-	if len(members) == 0 {
-		return nil
-	}
-
-	err = u.db.Model(&data).Association("Members").Delete(members[0])
-	return err
 }
 
 func NewTodoRepoNoCache(db *gorm.DB) TodoRepo {

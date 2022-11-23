@@ -2,346 +2,184 @@ package service
 
 import (
 	"context"
-	api "github.com/ljxsteam/coinside-backend-kratos/api/team"
-	"github.com/ljxsteam/coinside-backend-kratos/app/team/service/internal/data"
+	api "github.com/ljxsteam/coinside-backend-kratos/api/todo"
+	"github.com/ljxsteam/coinside-backend-kratos/app/todo/service/internal/data"
 	"gorm.io/gorm"
 )
 
-type TeamService struct {
-	api.UnimplementedTeamServer
+type TodoService struct {
+	api.UnimplementedTodoServiceServer
 
-	repo data.TeamRepo
+	repo data.TodoRepo
 }
 
-func (t TeamService) GetTeamById(ctx context.Context, request *api.GetTeamByIdRequest) (*api.GetTeamResponse, error) {
+func (t TodoService) GetTodoById(ctx context.Context, request *api.GetTodoByIdRequest) (*api.GetTodoResponse, error) {
 	data, err := t.repo.FindOne(ctx, request.Id)
 
 	switch err {
 	case nil:
 	case gorm.ErrRecordNotFound:
-		return &api.GetTeamResponse{
-			Team: nil,
-			Code: api.Code_ERROR_TEAM_NOTFOUND,
+		return &api.GetTodoResponse{
+			Todo: nil,
+			Code: api.Code_ERROR_TODO_NOTFOUND,
 		}, nil
 	default:
-		return &api.GetTeamResponse{
+		return &api.GetTodoResponse{
 			Code: api.Code_ERROR_UNKNOWN,
 		}, err
 
 	}
 
-	var members []*api.TeamMember
-	for _, m := range data.Members {
-		members = append(members, &api.TeamMember{
-			UserId:    m.UserId,
-			IsAdmin:   m.IsAdmin,
-			CreatedAt: m.CreatedAt.Format("2006-01-02 15:04:05"),
-			UpdatedAt: m.UpdatedAt.Format("2006-01-02 15:04:05"),
+	var items []*api.TodoItem
+	for _, m := range data.Items {
+		items = append(items, &api.TodoItem{
+			Content:        m.Content,
+			IsFinished:     m.IsFinished,
+			FinishedUserId: m.FinishedUsedId,
+			CreatedAt:      m.CreatedAt.Format("2006-01-02 15:04:05"),
+			UpdatedAt:      m.UpdatedAt.Format("2006-01-02 15:04:05"),
 		})
 	}
 
-	team := &api.TeamInfo{
-		Id:          data.Id,
-		Name:        data.Name,
-		Description: data.Description,
-		Website:     data.Website,
-		Avatar:      data.Avatar,
-		Email:       data.Email,
-		Members:     members,
-		CreatedAt:   data.CreatedAt.Format("2006-01-02 15:04:05"),
-		UpdatedAt:   data.UpdatedAt.Format("2006-01-02 15:04:05"),
+	todo := &api.TodoInfo{
+		Id:        data.Id,
+		CardId:    data.CardId,
+		Title:     data.Title,
+		Items:     items,
+		CreatedAt: data.CreatedAt.Format("2006-01-02 15:04:05"),
+		UpdatedAt: data.UpdatedAt.Format("2006-01-02 15:04:05"),
 	}
-	return &api.GetTeamResponse{
-		Team: team,
+	return &api.GetTodoResponse{
+		Todo: todo,
 		Code: api.Code_OK,
 	}, nil
 }
 
-func (t TeamService) GetTeamByIdStream(server api.Team_GetTeamByIdStreamServer) error {
+func (t TodoService) GetTodoByIdStream(server api.TodoService_GetTodoByIdStreamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (t TeamService) GetTeamsByName(ctx context.Context, request *api.GetTeamsByNameRequest) (*api.GetTeamsResponse, error) {
-	//TODO implement me
-	panic("implement me")
-}
+func (t TodoService) AddTodo(ctx context.Context, todo *api.TodoInfo) (*api.AddTodoResponse, error) {
 
-func (t TeamService) GetTeamsByNameStream(server api.Team_GetTeamsByNameStreamServer) error {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (t TeamService) AddTeam(ctx context.Context, team *api.AddTeamRequest) (*api.AddTeamResponse, error) {
-
-	id, err := t.repo.Insert(ctx, &data.Team{
-		Name:        team.Team.Name,
-		Description: team.Team.Description,
-		Website:     team.Team.Website,
-		Avatar:      team.Team.Avatar,
-		Email:       team.Team.Email,
-		Members: []data.TeamMember{
-			{
-				UserId:  team.CreatorId,
-				IsAdmin: true,
-			},
-		},
+	id, err := t.repo.Insert(ctx, &data.Todo{
+		Id:     todo.Id,
+		CardId: todo.CardId,
+		Title:  todo.Title,
 	})
 
 	if err != nil {
-		return &api.AddTeamResponse{
+		return &api.AddTodoResponse{
 			Code: api.Code_ERROR_UNKNOWN,
 		}, err
 	}
 
-	return &api.AddTeamResponse{Id: id}, nil
+	return &api.AddTodoResponse{Id: id}, nil
 }
 
-func (t TeamService) AddTeamStream(server api.Team_AddTeamStreamServer) error {
+func (t TodoService) AddTodoStream(server api.TodoService_AddTodoStreamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (t TeamService) SetTeamName(ctx context.Context, req *api.SetTeamNameRequest) (*api.SetTeamNameResponse, error) {
+func (t TodoService) SetTodoTitle(ctx context.Context, req *api.SetTodoTitleRequest) (*api.SetTodoTitleResponse, error) {
 	one, err := t.repo.FindOne(ctx, req.Id)
 
 	switch err {
 	case nil:
 	case gorm.ErrRecordNotFound:
-		return &api.SetTeamNameResponse{
-			Code: api.Code_ERROR_TEAM_NOTFOUND,
+		return &api.SetTodoTitleResponse{
+			Code: api.Code_ERROR_TODO_NOTFOUND,
 		}, nil
 	default:
-		return &api.SetTeamNameResponse{
+		return &api.SetTodoTitleResponse{
 			Code: api.Code_ERROR_UNKNOWN,
 		}, err
 
 	}
 
-	one.Name = req.Name
+	one.Title = req.Title
 
 	if error := t.repo.Update(ctx, one); error != nil {
-		return &api.SetTeamNameResponse{
+		return &api.SetTodoTitleResponse{
 			Code: api.Code_ERROR_UNKNOWN,
 		}, error
 	}
 
-	return &api.SetTeamNameResponse{
+	return &api.SetTodoTitleResponse{
 		Code: api.Code_OK,
 	}, nil
 
 }
 
-func (t TeamService) SetTeamDescription(ctx context.Context, req *api.SetTeamDescriptionRequest) (*api.SetTeamDescriptionResponse, error) {
-	one, err := t.repo.FindOne(ctx, req.Id)
-
-	switch err {
-	case nil:
-	case gorm.ErrRecordNotFound:
-		return &api.SetTeamDescriptionResponse{
-			Code: api.Code_ERROR_TEAM_NOTFOUND,
-		}, nil
-	default:
-		return &api.SetTeamDescriptionResponse{
-			Code: api.Code_ERROR_UNKNOWN,
-		}, err
-
-	}
-
-	one.Description = req.Description
-
-	if error := t.repo.Update(ctx, one); error != nil {
-		return &api.SetTeamDescriptionResponse{
-			Code: api.Code_ERROR_UNKNOWN,
-		}, error
-	}
-
-	return &api.SetTeamDescriptionResponse{
-		Code: api.Code_OK,
-	}, nil
-
-}
-func (t TeamService) SetTeamAvatar(ctx context.Context, req *api.SetTeamAvatarRequest) (*api.SetTeamAvatarResponse, error) {
-	one, err := t.repo.FindOne(ctx, req.Id)
-
-	switch err {
-	case nil:
-	case gorm.ErrRecordNotFound:
-		return &api.SetTeamAvatarResponse{
-			Code: api.Code_ERROR_TEAM_NOTFOUND,
-		}, nil
-	default:
-		return &api.SetTeamAvatarResponse{
-			Code: api.Code_ERROR_UNKNOWN,
-		}, err
-
-	}
-	one.Avatar = req.Avatar
-
-	if error := t.repo.Update(ctx, one); error != nil {
-		return &api.SetTeamAvatarResponse{
-			Code: api.Code_ERROR_UNKNOWN,
-		}, error
-	}
-
-	return &api.SetTeamAvatarResponse{
-		Code: api.Code_OK,
-	}, nil
-
-}
-func (t TeamService) SetTeamEmail(ctx context.Context, req *api.SetTeamEmailRequest) (*api.SetTeamEmailResponse, error) {
-	one, err := t.repo.FindOne(ctx, req.Id)
-
-	switch err {
-	case nil:
-	case gorm.ErrRecordNotFound:
-		return &api.SetTeamEmailResponse{
-			Code: api.Code_ERROR_TEAM_NOTFOUND,
-		}, nil
-	default:
-		return &api.SetTeamEmailResponse{
-			Code: api.Code_ERROR_UNKNOWN,
-		}, err
-
-	}
-	one.Email = req.Email
-
-	if error := t.repo.Update(ctx, one); error != nil {
-		return &api.SetTeamEmailResponse{
-			Code: api.Code_ERROR_UNKNOWN,
-		}, error
-	}
-
-	return &api.SetTeamEmailResponse{
-		Code: api.Code_OK,
-	}, nil
-
-}
-func (t TeamService) SetTeamWebsite(ctx context.Context, req *api.SetTeamWebsiteRequest) (*api.SetTeamWebsiteResponse, error) {
-	one, err := t.repo.FindOne(ctx, req.Id)
-
-	switch err {
-	case nil:
-	case gorm.ErrRecordNotFound:
-		return &api.SetTeamWebsiteResponse{
-			Code: api.Code_ERROR_TEAM_NOTFOUND,
-		}, nil
-	default:
-		return &api.SetTeamWebsiteResponse{
-			Code: api.Code_ERROR_UNKNOWN,
-		}, err
-
-	}
-	one.Website = req.Website
-
-	if error := t.repo.Update(ctx, one); error != nil {
-		return &api.SetTeamWebsiteResponse{
-			Code: api.Code_ERROR_UNKNOWN,
-		}, error
-	}
-
-	return &api.SetTeamWebsiteResponse{
-		Code: api.Code_OK,
-	}, nil
-
-}
-
-func (t TeamService) SetTeamNameSteam(server api.Team_SetTeamNameSteamServer) error {
-	//TODO implement me
-	panic("implement me")
-}
-func (t TeamService) SetTeamDescriptionSteam(server api.Team_SetTeamDescriptionSteamServer) error {
-	//TODO implement me
-	panic("implement me")
-}
-func (t TeamService) SetTeamWebsiteSteam(server api.Team_SetTeamWebsiteSteamServer) error {
-	//TODO implement me
-	panic("implement me")
-}
-func (t TeamService) SetTeamAvatarSteam(server api.Team_SetTeamAvatarSteamServer) error {
-	//TODO implement me
-	panic("implement me")
-}
-func (t TeamService) SetTeamEmailSteam(server api.Team_SetTeamEmailSteamServer) error {
+func (t TodoService) SetTodoTitleStream(request *api.SetTodoTitleRequest, server api.TodoService_SetTodoTitleStreamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (t TeamService) DeleteTeam(ctx context.Context, request *api.DeleteTeamRequest) (*api.DeleteTeamResponse, error) {
+func (t TodoService) DeleteTodo(ctx context.Context, request *api.DeleteTodoRequest) (*api.DeleteTodoResponse, error) {
 	if err := t.repo.Delete(ctx, request.Id); err != nil {
-		return &api.DeleteTeamResponse{
+		return &api.DeleteTodoResponse{
 			Code: api.Code_ERROR_UNKNOWN,
 		}, err
 	}
-	return &api.DeleteTeamResponse{
+	return &api.DeleteTodoResponse{
 		Code: api.Code_OK,
 	}, nil
 }
 
-func (t TeamService) DeleteTeamStream(server api.Team_DeleteTeamStreamServer) error {
+func (t TodoService) DeleteTodoStream(server api.TodoService_DeleteTodoStreamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (t TeamService) AddMember(ctx context.Context, request *api.AddMemberRequest) (*api.AddMemberResponse, error) {
-	if err := t.repo.SetMember(ctx, request.TeamId, request.UserId, request.IsAdmin); err != nil {
-		return &api.AddMemberResponse{
-			Code: api.Code_ERROR_UNKNOWN,
-		}, err
-	}
-
-	return &api.AddMemberResponse{
-		Code: api.Code_OK,
-	}, nil
-
-}
-
-func (t TeamService) AddMemberStream(server api.Team_AddMemberStreamServer) error {
+func (t TodoService) AddItem(ctx context.Context, item *api.TodoItem) (*api.AddItemResponse, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (t TeamService) DeleteMember(ctx context.Context, request *api.DeleteMemberRequest) (*api.DeleteMemberResponse, error) {
-	if err := t.repo.DeleteMember(ctx, request.TeamId, request.UserId); err != nil {
-		return &api.DeleteMemberResponse{
-			Code: api.Code_ERROR_UNKNOWN,
-		}, err
-	}
-	return &api.DeleteMemberResponse{
-		Code: api.Code_OK,
-	}, nil
-}
-
-func (t TeamService) DeleteMemberStream(server api.Team_DeleteMemberStreamServer) error {
+func (t TodoService) AddItemStream(server api.TodoService_AddItemStreamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (t TeamService) AddAdmin(ctx context.Context, request *api.AddAdminRequest) (*api.AddAdminResponse, error) {
-	if err := t.repo.SetMember(ctx, request.TeamId, request.UserId, true); err != nil {
-		return &api.AddAdminResponse{
-			Code: api.Code_ERROR_UNKNOWN,
-		}, err
-	}
-
-	return &api.AddAdminResponse{
-		Code: api.Code_OK,
-	}, nil
-
-}
-
-func (t TeamService) AddAdminStream(server api.Team_AddAdminStreamServer) error {
+func (t TodoService) SetItemContent(ctx context.Context, request *api.SetContentRequest) (*api.SetContentResponse, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (t TeamService) mustEmbedUnimplementedTeamServiceServer() {
+func (t TodoService) SetItemContentStream(server api.TodoService_SetItemContentStreamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func NewTeamService(repo data.TeamRepo) *TeamService {
-	return &TeamService{
+func (t TodoService) SetItemFinished(ctx context.Context, request *api.SetFinishedRequest) (*api.SetFinishedResponse, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (t TodoService) SetItemFinishedStream(server api.TodoService_SetItemFinishedStreamServer) error {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (t TodoService) DeleteTodoItem(ctx context.Context, request *api.DeleteTodoItemRequest) (*api.DeleteTodoItemResponse, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (t TodoService) DeleteTodoItemStream(server api.TodoService_DeleteTodoItemStreamServer) error {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (t TodoService) mustEmbedUnimplementedTodoServiceServer() {
+	//TODO implement me
+	panic("implement me")
+}
+
+func NewTodoService(repo data.TodoRepo) *TodoService {
+	return &TodoService{
 		repo: repo,
 	}
 }
