@@ -27,9 +27,9 @@ service TodoService {
 //  rpc GetTodoByCardIdStream(stream GetTodoByCardIdRequest) returns (stream GetTodosResponse){}
 
   // add a Todo
-  rpc AddTodo(Todo) returns (AddTodoResponse){}
+  rpc AddTodo(TodoInfo) returns (AddTodoResponse){}
   // add a Todo via stream
-  rpc AddTodoStream(stream Todo) returns (stream AddTodoResponse){}
+  rpc AddTodoStream(stream TodoInfo) returns (stream AddTodoResponse){}
 
   // set Todo title
   rpc SetTodoTitle(SetTodoTitleRequest) returns (SetTodoTitleResponse){}
@@ -70,9 +70,9 @@ enum Code {
   ERROR_TODO_NOTFOUND = 2;
 }
 // The response message containing the greetings
-message Todo {
-  int64 id = 1; // 待办id
-  int64 card_id = 2; // 所属卡片id
+message TodoInfo {
+  uint64 id = 1; // 待办id
+  uint64 card_id = 2; // 所属卡片id
   string title = 3; // 待办标题
   repeated TodoItem items = 4; //待办项
   string created_at = 5; // 待办创建时间
@@ -80,17 +80,18 @@ message Todo {
 }
 
 message TodoItem{
-  int64 id = 1;//id
-  int64 todo_id = 2;   //所属待办的id
+  uint64 id = 1;//id
+  uint64 todo_id = 2;   //所属待办的id
   string content = 3;//具体内容
-  int64 is_finished = 4;//是否完成
-  int64 finished_user_id = 5;//完成人
+  bool is_finished = 4;//是否完成
+  uint64 finished_user_id = 5;//完成人
   string created_at = 6; // 待办项目创建时间
   string updated_at = 7; // 待办项目更新时间
 }
 
 message GetTodoResponse {
-  Todo todo = 1;
+  TodoInfo todo = 1;
+  Code code = 2;
 }
 
 message GetTodoByIdRequest
@@ -109,9 +110,8 @@ message GetTodoByIdRequest
 
 message AddTodoResponse
 {
-  bool success = 1;
-  string message = 2;
-  int64 id = 3;
+  Code code = 1;
+  uint64 id = 2;
 }
 
 message SetTodoTitleRequest
@@ -158,15 +158,13 @@ message DeleteTodoRequest
 
 message DeleteTodoResponse
 {
-  bool success = 1;
-  string message = 2;
+  Code code = 1;
 }
 
 message AddItemResponse
 {
-  bool success = 1;
-  string message = 2;
-  int64 id = 3;
+  Code code = 1;
+  uint64 id = 2;
 }
 //
 //message UpdateItemResponse
@@ -178,12 +176,11 @@ message AddItemResponse
 
 message DeleteTodoItemRequest
 {
-  int64 todo_item_id = 1;
+  uint64 todo_item_id = 1;
 
 }
 
 message DeleteTodoItemResponse
 {
-  bool success = 1;
-  string message = 2;
+  Code code = 1;
 }

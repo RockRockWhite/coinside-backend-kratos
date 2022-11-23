@@ -27,7 +27,7 @@ type TodoServiceClient interface {
 	// Get a Todo by id via stream
 	GetTodoByIdStream(ctx context.Context, opts ...grpc.CallOption) (TodoService_GetTodoByIdStreamClient, error)
 	// add a Todo
-	AddTodo(ctx context.Context, in *Todo, opts ...grpc.CallOption) (*AddTodoResponse, error)
+	AddTodo(ctx context.Context, in *TodoInfo, opts ...grpc.CallOption) (*AddTodoResponse, error)
 	// add a Todo via stream
 	AddTodoStream(ctx context.Context, opts ...grpc.CallOption) (TodoService_AddTodoStreamClient, error)
 	// set Todo title
@@ -104,7 +104,7 @@ func (x *todoServiceGetTodoByIdStreamClient) Recv() (*GetTodoResponse, error) {
 	return m, nil
 }
 
-func (c *todoServiceClient) AddTodo(ctx context.Context, in *Todo, opts ...grpc.CallOption) (*AddTodoResponse, error) {
+func (c *todoServiceClient) AddTodo(ctx context.Context, in *TodoInfo, opts ...grpc.CallOption) (*AddTodoResponse, error) {
 	out := new(AddTodoResponse)
 	err := c.cc.Invoke(ctx, "/todo.TodoService/AddTodo", in, out, opts...)
 	if err != nil {
@@ -123,7 +123,7 @@ func (c *todoServiceClient) AddTodoStream(ctx context.Context, opts ...grpc.Call
 }
 
 type TodoService_AddTodoStreamClient interface {
-	Send(*Todo) error
+	Send(*TodoInfo) error
 	Recv() (*AddTodoResponse, error)
 	grpc.ClientStream
 }
@@ -132,7 +132,7 @@ type todoServiceAddTodoStreamClient struct {
 	grpc.ClientStream
 }
 
-func (x *todoServiceAddTodoStreamClient) Send(m *Todo) error {
+func (x *todoServiceAddTodoStreamClient) Send(m *TodoInfo) error {
 	return x.ClientStream.SendMsg(m)
 }
 
@@ -394,7 +394,7 @@ type TodoServiceServer interface {
 	// Get a Todo by id via stream
 	GetTodoByIdStream(TodoService_GetTodoByIdStreamServer) error
 	// add a Todo
-	AddTodo(context.Context, *Todo) (*AddTodoResponse, error)
+	AddTodo(context.Context, *TodoInfo) (*AddTodoResponse, error)
 	// add a Todo via stream
 	AddTodoStream(TodoService_AddTodoStreamServer) error
 	// set Todo title
@@ -434,7 +434,7 @@ func (UnimplementedTodoServiceServer) GetTodoById(context.Context, *GetTodoByIdR
 func (UnimplementedTodoServiceServer) GetTodoByIdStream(TodoService_GetTodoByIdStreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetTodoByIdStream not implemented")
 }
-func (UnimplementedTodoServiceServer) AddTodo(context.Context, *Todo) (*AddTodoResponse, error) {
+func (UnimplementedTodoServiceServer) AddTodo(context.Context, *TodoInfo) (*AddTodoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddTodo not implemented")
 }
 func (UnimplementedTodoServiceServer) AddTodoStream(TodoService_AddTodoStreamServer) error {
@@ -534,7 +534,7 @@ func (x *todoServiceGetTodoByIdStreamServer) Recv() (*GetTodoByIdRequest, error)
 }
 
 func _TodoService_AddTodo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Todo)
+	in := new(TodoInfo)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -546,7 +546,7 @@ func _TodoService_AddTodo_Handler(srv interface{}, ctx context.Context, dec func
 		FullMethod: "/todo.TodoService/AddTodo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TodoServiceServer).AddTodo(ctx, req.(*Todo))
+		return srv.(TodoServiceServer).AddTodo(ctx, req.(*TodoInfo))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -557,7 +557,7 @@ func _TodoService_AddTodoStream_Handler(srv interface{}, stream grpc.ServerStrea
 
 type TodoService_AddTodoStreamServer interface {
 	Send(*AddTodoResponse) error
-	Recv() (*Todo, error)
+	Recv() (*TodoInfo, error)
 	grpc.ServerStream
 }
 
@@ -569,8 +569,8 @@ func (x *todoServiceAddTodoStreamServer) Send(m *AddTodoResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *todoServiceAddTodoStreamServer) Recv() (*Todo, error) {
-	m := new(Todo)
+func (x *todoServiceAddTodoStreamServer) Recv() (*TodoInfo, error) {
+	m := new(TodoInfo)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
