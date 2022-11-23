@@ -111,6 +111,7 @@ services:
     depends_on:
       - zookeeper
       - teamdb
+
   # Markdown-Service
   markdowndb:
     image: mariadb:latest

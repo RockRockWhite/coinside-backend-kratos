@@ -26,7 +26,7 @@ type Item struct {
 	TodoId         uint64         `gorm:"column:todo_id"`          //  待办id
 	Content        string         `gorm:"column:content"`          //  待办项内容
 	IsFinished     bool           `gorm:"column:is_finished"`      // 是否完成
-	FinishedUsedId uint64         `gorm:"column:finished_used_id"` //完成用户id
+	FinishedUserId uint64         `gorm:"column:finished_user_id"` //完成用户id
 	CreatedAt      time.Time      `gorm:"column:created_at"`       // 创建时间
 	UpdatedAt      time.Time      `gorm:"column:updated_at"`       // 更新时间
 	DeletedAt      gorm.DeletedAt `gorm:"column:deleted_at"`       // 删除时间
