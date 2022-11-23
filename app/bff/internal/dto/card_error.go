@@ -7,6 +7,11 @@ import (
 type CardError map[card.Code]ResponseDto
 
 var CardErrorCode CardError
+var CardOnlyOneMember ResponseDto = ResponseDto{
+	Code:    "ERROR_CARD_OLNY_MEMBER",
+	Message: "Cannot delete the only member of the card.",
+	Data:    nil,
+}
 
 func init() {
 	CardErrorCode = CardError{
