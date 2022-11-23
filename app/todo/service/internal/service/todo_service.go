@@ -35,7 +35,7 @@ func (t TodoService) GetTodoById(ctx context.Context, request *api.GetTodoByIdRe
 		items = append(items, &api.TodoItem{
 			Content:        m.Content,
 			IsFinished:     m.IsFinished,
-			FinishedUserId: m.FinishedUsedId,
+			FinishedUserId: m.FinishedUserId,
 			CreatedAt:      m.CreatedAt.Format("2006-01-02 15:04:05"),
 			UpdatedAt:      m.UpdatedAt.Format("2006-01-02 15:04:05"),
 		})
