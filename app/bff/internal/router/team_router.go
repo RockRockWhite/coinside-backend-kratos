@@ -7,13 +7,6 @@ import (
 )
 
 func TeamRouter(r *gin.Engine, controller *controller.TeamController) *gin.Engine {
-	//selfCond := func(c *gin.Context) bool {
-	//	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
-	//	claims := c.MustGet("claims").(*util.JwtClaims)
-	//
-	//	return id == claims.Id
-	//}
-
 	team := r.Group("/teams")
 	{
 		team.GET("/:id", middleware.JwtAuth(nil), controller.GetTeamInfo)
