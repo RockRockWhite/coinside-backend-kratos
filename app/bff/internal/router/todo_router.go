@@ -6,7 +6,7 @@ import (
 	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/middleware"
 )
 
-func TeamRouter(r *gin.Engine, controller *controller.TeamController) *gin.Engine {
+func TodoRouter(r *gin.Engine, controller *controller.TeamController) *gin.Engine {
 	//selfCond := func(c *gin.Context) bool {
 	//	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 	//	claims := c.MustGet("claims").(*util.JwtClaims)

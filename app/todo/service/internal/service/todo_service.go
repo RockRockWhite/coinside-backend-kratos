@@ -33,6 +33,8 @@ func (t TodoService) GetTodoById(ctx context.Context, request *api.GetTodoByIdRe
 	var items []*api.TodoItem
 	for _, m := range data.Items {
 		items = append(items, &api.TodoItem{
+			Id:             m.Id,
+			TodoId:         m.TodoId,
 			Content:        m.Content,
 			IsFinished:     m.IsFinished,
 			FinishedUserId: m.FinishedUserId,
@@ -60,10 +62,9 @@ func (t TodoService) GetTodoByIdStream(server api.TodoService_GetTodoByIdStreamS
 	panic("implement me")
 }
 
-func (t TodoService) AddTodo(ctx context.Context, todo *api.TodoInfo) (*api.AddTodoResponse, error) {
+func (t TodoService) AddTodo(ctx context.Context, todo *api.AddTodoRequest) (*api.AddTodoResponse, error) {
 
 	id, err := t.repo.Insert(ctx, &data.Todo{
-		Id:     todo.Id,
 		CardId: todo.CardId,
 		Title:  todo.Title,
 	})

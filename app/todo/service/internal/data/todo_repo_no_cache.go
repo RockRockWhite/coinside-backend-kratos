@@ -66,7 +66,7 @@ func (t TodoRepoNoCache) DeleteItem(ctx context.Context, id uint64, itemId uint6
 		return nil
 	}
 
-	err = t.db.Model(&data).Association("Todos").Delete(item[0])
+	err = t.db.Model(&data).Association("Items").Delete(item[0])
 	return err
 }
 
@@ -88,8 +88,8 @@ func (t TodoRepoNoCache) FinishItem(ctx context.Context, id uint64, itemId uint6
 	item[0].IsFinished = true
 	item[0].FinishedUserId = finishedUserId
 
-	err = t.db.Model(&data).Association("Todos").Delete(item[0])
-	return err
+	res := t.db.Save(item[0])
+	return res.Error
 }
 
 func (t TodoRepoNoCache) UpdateContent(ctx context.Context, id uint64, itemId uint64, content string) error {
@@ -109,8 +109,8 @@ func (t TodoRepoNoCache) UpdateContent(ctx context.Context, id uint64, itemId ui
 
 	item[0].Content = content
 
-	err = t.db.Model(&data).Association("Todos").Delete(item[0])
-	return err
+	res := t.db.Save(item[0])
+	return res.Error
 }
 
 func (t TodoRepoNoCache) RestartItem(ctx context.Context, id uint64, itemId uint64) error {
@@ -131,8 +131,8 @@ func (t TodoRepoNoCache) RestartItem(ctx context.Context, id uint64, itemId uint
 	item[0].IsFinished = false
 	item[0].FinishedUserId = 0
 
-	err = t.db.Model(&data).Association("Todos").Delete(item[0])
-	return err
+	res := t.db.Save(item[0])
+	return res.Error
 }
 
 func NewTodoRepoNoCache(db *gorm.DB) TodoRepo {

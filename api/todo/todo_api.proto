@@ -27,9 +27,9 @@ service TodoService {
 //  rpc GetTodoByCardIdStream(stream GetTodoByCardIdRequest) returns (stream GetTodosResponse){}
 
   // add a Todo
-  rpc AddTodo(TodoInfo) returns (AddTodoResponse){}
+  rpc AddTodo(AddTodoRequest) returns (AddTodoResponse){}
   // add a Todo via stream
-  rpc AddTodoStream(stream TodoInfo) returns (stream AddTodoResponse){}
+  rpc AddTodoStream(stream AddTodoRequest) returns (stream AddTodoResponse){}
 
   // set Todo title
   rpc SetTodoTitle(SetTodoTitleRequest) returns (SetTodoTitleResponse){}
@@ -186,4 +186,10 @@ message DeleteTodoItemRequest
 message DeleteTodoItemResponse
 {
   Code code = 1;
+}
+
+message AddTodoRequest
+{
+  uint64 card_id = 1; // 所属卡片id
+  string title = 2; // 待办标题
 }

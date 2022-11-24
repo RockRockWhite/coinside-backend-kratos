@@ -17,7 +17,7 @@ CREATE TABLE
     IF NOT EXISTS`m_todo_item`
 (
     `id`               INT          NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT 'id',
-    `todo_id`          INT          NOT NULL COMMENT 'todolist id',
+    `todo_id`          INT          COMMENT 'todolist id',
     `content`          VARCHAR(255) NOT NULL COMMENT '待办项',
     `is_finished`      TINYINT      NOT NULL DEFAULT '0' COMMENT '是否完成，0未完成，1已完成',
     `finished_user_id` INT          DEFAULT NULL COMMENT '完成用户id',
