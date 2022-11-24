@@ -5,12 +5,12 @@ import (
 	"github.com/ljxsteam/coinside-backend-kratos/api/card"
 	"github.com/ljxsteam/coinside-backend-kratos/app/card/service/internal/data"
 	"gorm.io/gorm"
+	"strconv"
 	"time"
 )
 
 type CardService struct {
 	card.UnimplementedCardServer
-
 	repo data.CardRepo
 }
 
@@ -112,8 +112,88 @@ func (c CardService) GetCardInfoStream(server card.Card_GetCardInfoStreamServer)
 }
 
 func (c CardService) GetCardInfoList(ctx context.Context, request *card.GetCardInfoListRequest) (*card.GetCardInfoListResponse, error) {
-	//TODO implement me
-	panic("implement me")
+	var filters []data.Filter
+
+	// 生成过滤器参数
+	for _, f := range request.Filters {
+		switch f.Type {
+		case card.CardFilterType_TEAM:
+			teamId, err := strconv.ParseUint(f.Value, 10, 64)
+			if err != nil {
+				return nil, err
+			}
+			filters = append(filters, data.NewTeamFilter(teamId))
+		case card.CardFilterType_STATUS:
+			statusUint64, err := strconv.ParseUint(f.Value, 10, 64)
+			status := card.CardStatus(statusUint64)
+			if err != nil {
+				return nil, err
+			}
+			filters = append(filters, data.NewStatusFilter(status))
+		case card.CardFilterType_MEMBER:
+			userId, err := strconv.ParseUint(f.Value, 10, 64)
+			if err != nil {
+				return nil, err
+			}
+			filters = append(filters, data.NewMemberFilter(userId))
+		case card.CardFilterType_TAG:
+			tagContent := f.Value
+			filters = append(filters, data.NewTagFilter(tagContent))
+		default:
+		}
+	}
+
+	all, err := c.repo.FindAll(ctx, request.Limit, request.Offset, filters)
+	switch err {
+	case nil:
+
+	default:
+		return &card.GetCardInfoListResponse{
+			Code:  card.Code_ERROR_UNKNOWN,
+			Infos: nil,
+		}, err
+	}
+
+	var infos []*card.CardInfo
+	// 组装members
+	for _, one := range all {
+		var members []*card.CardMember
+		for _, m := range one.Members {
+			members = append(members, &card.CardMember{
+				UserId:    m.UserId,
+				IsAdmin:   m.IsAdmin,
+				CreatedAt: m.CreatedAt.Format("2006-01-02 15:04:05"),
+				UpdatedAt: m.UpdatedAt.Format("2006-01-02 15:04:05"),
+			})
+		}
+
+		var tags []*card.CardTag
+		for _, t := range one.Tags {
+			tags = append(tags, &card.CardTag{
+				Content:   t.Content,
+				CreatedAt: t.CreatedAt.Format("2006-01-02 15:04:05"),
+				UpdatedAt: t.UpdatedAt.Format("2006-01-02 15:04:05"),
+			})
+		}
+
+		infos = append(infos, &card.CardInfo{
+			Id:        one.Id,
+			TeamId:    one.TeamId,
+			Title:     one.Title,
+			Content:   one.Content,
+			Status:    one.Status,
+			Deadline:  one.Deadline.Format("2006-01-02 15:04:05"),
+			Members:   members,
+			Tags:      tags,
+			CreatedAt: one.CreatedAt.Format("2006-01-02 15:04:05"),
+			UpdatedAt: one.UpdatedAt.Format("2006-01-02 15:04:05"),
+		})
+	}
+
+	return &card.GetCardInfoListResponse{
+		Infos: infos,
+		Code:  card.Code_OK,
+	}, nil
 }
 
 func (c CardService) GetCardInfoListStream(server card.Card_GetCardInfoListStreamServer) error {
