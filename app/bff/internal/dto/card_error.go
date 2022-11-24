@@ -12,6 +12,11 @@ var CardOnlyOneMember ResponseDto = ResponseDto{
 	Message: "Cannot delete the only member of the card.",
 	Data:    nil,
 }
+var CardFilterError ResponseDto = ResponseDto{
+	Code:    "ERROR_CARD_Filter",
+	Message: "Must has at lease one query of member_id or team_id.",
+	Data:    nil,
+}
 
 func init() {
 	CardErrorCode = CardError{

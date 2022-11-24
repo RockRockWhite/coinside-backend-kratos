@@ -10,6 +10,7 @@ func CardRouter(r *gin.Engine, controller *controller.CardController) *gin.Engin
 	card := r.Group("/cards")
 	{
 		card.GET("/:id", middleware.JwtAuth(nil), controller.IsCardMember(false), controller.GetCardInfo)
+		card.GET("", middleware.JwtAuth(nil), controller.GetCardInfoList)
 
 		card.POST("", middleware.JwtAuth(nil), controller.CreateCard)
 

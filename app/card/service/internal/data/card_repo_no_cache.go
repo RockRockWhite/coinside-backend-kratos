@@ -30,7 +30,7 @@ func (u CardRepoNoCache) FindAll(ctx context.Context, limit uint64, offset uint6
 		db = f.Filter(db)
 	}
 
-	res := db.Preload("Members").Preload("Tags").Find(&datas)
+	res := db.Preload("Members").Preload("Tags").Limit(int(limit)).Offset(int(offset)).Find(&datas)
 	return datas, res.Error
 }
 
