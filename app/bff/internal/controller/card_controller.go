@@ -71,6 +71,119 @@ func (u *CardController) GetCardInfo(c *gin.Context) {
 	})
 }
 
+func (u *CardController) GetCardInfoList(c *gin.Context) {
+	teamId := c.Query("team_id")
+	status := c.Query("status")
+	memberIds := c.QueryArray("member_id")
+	tags := c.QueryArray("tag")
+
+	// 生成过滤器参数
+	var filters []*card.CardFilter
+	if teamId != "" {
+		filters = append(filters, &card.CardFilter{
+			Type:  card.CardFilterType_TEAM,
+			Value: teamId,
+		})
+	}
+
+	for _, id := range memberIds {
+		filters = append(filters, &card.CardFilter{
+			Type:  card.CardFilterType_MEMBER,
+			Value: id,
+		})
+	}
+	// 判断上述两种过滤器必须有至少有一个
+
+	if status != "" {
+		filters = append(filters, &card.CardFilter{
+			Type:  card.CardFilterType_STATUS,
+			Value: status,
+		})
+	}
+	for _, tag := range tags {
+		filters = append(filters, &card.CardFilter{
+			Type:  card.CardFilterType_TAG,
+			Value: tag,
+		})
+	}
+
+	limit, _ := strconv.ParseUint(c.Query("limit"), 10, 64)
+	if limit == 0 {
+		limit = 20
+	}
+	offset, _ := strconv.ParseUint(c.Query("offset"), 10, 64)
+
+	res, err := u.cardClient.GetCardInfoList(context.Background(), &card.GetCardInfoListRequest{
+		Limit:   limit,
+		Offset:  offset,
+		Filters: filters,
+	})
+	if err != nil {
+		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+		return
+	}
+
+	// 获取冗余用户信息
+	type MemberInfo struct {
+		*card.CardMember
+		Nickname string `json:"nickname"`
+		Fullname string `json:"fullname"`
+		Email    string `json:"email"`
+		Avatar   string `json:"avatar"`
+	}
+	var data []struct {
+		*card.CardInfo
+		Members []MemberInfo `json:"members"`
+	}
+
+	infos := res.Infos
+	for _, info := range infos {
+		var members []MemberInfo
+		// 获取成员信息
+		stream, err := u.userClient.GetUserInfoStream(context.Background())
+		defer stream.CloseSend()
+		if err != nil {
+			c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+			return
+		}
+
+		for _, m := range info.Members {
+			if err := stream.Send(&user.GetUserInfoRequest{Id: m.UserId}); err != nil {
+				c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+				return
+			}
+
+			userInfo, err := stream.Recv()
+			if err != nil {
+				c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+				return
+			}
+
+			members = append(members, MemberInfo{
+				CardMember: m,
+				Nickname:   userInfo.Info.Nickname,
+				Fullname:   userInfo.Info.Fullname,
+				Email:      userInfo.Info.Email,
+				Avatar:     userInfo.Info.Avatar,
+			})
+		}
+
+		data = append(data, struct {
+			*card.CardInfo
+			Members []MemberInfo `json:"members"`
+		}{
+			CardInfo: info,
+			Members:  members,
+		})
+	}
+
+	c.JSON(http.StatusOK, &dto.ResponseDto{
+		Code:    dto.CardErrorCode[card.Code_OK].Code,
+		Message: dto.CardErrorCode[card.Code_OK].Message,
+		Data:    data,
+	})
+}
+
 func (u *CardController) CreateCard(c *gin.Context) {
 	var req card.CreateCardRequest
 	if err := c.ShouldBind(&req); err != nil {
