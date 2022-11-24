@@ -3,93 +3,85 @@ package controller
 import (
 	"context"
 	"github.com/gin-gonic/gin"
-	"github.com/ljxsteam/coinside-backend-kratos/api/team"
 	"github.com/ljxsteam/coinside-backend-kratos/api/todo"
 	"github.com/ljxsteam/coinside-backend-kratos/api/user"
 	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/dto"
-	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/util"
 	"net/http"
 	"strconv"
 )
 
 type TodoController struct {
 	userClient user.UserClient
-	todoClient todo.TodoClient
+	todoClient todo.TodoServiceClient
 }
 
 func (t *TodoController) GetTodoInfo(c *gin.Context) {
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 
-	res, err := t.todoClient.GetTodoById(context.Background(), &team.GetTeamByIdRequest{Id: id})
+	res, err := t.todoClient.GetTodoById(context.Background(), &todo.GetTodoByIdRequest{Id: id})
 
-	//resDto := dto.ResponseDto{
-	//	Code:    dto.TeamErrorCode[res.Code].Code,
-	//	Message: dto.TeamErrorCode[res.Code].Message,
-	//	Data:    nil,
-	//}
-	//
 	if err != nil {
 		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
 		return
 	}
 
 	switch res.Code {
-	case team.Code_OK:
-		// 获取冗余用户信息
-		type MemberInfo struct {
-			*team.TeamMember
-			Nickname string `json:"nickname"`
-			Fullname string `json:"fullname"`
-			Email    string `json:"email"`
-			Avatar   string `json:"avatar"`
-		}
-
-		var members []MemberInfo
-		// 获取成员信息
-		stream, err := t.userClient.GetUserInfoStream(context.Background())
-		defer stream.CloseSend()
-		if err != nil {
-			c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
-			return
-		}
-
-		for _, m := range res.Team.Members {
-			if err := stream.Send(&user.GetUserInfoRequest{Id: m.UserId}); err != nil {
-				c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
-				return
-			}
-
-			userInfo, err := stream.Recv()
-			if err != nil {
-				c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
-				return
-			}
-
-			members = append(members, MemberInfo{
-				TeamMember: m,
-				Nickname:   userInfo.Info.Nickname,
-				Fullname:   userInfo.Info.Fullname,
-				Email:      userInfo.Info.Email,
-				Avatar:     userInfo.Info.Avatar,
-			})
-		}
+	case todo.Code_OK:
+		//// 获取冗余用户信息
+		//type MemberInfo struct {
+		//	*team.TeamMember
+		//	Nickname string `json:"nickname"`
+		//	Fullname string `json:"fullname"`
+		//	Email    string `json:"email"`
+		//	Avatar   string `json:"avatar"`
+		//}
+		//
+		//var members []
+		//// 获取成员信息
+		//stream, err := t.userClient.GetUserInfoStream(context.Background())
+		//defer stream.CloseSend()
+		//if err != nil {
+		//	c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+		//	return
+		//}
+		//
+		//for _, m := range res.Todo.Members {
+		//	if err := stream.Send(&user.GetUserInfoRequest{Id: m.UserId}); err != nil {
+		//		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+		//		return
+		//	}
+		//
+		//	userInfo, err := stream.Recv()
+		//	if err != nil {
+		//		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+		//		return
+		//	}
+		//
+		//	members = append(members, MemberInfo{
+		//		TodoMember: m,
+		//		Nickname:   userInfo.Info.Nickname,
+		//		Fullname:   userInfo.Info.Fullname,
+		//		Email:      userInfo.Info.Email,
+		//		Avatar:     userInfo.Info.Avatar,
+		//	})
+		//}
 
 		c.JSON(http.StatusOK, &dto.ResponseDto{
-			Code:    dto.TeamErrorCode[res.Code].Code,
-			Message: dto.TeamErrorCode[res.Code].Message,
+			Code:    dto.TodoErrorCode[res.Code].Code,
+			Message: dto.TodoErrorCode[res.Code].Message,
 			Data: struct {
-				*team.TeamInfo
-				Members []MemberInfo `json:"members"`
+				*todo.TodoInfo
+				//Members []MemberInfo `json:"members"`
 			}{
-				TeamInfo: res.Team,
-				Members:  members,
+				TodoInfo: res.Todo,
+				//Members: members,
 			},
 		})
 
 	default:
 		c.JSON(http.StatusOK, &dto.ResponseDto{
-			Code:    dto.TeamErrorCode[res.Code].Code,
-			Message: dto.TeamErrorCode[res.Code].Message,
+			Code:    dto.TodoErrorCode[res.Code].Code,
+			Message: dto.TodoErrorCode[res.Code].Message,
 			Data:    nil,
 		})
 	}
@@ -97,30 +89,30 @@ func (t *TodoController) GetTodoInfo(c *gin.Context) {
 	//if res.Code != team.Code_OK {
 	//	resDto.Data = err
 	//} else {
-	//	resDto.Data = res.Team
+	//	resDto.Data = res.Todo
 	//}
 	//
 	//c.JSON(http.StatusOK, resDto)
 }
 
-func (t *TeamController) CreateTeam(c *gin.Context) {
-	var req team.AddTeamRequest
+func (t *TodoController) CreateTodo(c *gin.Context) {
+	var req todo.AddTodoRequest
 
 	if err := c.ShouldBind(&req); err != nil {
 		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
 		return
 	}
-	req.CreatorId = c.MustGet("claims").(*util.JwtClaims).Id
+	//req.CreatorId = c.MustGet("claims").(*util.JwtClaims).Id
 
-	res, err := t.teamClient.AddTeam(context.Background(), &req)
+	res, err := t.todoClient.AddTodo(context.Background(), &req)
 
 	resDto := dto.ResponseDto{
-		Code:    dto.TeamErrorCode[res.Code].Code,
-		Message: dto.TeamErrorCode[res.Code].Message,
+		Code:    dto.TodoErrorCode[res.Code].Code,
+		Message: dto.TodoErrorCode[res.Code].Message,
 		Data:    nil,
 	}
 
-	if res.Code != team.Code_OK {
+	if res.Code != todo.Code_OK {
 		resDto.Data = err
 	} else {
 		resDto.Data = struct {
@@ -133,148 +125,29 @@ func (t *TeamController) CreateTeam(c *gin.Context) {
 	c.JSON(http.StatusOK, resDto)
 }
 
-func (t *TeamController) SetName(c *gin.Context) {
+func (t *TodoController) SetTitle(c *gin.Context) {
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 
 	reqDto := struct {
-		Name string `json:"name"`
+		Title string `json:"title"`
 	}{}
 	if err := c.ShouldBind(&reqDto); err != nil {
 		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
 		return
 	}
 
-	res, err := t.teamClient.SetTeamName(context.Background(), &team.SetTeamNameRequest{
-		Id:   id,
-		Name: reqDto.Name,
-	})
-
-	resDto := dto.ResponseDto{
-		Code:    dto.TeamErrorCode[res.Code].Code,
-		Message: dto.TeamErrorCode[res.Code].Message,
-		Data:    nil,
-	}
-
-	if res.Code != team.Code_OK {
-		resDto.Data = err
-	} else {
-	}
-
-	c.JSON(http.StatusOK, resDto)
-}
-func (t *TeamController) SetDescription(c *gin.Context) {
-	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
-
-	reqDto := struct {
-		Description string `json:"description"`
-	}{}
-	if err := c.ShouldBind(&reqDto); err != nil {
-		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
-		return
-	}
-
-	res, err := t.teamClient.SetTeamDescription(context.Background(), &team.SetTeamDescriptionRequest{
-		Id:          id,
-		Description: reqDto.Description,
-	})
-
-	resDto := dto.ResponseDto{
-		Code:    dto.TeamErrorCode[res.Code].Code,
-		Message: dto.TeamErrorCode[res.Code].Message,
-		Data:    nil,
-	}
-
-	if res.Code != team.Code_OK {
-		resDto.Data = err
-	} else {
-	}
-
-	c.JSON(http.StatusOK, resDto)
-}
-
-func (t *TeamController) SetWebsite(c *gin.Context) {
-	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
-
-	reqDto := struct {
-		Website string `json:"website"`
-	}{}
-	if err := c.ShouldBind(&reqDto); err != nil {
-		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
-		return
-	}
-
-	res, err := t.teamClient.SetTeamWebsite(context.Background(), &team.SetTeamWebsiteRequest{
-		Id:      id,
-		Website: reqDto.Website,
-	})
-
-	resDto := dto.ResponseDto{
-		Code:    dto.TeamErrorCode[res.Code].Code,
-		Message: dto.TeamErrorCode[res.Code].Message,
-		Data:    nil,
-	}
-
-	if res.Code != team.Code_OK {
-		resDto.Data = err
-	} else {
-	}
-
-	c.JSON(http.StatusOK, resDto)
-}
-
-func (t *TeamController) SetAvatar(c *gin.Context) {
-	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
-
-	reqDto := struct {
-		Avatar string `json:"avatar"`
-	}{}
-	if err := c.ShouldBind(&reqDto); err != nil {
-		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
-		return
-	}
-
-	res, err := t.teamClient.SetTeamAvatar(context.Background(), &team.SetTeamAvatarRequest{
-		Id:     id,
-		Avatar: reqDto.Avatar,
-	})
-
-	resDto := dto.ResponseDto{
-		Code:    dto.TeamErrorCode[res.Code].Code,
-		Message: dto.TeamErrorCode[res.Code].Message,
-		Data:    nil,
-	}
-
-	if res.Code != team.Code_OK {
-		resDto.Data = err
-	} else {
-	}
-
-	c.JSON(http.StatusOK, resDto)
-}
-
-func (t *TeamController) SetEmail(c *gin.Context) {
-	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
-
-	reqDto := struct {
-		Email string `json:"email"`
-	}{}
-	if err := c.ShouldBind(&reqDto); err != nil {
-		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
-		return
-	}
-
-	res, err := t.teamClient.SetTeamEmail(context.Background(), &team.SetTeamEmailRequest{
+	res, err := t.todoClient.SetTodoTitle(context.Background(), &todo.SetTodoTitleRequest{
 		Id:    id,
-		Email: reqDto.Email,
+		Title: reqDto.Title,
 	})
 
 	resDto := dto.ResponseDto{
-		Code:    dto.TeamErrorCode[res.Code].Code,
-		Message: dto.TeamErrorCode[res.Code].Message,
+		Code:    dto.TodoErrorCode[res.Code].Code,
+		Message: dto.TodoErrorCode[res.Code].Message,
 		Data:    nil,
 	}
 
-	if res.Code != team.Code_OK {
+	if res.Code != todo.Code_OK {
 		resDto.Data = err
 	} else {
 	}
@@ -282,20 +155,20 @@ func (t *TeamController) SetEmail(c *gin.Context) {
 	c.JSON(http.StatusOK, resDto)
 }
 
-func (t *TeamController) DeleteTeam(c *gin.Context) {
+func (t *TodoController) DeleteTodo(c *gin.Context) {
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 
-	res, err := t.teamClient.DeleteTeam(context.Background(), &team.DeleteTeamRequest{
+	res, err := t.todoClient.DeleteTodo(context.Background(), &todo.DeleteTodoRequest{
 		Id: id,
 	})
 
 	resDto := dto.ResponseDto{
-		Code:    dto.TeamErrorCode[res.Code].Code,
-		Message: dto.TeamErrorCode[res.Code].Message,
+		Code:    dto.TodoErrorCode[res.Code].Code,
+		Message: dto.TodoErrorCode[res.Code].Message,
 		Data:    nil,
 	}
 
-	if res.Code != team.Code_OK {
+	if res.Code != todo.Code_OK {
 		resDto.Data = err
 	} else {
 	}
@@ -303,12 +176,130 @@ func (t *TeamController) DeleteTeam(c *gin.Context) {
 	c.JSON(http.StatusOK, resDto)
 }
 
-func (t *TeamController) SetTeamMember(c *gin.Context) {
+func (t *TodoController) SetTodoItem(c *gin.Context) {
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
-	userId, _ := strconv.ParseUint(c.Param("user_id"), 10, 64)
+	//userId, _ := strconv.ParseUint(c.Param("user_id"), 10, 64)
 
 	reqDto := struct {
-		IsAdmin bool `json:"is_admin"`
+		Content string `json:"content"`
+	}{}
+	if err := c.ShouldBind(&reqDto); err != nil {
+		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
+		return
+	}
+
+	//// 判断用户是否存在
+	//if res, err := t.userClient.GetUserInfo(context.Background(), &user.GetUserInfoRequest{Id: userId}); err != nil {
+	//	// error
+	//	c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+	//	return
+	//} else {
+	//	// no error
+	//	switch res.Code {
+	//	case user.Code_OK:
+	//	case user.Code_ERROR_USER_NOTFOUND:
+	//		c.JSON(http.StatusOK, &dto.ResponseDto{
+	//			Code:    dto.UserErrorCode[res.Code].Code,
+	//			Message: dto.UserErrorCode[res.Code].Message,
+	//			Data:    nil,
+	//		})
+	//		return
+	//	default:
+	//		c.JSON(http.StatusOK, &dto.ResponseDto{
+	//			Code:    dto.UserErrorCode[user.Code_ERROR_UNKNOWN].Code,
+	//			Message: dto.UserErrorCode[user.Code_ERROR_UNKNOWN].Message,
+	//			Data:    err,
+	//		})
+	//		return
+	//	}
+	//}
+
+	res, err := t.todoClient.AddItem(context.Background(), &todo.TodoItem{
+		TodoId:  id,
+		Content: reqDto.Content,
+	})
+
+	resDto := dto.ResponseDto{
+		Code:    dto.TodoErrorCode[res.Code].Code,
+		Message: dto.TodoErrorCode[res.Code].Message,
+		Data:    nil,
+	}
+
+	if res.Code != todo.Code_OK {
+		resDto.Data = err
+	} else {
+	}
+
+	c.JSON(http.StatusOK, resDto)
+}
+
+func (t *TodoController) SetItemContent(c *gin.Context) {
+	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
+	itemId, _ := strconv.ParseUint(c.Param("item_id"), 10, 64)
+	//userId, _ := strconv.ParseUint(c.Param("user_id"), 10, 64)
+	//
+	reqDto := struct {
+		Content string `json:"content"`
+	}{}
+	if err := c.ShouldBind(&reqDto); err != nil {
+		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
+		return
+	}
+	//
+	//// 判断用户是否存在
+	//if res, err := t.userClient.GetUserInfo(context.Background(), &user.GetUserInfoRequest{Id: userId}); err != nil {
+	//	// error
+	//	c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+	//	return
+	//} else {
+	//	// no error
+	//	switch res.Code {
+	//	case user.Code_OK:
+	//	case user.Code_ERROR_USER_NOTFOUND:
+	//		c.JSON(http.StatusOK, &dto.ResponseDto{
+	//			Code:    dto.UserErrorCode[res.Code].Code,
+	//			Message: dto.UserErrorCode[res.Code].Message,
+	//			Data:    nil,
+	//		})
+	//		return
+	//	default:
+	//		c.JSON(http.StatusOK, &dto.ResponseDto{
+	//			Code:    dto.UserErrorCode[user.Code_ERROR_UNKNOWN].Code,
+	//			Message: dto.UserErrorCode[user.Code_ERROR_UNKNOWN].Message,
+	//			Data:    err,
+	//		})
+	//		return
+	//	}
+	//}
+
+	res, err := t.todoClient.SetItemContent(context.Background(), &todo.SetContentRequest{
+		Id:      id,
+		ItemId:  itemId,
+		Content: reqDto.Content,
+	})
+
+	resDto := dto.ResponseDto{
+		Code:    dto.TodoErrorCode[res.Code].Code,
+		Message: dto.TodoErrorCode[res.Code].Message,
+		Data:    nil,
+	}
+
+	if res.Code != todo.Code_OK {
+		resDto.Data = err
+	} else {
+	}
+
+	c.JSON(http.StatusOK, resDto)
+}
+
+func (t *TodoController) SetItemFinished(c *gin.Context) {
+	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
+	itemId, _ := strconv.ParseUint(c.Param("item_id"), 10, 64)
+	//userId, _ := strconv.ParseUint(c.Param("user_id"), 10, 64)
+
+	reqDto := struct {
+		IsFinished bool   `json:"is_finished"`
+		UserId     uint64 `json:"finished_user_id"`
 	}{}
 	if err := c.ShouldBind(&reqDto); err != nil {
 		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
@@ -316,7 +307,7 @@ func (t *TeamController) SetTeamMember(c *gin.Context) {
 	}
 
 	// 判断用户是否存在
-	if res, err := t.userClient.GetUserInfo(context.Background(), &user.GetUserInfoRequest{Id: userId}); err != nil {
+	if res, err := t.userClient.GetUserInfo(context.Background(), &user.GetUserInfoRequest{Id: reqDto.UserId}); err != nil {
 		// error
 		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
 		return
@@ -341,19 +332,20 @@ func (t *TeamController) SetTeamMember(c *gin.Context) {
 		}
 	}
 
-	res, err := t.teamClient.AddMember(context.Background(), &team.AddMemberRequest{
-		TeamId:  id,
-		UserId:  userId,
-		IsAdmin: reqDto.IsAdmin,
+	res, err := t.todoClient.SetItemFinished(context.Background(), &todo.SetFinishedRequest{
+		Id:         id,
+		ItemId:     itemId,
+		IsFinished: reqDto.IsFinished,
+		UserId:     reqDto.UserId,
 	})
 
 	resDto := dto.ResponseDto{
-		Code:    dto.TeamErrorCode[res.Code].Code,
-		Message: dto.TeamErrorCode[res.Code].Message,
+		Code:    dto.TodoErrorCode[res.Code].Code,
+		Message: dto.TodoErrorCode[res.Code].Message,
 		Data:    nil,
 	}
 
-	if res.Code != team.Code_OK {
+	if res.Code != todo.Code_OK {
 		resDto.Data = err
 	} else {
 	}
@@ -361,53 +353,27 @@ func (t *TeamController) SetTeamMember(c *gin.Context) {
 	c.JSON(http.StatusOK, resDto)
 }
 
-func (t *TeamController) DeleteTeamMember(c *gin.Context) {
-	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
-	userId, _ := strconv.ParseUint(c.Param("user_id"), 10, 64)
+func (t *TodoController) DeleteTodoItem(c *gin.Context) {
+	todoId, _ := strconv.ParseUint(c.Param("id"), 10, 64)
+	todoItemId, _ := strconv.ParseUint(c.Param("item_id"), 10, 64)
 
-	res, err := t.teamClient.DeleteMember(context.Background(), &team.DeleteMemberRequest{
-		TeamId: id,
-		UserId: userId,
+	res, err := t.todoClient.DeleteTodoItem(context.Background(), &todo.DeleteTodoItemRequest{
+		TodoId:     todoId,
+		TodoItemId: todoItemId,
 	})
 
-	resDto := dto.ResponseDto{
-		Code:    dto.TeamErrorCode[res.Code].Code,
-		Message: dto.TeamErrorCode[res.Code].Message,
-		Data:    nil,
-	}
-
-	if res.Code != team.Code_OK {
-		resDto.Data = err
-	} else {
-	}
-
-	c.JSON(http.StatusOK, resDto)
-}
-
-func (t *TeamController) SetTeamAdmin(c *gin.Context) {
-	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
-	userId, _ := strconv.ParseUint(c.Param("user_id"), 10, 64)
-
-	reqDto := struct {
-		IsAdmin bool `json:"is_admin"`
-	}{}
-	if err := c.ShouldBind(&reqDto); err != nil {
-		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
+	if err != nil {
+		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
 		return
 	}
 
-	res, err := t.teamClient.AddAdmin(context.Background(), &team.AddAdminRequest{
-		TeamId: id,
-		UserId: userId,
-	})
-
 	resDto := dto.ResponseDto{
-		Code:    dto.TeamErrorCode[res.Code].Code,
-		Message: dto.TeamErrorCode[res.Code].Message,
+		Code:    dto.TodoErrorCode[res.Code].Code,
+		Message: dto.TodoErrorCode[res.Code].Message,
 		Data:    nil,
 	}
 
-	if res.Code != team.Code_OK {
+	if res.Code != todo.Code_OK {
 		resDto.Data = err
 	} else {
 	}
@@ -415,6 +381,6 @@ func (t *TeamController) SetTeamAdmin(c *gin.Context) {
 	c.JSON(http.StatusOK, resDto)
 }
 
-func NewTeamController(userClient user.UserClient, client team.TeamClient) *TeamController {
-	return &TeamController{userClient: userClient, teamClient: client}
+func NewTodoController(userClient user.UserClient, client todo.TodoServiceClient) *TodoController {
+	return &TodoController{userClient: userClient, todoClient: client}
 }

@@ -10,7 +10,7 @@ import (
 	"github.com/ljxsteam/coinside-backend-kratos/pkg/config"
 )
 
-func NewTodoClinet(conf *config.Config, dis registry.Discovery) todo.TodoServiceServer {
+func NewTodoClinet(conf *config.Config, dis registry.Discovery) todo.TodoServiceClient {
 	conn, err := grpc.DialInsecure(
 		context.Background(),
 		grpc.WithEndpoint(fmt.Sprintf("discovery:///%s", conf.GetString("service.todo.name"))),

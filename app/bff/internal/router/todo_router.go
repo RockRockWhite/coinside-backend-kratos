@@ -6,7 +6,7 @@ import (
 	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/middleware"
 )
 
-func TodoRouter(r *gin.Engine, controller *controller.TeamController) *gin.Engine {
+func TodoRouter(r *gin.Engine, controller *controller.TodoController) *gin.Engine {
 	//selfCond := func(c *gin.Context) bool {
 	//	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 	//	claims := c.MustGet("claims").(*util.JwtClaims)
@@ -14,21 +14,18 @@ func TodoRouter(r *gin.Engine, controller *controller.TeamController) *gin.Engin
 	//	return id == claims.Id
 	//}
 
-	team := r.Group("/teams")
+	team := r.Group("/modules/todos")
 	{
-		team.GET("/:id", middleware.JwtAuth(nil), controller.GetTeamInfo)
-		team.POST("", middleware.JwtAuth(nil), controller.CreateTeam)
-		team.POST("/:id/members/:user_id", controller.SetTeamMember)
-		team.POST("/:id/admins/:user_id", controller.SetTeamAdmin)
+		team.GET("/:id", middleware.JwtAuth(nil), controller.GetTodoInfo)
+		team.POST("", middleware.JwtAuth(nil), controller.CreateTodo)
+		team.POST("/:id/items", controller.SetTodoItem)
 
-		team.PUT(":id/name", middleware.JwtAuth(nil), controller.SetName)
-		team.PUT(":id/avatar", middleware.JwtAuth(nil), controller.SetAvatar)
-		team.PUT(":id/email", middleware.JwtAuth(nil), controller.SetEmail)
-		team.PUT(":id/description", middleware.JwtAuth(nil), controller.SetDescription)
-		team.PUT(":id/website", middleware.JwtAuth(nil), controller.SetWebsite)
+		team.PUT(":id/title", middleware.JwtAuth(nil), controller.SetTitle)
+		team.PUT(":id/items/:item_id/content", middleware.JwtAuth(nil), controller.SetItemContent)
+		team.PUT(":id/items/:item_id/finished", middleware.JwtAuth(nil), controller.SetItemFinished)
 
-		team.DELETE("/:id", middleware.JwtAuth(nil), controller.DeleteTeam)
-		team.DELETE("/:id/members/:user_id", middleware.JwtAuth(nil), controller.DeleteTeamMember)
+		team.DELETE("/:id", middleware.JwtAuth(nil), controller.DeleteTodo)
+		team.DELETE("/:id/items/:item_id", middleware.JwtAuth(nil), controller.DeleteTodoItem)
 
 	}
 
