@@ -128,7 +128,8 @@ message SetTodoTitleResponse
 message SetContentRequest
 {
   uint64 id = 1;
-  string content = 2;
+  uint64 item_id = 2;
+  string content = 3;
 }
 message SetContentResponse
 {
@@ -137,8 +138,9 @@ message SetContentResponse
 message SetFinishedRequest
 {
   uint64 id = 1;
-  bool is_finished = 2;
-  uint64 user_id = 3;
+  uint64 item_id = 2;
+  bool is_finished = 3;
+  uint64 user_id = 4;
 }
 
 message SetFinishedResponse
@@ -176,7 +178,8 @@ message AddItemResponse
 
 message DeleteTodoItemRequest
 {
-  uint64 todo_item_id = 1;
+  uint64 todo_id = 1;
+  uint64 todo_item_id = 2;
 
 }
 

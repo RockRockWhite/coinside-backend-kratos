@@ -2,7 +2,7 @@ package data
 
 import (
 	"context"
-	"github.com/ljxsteam/coinside-backend-kratos/app/todo/service/config"
+	"github.com/ljxsteam/coinside-backend-kratos/pkg/config"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -15,7 +15,7 @@ func init() {
 
 func TestTodoRepoNoCache_Insert(t *testing.T) {
 	todo := &Todo{
-		CardId: 0,
+		CardId: 1,
 		Title:  "单元测试数据",
 	}
 

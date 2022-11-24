@@ -92,6 +92,27 @@ func (t TodoRepoNoCache) FinishItem(ctx context.Context, id uint64, itemId uint6
 	return err
 }
 
+func (t TodoRepoNoCache) UpdateContent(ctx context.Context, id uint64, itemId uint64, content string) error {
+	data, err := t.FindOne(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	var item []Item
+	if err = t.db.Model(&data).Association("Items").Find(&item, "id = ?", itemId); err != nil {
+		return err
+	}
+
+	if len(item) == 0 {
+		return nil
+	}
+
+	item[0].Content = content
+
+	err = t.db.Model(&data).Association("Todos").Delete(item[0])
+	return err
+}
+
 func (t TodoRepoNoCache) RestartItem(ctx context.Context, id uint64, itemId uint64) error {
 	data, err := t.FindOne(ctx, id)
 	if err != nil {

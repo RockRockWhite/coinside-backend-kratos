@@ -2,7 +2,7 @@ package data
 
 import (
 	"fmt"
-	"github.com/ljxsteam/coinside-backend-kratos/app/todo/service/config"
+	"github.com/ljxsteam/coinside-backend-kratos/pkg/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
