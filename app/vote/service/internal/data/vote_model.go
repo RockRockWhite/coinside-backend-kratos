@@ -1,52 +1,50 @@
 package data
 
 import (
-	"github.com/ljxsteam/coinside-backend-kratos/api/card"
 	"gorm.io/gorm"
 	"time"
 )
 
 type Vote struct {
-	Id        uint64          `gorm:"primaryKey, column:id"` // id
-	TeamId    uint64          `gorm:"column:team_id"`        // 团队id
-	Title     string          `gorm:"column:title"`          // 卡片标题
-	Content   string          `gorm:"column:content"`        // 卡片详细内容，以标记语言存储
-	Status    card.CardStatus `gorm:"column:status"`         // 卡片状态, 0：进行中，1：已完成
-	Deadline  time.Time       `gorm:"column:deadline"`       // 截止时间
-	CreatedAt time.Time       `gorm:"column:created_at"`     // 创建时间
-	UpdatedAt time.Time       `gorm:"column:updated_at"`     // 更新时间
-	DeletedAt gorm.DeletedAt  `gorm:"column:deleted_at"`     // 删除时间
-
-	Members []Member `gorm:"foreignKey:CardId;references:Id"` // 卡片成员
-	Tags    []Tag    `gorm:"many2many:c_card_tag"`            // 卡片标签
-}
-
-func (Card) TableName() string {
-	return "c_card"
-}
-
-type Member struct {
 	Id        uint64         `gorm:"primaryKey, column:id"` // id
-	CardId    uint64         `gorm:"column:card_id"`        // 所属卡片id
-	UserId    uint64         `gorm:"column:user_id"`        // 用户id
-	IsAdmin   bool           `gorm:"column:is_admin"`       // 管理员：0：非管理员 1：管理员
-	CreatedAt time.Time      `gorm:"column:created_at"`     // 创建时间
-	UpdatedAt time.Time      `gorm:"column:updated_at"`     // 更新时间
-	DeletedAt gorm.DeletedAt `gorm:"column:deleted_at"`     // 删除时间,软删除支持字段
-}
-
-func (Member) TableName() string {
-	return "c_member"
-}
-
-type Tag struct {
-	Id        uint64         `gorm:"primaryKey, column:id"` // id
-	Content   string         `gorm:"column:content"`        // 标签内容
+	CardId    uint64         `gorm:"column:card_id"`        // 卡片id
+	Title     string         `gorm:"column:title"`          // 投票标题
 	CreatedAt time.Time      `gorm:"column:created_at"`     // 创建时间
 	UpdatedAt time.Time      `gorm:"column:updated_at"`     // 更新时间
 	DeletedAt gorm.DeletedAt `gorm:"column:deleted_at"`     // 删除时间
+
+	Items []Item `gorm:"foreignKey:VoteId;references:Id"` // 投票项
+
 }
 
-func (Tag) TableName() string {
-	return "c_tag"
+func (Vote) TableName() string {
+	return "m_vote"
+}
+
+type Item struct {
+	Id        uint64         `gorm:"primaryKey, column:id"` // id
+	VoteId    uint64         `gorm:"column:vote_id"`        // 投票id
+	Content   string         `gorm:"column:content"`        // 内容
+	CreatedAt time.Time      `gorm:"column:created_at"`     // 创建时间
+	UpdatedAt time.Time      `gorm:"column:updated_at"`     // 更新时间
+	DeletedAt gorm.DeletedAt `gorm:"column:deleted_at"`     // 删除时间,软删除支持字段
+	//这个放这里还是底下
+	Commits []Commit `gorm:"foreignKey:VoteItemId;references:Id"` // 投票提交
+}
+
+func (Item) TableName() string {
+	return "m_vote_item"
+}
+
+type Commit struct {
+	Id         uint64         `gorm:"primaryKey, column:id"` // id
+	VoteItemId string         `gorm:"column:vote_item_id"`   // 投票项id
+	UserId     uint64         `gorm:"column:user_id"`        //用户id
+	CreatedAt  time.Time      `gorm:"column:created_at"`     // 创建时间
+	UpdatedAt  time.Time      `gorm:"column:updated_at"`     // 更新时间
+	DeletedAt  gorm.DeletedAt `gorm:"column:deleted_at"`     // 删除时间
+}
+
+func (Commit) TableName() string {
+	return "m_vote_commit"
 }

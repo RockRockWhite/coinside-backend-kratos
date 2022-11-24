@@ -6,40 +6,41 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-type CardRepoNoCache struct {
+type VoteRepoNoCache struct {
 	db *gorm.DB
 }
 
-func (u CardRepoNoCache) Insert(ctx context.Context, data *Card) (uint64, error) {
+func (u VoteRepoNoCache) Insert(ctx context.Context, data *Vote) (uint64, error) {
 	res := u.db.Create(data)
 	return data.Id, res.Error
 }
 
-func (u CardRepoNoCache) FindOne(ctx context.Context, id uint64) (*Card, error) {
-	var data Card
-	res := u.db.Model(&data).Preload("Members").Preload("Tags").Where("id = ?", id).First(&data)
+func (u VoteRepoNoCache) FindOne(ctx context.Context, id uint64) (*Vote, error) {
+	var data Vote
+	res := u.db.Model(&data).Preload("Items").Where("id = ?", id).First(&data)
 	return &data, res.Error
 }
 
-// FindAll 批量查询卡片信息
-func (u CardRepoNoCache) FindAll(ctx context.Context, limit uint64, offset uint64, filters []Filter) ([]Card, error) {
-	var datas []Card
-	db := u.db.Model(&Card{})
+//
+//// FindAll 批量查询卡片信息
+//func (u CardRepoNoCache) FindAll(ctx context.Context, limit uint64, offset uint64, filters []Filter) ([]Card, error) {
+//	var datas []Card
+//	db := u.db.Model(&Card{})
+//
+//	for _, f := range filters {
+//		db = f.Filter(db)
+//	}
+//
+//	res := db.Preload("Members").Preload("Tags").Find(&datas)
+//	return datas, res.Error
+//}
 
-	for _, f := range filters {
-		db = f.Filter(db)
-	}
-
-	res := db.Preload("Members").Preload("Tags").Find(&datas)
-	return datas, res.Error
-}
-
-func (u CardRepoNoCache) Update(ctx context.Context, newData *Card) error {
+func (u VoteRepoNoCache) Update(ctx context.Context, newData *Vote) error {
 	res := u.db.Omit(clause.Associations).Save(newData)
 	return res.Error
 }
 
-func (u CardRepoNoCache) Delete(ctx context.Context, id uint64) error {
+func (u VoteRepoNoCache) Delete(ctx context.Context, id uint64) error {
 	data, err := u.FindOne(ctx, id)
 	if err != nil {
 		return err
@@ -49,84 +50,64 @@ func (u CardRepoNoCache) Delete(ctx context.Context, id uint64) error {
 	return res.Error
 }
 
-func (u CardRepoNoCache) InsertTag(ctx context.Context, id uint64, content string) error {
+func (u VoteRepoNoCache) InsertItem(ctx context.Context, id uint64, content string) (uint64, error) {
 	data, err := u.FindOne(ctx, id)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	err = u.db.Model(&data).Association("Tags").Append(
-		&Tag{
-			Content: content,
-		})
-	return err
+	item := &Item{
+		Content: content,
+	}
+	err = u.db.Model(&data).Association("Items").Append(item)
+	return item.Id, err
 }
 
-func (u CardRepoNoCache) DeleteTag(ctx context.Context, id uint64, content string) error {
+func (u VoteRepoNoCache) DeleteItem(ctx context.Context, id uint64, itemId uint64) error {
 	data, err := u.FindOne(ctx, id)
 	if err != nil {
 		return err
 	}
 
-	var tags []Tag
-	if err = u.db.Model(&data).Association("Tags").Find(&tags, "content = ?", content); err != nil {
+	var items []Item
+	if err = u.db.Model(&data).Association("Items").Find(&items, "item_id = ?", itemId); err != nil {
 		return err
 	}
 
-	if len(tags) == 0 {
+	if len(items) == 0 {
 		return nil
 	}
 
-	err = u.db.Model(&data).Association("Tags").Delete(tags[0])
+	err = u.db.Model(&data).Association("Items").Delete(items[0])
 	return err
 }
-
-func (u CardRepoNoCache) SetMember(ctx context.Context, id uint64, userId uint64, admin bool) error {
+func (u VoteRepoNoCache) UpdateItem(ctx context.Context, id uint64, itemId uint64, context string) error {
 	data, err := u.FindOne(ctx, id)
 	if err != nil {
 		return err
 	}
-
-	var members []Member
-	if err = u.db.Model(&data).Association("Members").Find(&members, "user_id = ?", userId); err != nil {
+	var items []Item
+	if err = u.db.Model(&data).Association("Items").Find(&items, "item_id = ?", itemId); err != nil {
 		return err
 	}
 
-	// add a member
-	if len(members) == 0 {
-		err = u.db.Model(&data).Association("Members").Append(
-			&Member{
-				UserId:  userId,
-				IsAdmin: admin,
-			})
-		return err
-	}
-
-	// update a member
-	members[0].IsAdmin = admin
-	res := u.db.Save(members[0])
-	return res.Error
-}
-
-func (u CardRepoNoCache) DeleteMember(ctx context.Context, id uint64, userId uint64) error {
-	data, err := u.FindOne(ctx, id)
-	if err != nil {
-		return err
-	}
-
-	var members []Member
-	if err = u.db.Model(&data).Association("Members").Find(&members, "user_id = ?", userId); err != nil {
-		return err
-	}
-
-	if len(members) == 0 {
+	if len(items) == 0 {
 		return nil
 	}
 
-	err = u.db.Model(&data).Association("Members").Delete(members[0])
+	items[0].Content = context
+	//这里这里，，是不是这样要测试
+	err = u.db.Model(&data).Association("Items").Replace(items[0])
 	return err
 }
 
-func NewCardRepoNoCache(db *gorm.DB) CardRepo {
-	return CardRepoNoCache{db: db}
+func (u VoteRepoNoCache) InsertCommit(ctx context.Context, id uint64, itemId uint64, userId uint64) error {
+	return nil
+}
+func (u VoteRepoNoCache) DeleteCommit(ctx context.Context, id uint64, itemId uint64, userId uint64) error {
+	return nil
+}
+
+func NewVoteRepoNoCache(db *gorm.DB) VoteRepo {
+	return VoteRepoNoCache{db: db}
 }
