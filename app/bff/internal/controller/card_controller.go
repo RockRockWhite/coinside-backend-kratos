@@ -366,39 +366,44 @@ func (u *CardController) DeleteCard(c *gin.Context) {
 	c.JSON(http.StatusOK, resDto)
 }
 
-func (u *CardController) IsCardMember(c *gin.Context) {
-	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
-	userId := c.MustGet("claims").(*util.JwtClaims).Id
+func (u *CardController) IsCardMember(isAdmin bool) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
+		userId := c.MustGet("claims").(*util.JwtClaims).Id
 
-	// 获取当前用户
-	cardInfo, err := u.cardClient.GetCardInfo(context.Background(), &card.GetCardInfoRequest{
-		Id: id,
-	})
-	if err != nil {
-		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
-		c.Abort()
-		return
-	}
-
-	switch cardInfo.Code {
-	case card.Code_OK:
-		// 判断是否是团队成员
-		for _, m := range cardInfo.Info.Members {
-			if m.UserId == userId {
-				// Claims写入上下文
-				c.Set("card_info", cardInfo.Info)
-				return
-			}
-		}
-		c.JSON(http.StatusOK, &dto.ErrorForbidden)
-		c.Abort()
-	default:
-		c.JSON(http.StatusOK, &dto.ResponseDto{
-			Code:    dto.CardErrorCode[cardInfo.Code].Code,
-			Message: dto.CardErrorCode[cardInfo.Code].Message,
-			Data:    nil,
+		// 获取当前用户
+		cardInfo, err := u.cardClient.GetCardInfo(context.Background(), &card.GetCardInfoRequest{
+			Id: id,
 		})
-		c.Abort()
+		if err != nil {
+			c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+			c.Abort()
+			return
+		}
+
+		switch cardInfo.Code {
+		case card.Code_OK:
+			// 判断是否是团队成员
+			for _, m := range cardInfo.Info.Members {
+				if m.UserId == userId {
+					if isAdmin && !m.IsAdmin {
+						continue
+					}
+					// Claims写入上下文
+					c.Set("card_info", cardInfo.Info)
+					return
+				}
+			}
+			c.JSON(http.StatusOK, &dto.ErrorForbidden)
+			c.Abort()
+		default:
+			c.JSON(http.StatusOK, &dto.ResponseDto{
+				Code:    dto.CardErrorCode[cardInfo.Code].Code,
+				Message: dto.CardErrorCode[cardInfo.Code].Message,
+				Data:    nil,
+			})
+			c.Abort()
+		}
 	}
 }
 

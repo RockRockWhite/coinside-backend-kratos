@@ -9,20 +9,20 @@ import (
 func CardRouter(r *gin.Engine, controller *controller.CardController) *gin.Engine {
 	card := r.Group("/cards")
 	{
-		card.GET("/:id", middleware.JwtAuth(nil), controller.IsCardMember, controller.GetCardInfo)
+		card.GET("/:id", middleware.JwtAuth(nil), controller.IsCardMember(false), controller.GetCardInfo)
 
 		card.POST("", middleware.JwtAuth(nil), controller.CreateCard)
 
-		card.PUT(":id/title", middleware.JwtAuth(nil), controller.IsCardMember, controller.SetTitle)
-		card.PUT(":id/content", middleware.JwtAuth(nil), controller.IsCardMember, controller.SetContent)
-		card.PUT(":id/deadline", middleware.JwtAuth(nil), controller.IsCardMember, controller.SetDeadline)
-		card.PUT(":id/status", middleware.JwtAuth(nil), controller.IsCardMember, controller.SetStatus)
-		card.PUT(":id/members/:user_id", middleware.JwtAuth(nil), controller.IsCardMember, controller.SetMember)
-		card.PUT(":id/tags/:tag_content", middleware.JwtAuth(nil), controller.IsCardMember, controller.AddTag)
+		card.PUT(":id/title", middleware.JwtAuth(nil), controller.IsCardMember(true), controller.SetTitle)
+		card.PUT(":id/content", middleware.JwtAuth(nil), controller.IsCardMember(true), controller.SetContent)
+		card.PUT(":id/deadline", middleware.JwtAuth(nil), controller.IsCardMember(true), controller.SetDeadline)
+		card.PUT(":id/status", middleware.JwtAuth(nil), controller.IsCardMember(true), controller.SetStatus)
+		card.PUT(":id/members/:user_id", middleware.JwtAuth(nil), controller.IsCardMember(true), controller.SetMember)
+		card.PUT(":id/tags/:tag_content", middleware.JwtAuth(nil), controller.IsCardMember(true), controller.AddTag)
 
-		card.DELETE(":id/members/:user_id", middleware.JwtAuth(nil), controller.IsCardMember, controller.DeleteMember)
-		card.DELETE(":id/tags/:tag_content", middleware.JwtAuth(nil), controller.IsCardMember, controller.DeleleTag)
-		card.DELETE("/:id", middleware.JwtAuth(nil), controller.IsCardMember, controller.DeleteCard)
+		card.DELETE(":id/members/:user_id", middleware.JwtAuth(nil), controller.IsCardMember(true), controller.DeleteMember)
+		card.DELETE(":id/tags/:tag_content", middleware.JwtAuth(nil), controller.IsCardMember(true), controller.DeleleTag)
+		card.DELETE("/:id", middleware.JwtAuth(nil), controller.IsCardMember(true), controller.DeleteCard)
 	}
 
 	return r

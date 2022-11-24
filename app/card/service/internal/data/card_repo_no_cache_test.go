@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"fmt"
 	"github.com/ljxsteam/coinside-backend-kratos/pkg/config"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -46,6 +47,25 @@ func TestCardModelDefault_FindOne(t *testing.T) {
 	card, err := cardRepo.FindOne(context.Background(), 13)
 	assert.Nil(t, err)
 	assert.NotNil(t, card)
+}
+
+func TestCardRepoNoCache_FindAll(t *testing.T) {
+	cards, err := cardRepo.FindAll(context.Background(), 0, 0,
+		[]Filter{
+			NewMemberFilter(1),
+			NewTagFilter("tag1"),
+		})
+
+	assert.Nil(t, err)
+	fmt.Printf("%+v", cards)
+
+	//var datas []Card
+	//res := NewDB(config.NewConfig()).
+	//	Model(&Card{}).
+	//	Joins("JOIN c_card_tag ON c_card_tag.card_id = c_card.id").
+	//	Joins("JOIN c_tag ON c_card_tag.tag_id = c_tag.id AND c_tag.content = ?", "hello").
+	//	Preload("Members").Preload("Tags").Find(&datas)
+	//fmt.Println(res)
 }
 
 func TestCardModelDefault_Update(t *testing.T) {
