@@ -67,7 +67,7 @@ service Vote {
 enum Code {
   OK = 0;
   ERROR_UNKNOWN = 1;
-  ERROR_Vote_NOTFOUND = 2;
+  ERROR_VOTE_NOTFOUND = 2;
 }
 // The response message containing the greetings
 message VoteInfo {
