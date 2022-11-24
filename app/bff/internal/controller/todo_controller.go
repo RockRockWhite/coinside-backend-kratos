@@ -228,6 +228,12 @@ func (t *TodoController) SetTodoItem(c *gin.Context) {
 	if res.Code != todo.Code_OK {
 		resDto.Data = err
 	} else {
+
+		resDto.Data = struct {
+			ItemId uint64 `json:"item_id,omitempty"`
+		}{
+			ItemId: res.Id,
+		}
 	}
 
 	c.JSON(http.StatusOK, resDto)
