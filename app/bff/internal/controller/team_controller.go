@@ -28,7 +28,7 @@ func (t *TeamController) GetTeamInfo(c *gin.Context) {
 	//}
 	//
 	if err != nil {
-		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err.Error()))
 		return
 	}
 
@@ -48,19 +48,19 @@ func (t *TeamController) GetTeamInfo(c *gin.Context) {
 		stream, err := t.userClient.GetUserInfoStream(context.Background())
 		defer stream.CloseSend()
 		if err != nil {
-			c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+			c.JSON(http.StatusOK, dto.NewErrorInternalDto(err.Error()))
 			return
 		}
 
 		for _, m := range res.Team.Members {
 			if err := stream.Send(&user.GetUserInfoRequest{Id: m.UserId}); err != nil {
-				c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+				c.JSON(http.StatusOK, dto.NewErrorInternalDto(err.Error()))
 				return
 			}
 
 			userInfo, err := stream.Recv()
 			if err != nil {
-				c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+				c.JSON(http.StatusOK, dto.NewErrorInternalDto(err.Error()))
 				return
 			}
 
@@ -317,7 +317,7 @@ func (t *TeamController) SetTeamMember(c *gin.Context) {
 	// 判断用户是否存在
 	if res, err := t.userClient.GetUserInfo(context.Background(), &user.GetUserInfoRequest{Id: userId}); err != nil {
 		// error
-		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err.Error()))
 		return
 	} else {
 		// no error

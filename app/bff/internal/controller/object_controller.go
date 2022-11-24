@@ -19,13 +19,13 @@ type ObjectController struct {
 func (o *ObjectController) PutObject(c *gin.Context) {
 	file, err := c.FormFile("file")
 	if err != nil {
-		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err.Error()))
 		return
 	}
 
 	obj, err := file.Open()
 	if err != nil {
-		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err.Error()))
 		return
 	}
 
@@ -40,7 +40,7 @@ func (o *ObjectController) PutObject(c *gin.Context) {
 	name := fmt.Sprintf("%s.%s", prefix, postfix)
 	_, err = o.cosClient.Object.Put(context.Background(), name, obj, nil)
 	if err != nil {
-		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err.Error()))
 		return
 	}
 

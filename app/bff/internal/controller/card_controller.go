@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/ljxsteam/coinside-backend-kratos/api/card"
+	"github.com/ljxsteam/coinside-backend-kratos/api/team"
 	"github.com/ljxsteam/coinside-backend-kratos/api/user"
 	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/dto"
 	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/util"
@@ -13,6 +14,7 @@ import (
 
 type CardController struct {
 	userClient user.UserClient
+	teamClient team.TeamClient
 	cardClient card.CardClient
 }
 
@@ -33,19 +35,19 @@ func (u *CardController) GetCardInfo(c *gin.Context) {
 	stream, err := u.userClient.GetUserInfoStream(context.Background())
 	defer stream.CloseSend()
 	if err != nil {
-		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err.Error()))
 		return
 	}
 
 	for _, m := range cardInfo.Members {
 		if err := stream.Send(&user.GetUserInfoRequest{Id: m.UserId}); err != nil {
-			c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+			c.JSON(http.StatusOK, dto.NewErrorInternalDto(err.Error()))
 			return
 		}
 
 		userInfo, err := stream.Recv()
 		if err != nil {
-			c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+			c.JSON(http.StatusOK, dto.NewErrorInternalDto(err.Error()))
 			return
 		}
 
@@ -77,9 +79,49 @@ func (u *CardController) GetCardInfoList(c *gin.Context) {
 	memberIds := c.QueryArray("member_id")
 	tags := c.QueryArray("tag")
 
+	claims := c.MustGet("claims").(*util.JwtClaims)
+
 	// 生成过滤器参数
 	var filters []*card.CardFilter
 	if teamId != "" {
+		// 判断必须是该team的leader
+		id, err := strconv.ParseUint(teamId, 10, 64)
+		if err != nil {
+			c.JSON(http.StatusOK, dto.NewErrorInternalDto(err.Error()))
+			return
+		}
+
+		res, err := u.teamClient.GetTeamById(context.Background(), &team.GetTeamByIdRequest{
+			Id: id,
+		})
+		if err != nil {
+			c.JSON(http.StatusOK, dto.NewErrorInternalDto(err.Error()))
+			return
+		}
+
+		switch res.Code {
+		case team.Code_OK:
+			ok := false
+			for _, m := range res.Team.Members {
+				if m.IsAdmin && m.UserId == claims.Id {
+					ok = true
+					break
+				}
+			}
+			if !ok {
+				c.JSON(http.StatusOK, dto.ErrorForbidden)
+				return
+			}
+
+		default:
+			c.JSON(http.StatusOK, &dto.ResponseDto{
+				Code:    dto.TeamErrorCode[res.Code].Code,
+				Message: dto.TeamErrorCode[res.Code].Message,
+				Data:    nil,
+			})
+			return
+		}
+
 		filters = append(filters, &card.CardFilter{
 			Type:  card.CardFilterType_TEAM,
 			Value: teamId,
@@ -87,12 +129,26 @@ func (u *CardController) GetCardInfoList(c *gin.Context) {
 	}
 
 	for _, id := range memberIds {
+		// 如果未设置team过滤器，则只允许过滤自身
+		userId, err := strconv.ParseUint(id, 10, 64)
+		if err != nil {
+			c.JSON(http.StatusOK, dto.NewErrorInternalDto(err.Error()))
+			return
+		}
+		if teamId == "" && userId != claims.Id {
+			c.JSON(http.StatusOK, dto.ErrorForbidden)
+			return
+		}
 		filters = append(filters, &card.CardFilter{
 			Type:  card.CardFilterType_MEMBER,
 			Value: id,
 		})
 	}
 	// 判断上述两种过滤器必须有至少有一个
+	if len(filters) == 0 {
+		c.JSON(http.StatusOK, dto.CardFilterError)
+		return
+	}
 
 	if status != "" {
 		filters = append(filters, &card.CardFilter{
@@ -119,7 +175,7 @@ func (u *CardController) GetCardInfoList(c *gin.Context) {
 		Filters: filters,
 	})
 	if err != nil {
-		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err.Error()))
 		return
 	}
 
@@ -143,19 +199,19 @@ func (u *CardController) GetCardInfoList(c *gin.Context) {
 		stream, err := u.userClient.GetUserInfoStream(context.Background())
 		defer stream.CloseSend()
 		if err != nil {
-			c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+			c.JSON(http.StatusOK, dto.NewErrorInternalDto(err.Error()))
 			return
 		}
 
 		for _, m := range info.Members {
 			if err := stream.Send(&user.GetUserInfoRequest{Id: m.UserId}); err != nil {
-				c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+				c.JSON(http.StatusOK, dto.NewErrorInternalDto(err.Error()))
 				return
 			}
 
 			userInfo, err := stream.Recv()
 			if err != nil {
-				c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+				c.JSON(http.StatusOK, dto.NewErrorInternalDto(err.Error()))
 				return
 			}
 
@@ -290,7 +346,7 @@ func (u *CardController) SetDeadline(c *gin.Context) {
 	})
 
 	if err != nil {
-		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err.Error()))
 		return
 	}
 
@@ -318,7 +374,7 @@ func (u *CardController) SetStatus(c *gin.Context) {
 	})
 
 	if err != nil {
-		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err.Error()))
 		return
 	}
 
@@ -390,7 +446,7 @@ func (u *CardController) SetMember(c *gin.Context) {
 	// 判断用户是否存在
 	if res, err := u.userClient.GetUserInfo(context.Background(), &user.GetUserInfoRequest{Id: userId}); err != nil {
 		// error
-		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err.Error()))
 		return
 	} else {
 		// no error
@@ -421,7 +477,7 @@ func (u *CardController) SetMember(c *gin.Context) {
 	})
 
 	if err != nil {
-		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err.Error()))
 		return
 	}
 
@@ -448,7 +504,7 @@ func (u *CardController) DeleteMember(c *gin.Context) {
 		UserId: userId,
 	})
 	if err != nil {
-		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err.Error()))
 	}
 
 	c.JSON(http.StatusOK, &dto.ResponseDto{
@@ -489,7 +545,7 @@ func (u *CardController) IsCardMember(isAdmin bool) gin.HandlerFunc {
 			Id: id,
 		})
 		if err != nil {
-			c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+			c.JSON(http.StatusOK, dto.NewErrorInternalDto(err.Error()))
 			c.Abort()
 			return
 		}
@@ -520,6 +576,6 @@ func (u *CardController) IsCardMember(isAdmin bool) gin.HandlerFunc {
 	}
 }
 
-func NewCardController(userClient user.UserClient, cardClient card.CardClient) *CardController {
-	return &CardController{userClient: userClient, cardClient: cardClient}
+func NewCardController(userClient user.UserClient, cardClient card.CardClient, teamClient team.TeamClient) *CardController {
+	return &CardController{userClient: userClient, cardClient: cardClient, teamClient: teamClient}
 }
