@@ -82,6 +82,7 @@ message GetCardInfoListRequest{
 message GetCardInfoListResponse{
   Code code = 1;
   repeated CardInfo infos = 2;
+  uint64  count = 3;
 }
 
 message UpdateCardTitleRequest{

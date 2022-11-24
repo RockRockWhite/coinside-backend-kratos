@@ -236,7 +236,13 @@ func (u *CardController) GetCardInfoList(c *gin.Context) {
 	c.JSON(http.StatusOK, &dto.ResponseDto{
 		Code:    dto.CardErrorCode[card.Code_OK].Code,
 		Message: dto.CardErrorCode[card.Code_OK].Message,
-		Data:    data,
+		Data: struct {
+			Count uint64 `json:"count,omitempty"`
+			Infos interface{}
+		}{
+			Count: res.Count,
+			Infos: data,
+		},
 	})
 }
 
