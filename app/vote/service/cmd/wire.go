@@ -7,9 +7,9 @@ package main
 import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/google/wire"
-	"github.com/ljxsteam/coinside-backend-kratos/app/todo/service/internal/data"
-	"github.com/ljxsteam/coinside-backend-kratos/app/todo/service/internal/server"
-	"github.com/ljxsteam/coinside-backend-kratos/app/todo/service/internal/service"
+	"github.com/ljxsteam/coinside-backend-kratos/app/vote/service/internal/data"
+	"github.com/ljxsteam/coinside-backend-kratos/app/vote/service/internal/server"
+	"github.com/ljxsteam/coinside-backend-kratos/app/vote/service/internal/service"
 	"github.com/ljxsteam/coinside-backend-kratos/pkg/config"
 )
 

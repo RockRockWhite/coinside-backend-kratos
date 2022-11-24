@@ -33,6 +33,8 @@ func (t TodoService) GetTodoById(ctx context.Context, request *api.GetTodoByIdRe
 	var items []*api.TodoItem
 	for _, m := range data.Items {
 		items = append(items, &api.TodoItem{
+			Id:             m.Id,
+			TodoId:         m.TodoId,
 			Content:        m.Content,
 			IsFinished:     m.IsFinished,
 			FinishedUserId: m.FinishedUserId,
@@ -60,10 +62,9 @@ func (t TodoService) GetTodoByIdStream(server api.TodoService_GetTodoByIdStreamS
 	panic("implement me")
 }
 
-func (t TodoService) AddTodo(ctx context.Context, todo *api.TodoInfo) (*api.AddTodoResponse, error) {
+func (t TodoService) AddTodo(ctx context.Context, todo *api.AddTodoRequest) (*api.AddTodoResponse, error) {
 
 	id, err := t.repo.Insert(ctx, &data.Todo{
-		Id:     todo.Id,
 		CardId: todo.CardId,
 		Title:  todo.Title,
 	})
@@ -134,8 +135,15 @@ func (t TodoService) DeleteTodoStream(server api.TodoService_DeleteTodoStreamSer
 }
 
 func (t TodoService) AddItem(ctx context.Context, item *api.TodoItem) (*api.AddItemResponse, error) {
-	//TODO implement me
-	panic("implement me")
+	id, err := t.repo.InsertItem(ctx, item.TodoId, item.Content)
+
+	if err != nil {
+		return &api.AddItemResponse{
+			Code: api.Code_ERROR_UNKNOWN,
+		}, err
+	}
+
+	return &api.AddItemResponse{Code: api.Code_OK, Id: id}, nil
 }
 
 func (t TodoService) AddItemStream(server api.TodoService_AddItemStreamServer) error {
@@ -143,9 +151,32 @@ func (t TodoService) AddItemStream(server api.TodoService_AddItemStreamServer) e
 	panic("implement me")
 }
 
-func (t TodoService) SetItemContent(ctx context.Context, request *api.SetContentRequest) (*api.SetContentResponse, error) {
-	//TODO implement me
-	panic("implement me")
+func (t TodoService) SetItemContent(ctx context.Context, req *api.SetContentRequest) (*api.SetContentResponse, error) {
+
+	_, err := t.repo.FindOne(ctx, req.Id)
+
+	switch err {
+	case nil:
+	case gorm.ErrRecordNotFound:
+		return &api.SetContentResponse{
+			Code: api.Code_ERROR_TODO_NOTFOUND,
+		}, nil
+	default:
+		return &api.SetContentResponse{
+			Code: api.Code_ERROR_UNKNOWN,
+		}, err
+
+	}
+
+	if error := t.repo.UpdateContent(ctx, req.Id, req.ItemId, req.Content); error != nil {
+		return &api.SetContentResponse{
+			Code: api.Code_ERROR_UNKNOWN,
+		}, error
+	}
+
+	return &api.SetContentResponse{
+		Code: api.Code_OK,
+	}, nil
 }
 
 func (t TodoService) SetItemContentStream(server api.TodoService_SetItemContentStreamServer) error {
@@ -153,9 +184,32 @@ func (t TodoService) SetItemContentStream(server api.TodoService_SetItemContentS
 	panic("implement me")
 }
 
-func (t TodoService) SetItemFinished(ctx context.Context, request *api.SetFinishedRequest) (*api.SetFinishedResponse, error) {
-	//TODO implement me
-	panic("implement me")
+func (t TodoService) SetItemFinished(ctx context.Context, req *api.SetFinishedRequest) (*api.SetFinishedResponse, error) {
+
+	_, err := t.repo.FindOne(ctx, req.Id)
+
+	switch err {
+	case nil:
+	case gorm.ErrRecordNotFound:
+		return &api.SetFinishedResponse{
+			Code: api.Code_ERROR_TODO_NOTFOUND,
+		}, nil
+	default:
+		return &api.SetFinishedResponse{
+			Code: api.Code_ERROR_UNKNOWN,
+		}, err
+
+	}
+
+	if error := t.repo.FinishItem(ctx, req.Id, req.ItemId, req.UserId); error != nil {
+		return &api.SetFinishedResponse{
+			Code: api.Code_ERROR_UNKNOWN,
+		}, error
+	}
+
+	return &api.SetFinishedResponse{
+		Code: api.Code_OK,
+	}, nil
 }
 
 func (t TodoService) SetItemFinishedStream(server api.TodoService_SetItemFinishedStreamServer) error {
@@ -164,8 +218,14 @@ func (t TodoService) SetItemFinishedStream(server api.TodoService_SetItemFinishe
 }
 
 func (t TodoService) DeleteTodoItem(ctx context.Context, request *api.DeleteTodoItemRequest) (*api.DeleteTodoItemResponse, error) {
-	//TODO implement me
-	panic("implement me")
+	if err := t.repo.DeleteItem(ctx, request.TodoId, request.TodoItemId); err != nil {
+		return &api.DeleteTodoItemResponse{
+			Code: api.Code_ERROR_UNKNOWN,
+		}, err
+	}
+	return &api.DeleteTodoItemResponse{
+		Code: api.Code_OK,
+	}, nil
 }
 
 func (t TodoService) DeleteTodoItemStream(server api.TodoService_DeleteTodoItemStreamServer) error {

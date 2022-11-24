@@ -14,4 +14,5 @@ type TodoRepo interface {
 	DeleteItem(ctx context.Context, id uint64, itemId uint64) error
 	FinishItem(ctx context.Context, id uint64, itemId uint64, finishedUserId uint64) error
 	RestartItem(ctx context.Context, id uint64, itemId uint64) error
+	UpdateContent(ctx context.Context, id uint64, itemId uint64, content string) error
 }
