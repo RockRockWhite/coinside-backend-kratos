@@ -164,6 +164,26 @@ services:
     ports:
       - "3311:3306"
 
+  # Vote-Service
+  votedb:
+    image: mariadb:latest
+    volumes:
+      - votedb_data:/var/lib/mysql
+      - ./app/vote/resource/sql:/docker-entrypoint-initdb.d
+    restart: always
+    environment:
+      - LANG=C.UTF-8
+      - MYSQL_ROOT_PASSWORD=ljxljxljxljx
+      - MYSQL_DATABASE=coinside
+      - MYSQL_USER=ljx
+      - MYSQL_PASSWORD=ljxljxljxljx
+    networks:
+      - app-network
+    expose:
+      - 3306
+    ports:
+      - "3312:3306"
+
   # BFF
   bff-api:
     build:
@@ -188,3 +208,4 @@ volumes:
   teamdb_data:
   markdowndb_data:
   tododb_data:
+  votedb_data:
