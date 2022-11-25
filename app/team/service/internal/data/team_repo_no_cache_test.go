@@ -44,6 +44,19 @@ func TestUserModelDefault_FindOne(t *testing.T) {
 	fmt.Println(team)
 }
 
+func TestTeamRepoNoCache_FindAll(t *testing.T) {
+	filters := []Filter{
+		NewUserFilter(3, &FilterAdminOption{
+			IsAdmin: true,
+		}),
+	}
+
+	teams, count, err := teamRepo.FindAll(context.Background(), 20, 0, filters)
+	assert.Nil(t, err)
+	fmt.Println(count)
+	fmt.Println(teams)
+}
+
 func TestUserModelDefault_Update(t *testing.T) {
 	team, err := teamRepo.FindOne(context.Background(), 1)
 	assert.Nil(t, err)

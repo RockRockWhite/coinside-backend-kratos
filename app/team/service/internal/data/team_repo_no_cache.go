@@ -22,6 +22,24 @@ func (u TeamRepoNoCache) FindOne(ctx context.Context, id uint64) (*Team, error) 
 	return &team, res.Error
 }
 
+// FindAll 批量查询卡片信息
+func (u TeamRepoNoCache) FindAll(ctx context.Context, limit uint64, offset uint64, filters []Filter) ([]Team, uint64, error) {
+	var datas []Team
+	db := u.db.Model(&Team{})
+
+	for _, f := range filters {
+		db = f.Filter(db)
+	}
+
+	db = db.Preload("Members")
+
+	var count int64
+	db.Count(&count)
+
+	res := db.Limit(int(limit)).Offset(int(offset)).Find(&datas)
+	return datas, uint64(count), res.Error
+}
+
 func (u TeamRepoNoCache) Update(ctx context.Context, newData *Team) error {
 	res := u.db.Omit(clause.Associations).Save(newData)
 	return res.Error

@@ -50,14 +50,17 @@ func TestCardModelDefault_FindOne(t *testing.T) {
 }
 
 func TestCardRepoNoCache_FindAll(t *testing.T) {
-	cards, err := cardRepo.FindAll(context.Background(), 0, 0,
-		[]Filter{
-			NewMemberFilter(1),
-			NewTagFilter("tag1"),
-		})
+	//cards, count, err := cardRepo.FindAll(context.Background(), 0, 0,
+	//	[]Filter{
+	//		NewMemberFilter(1),
+	//		NewTagFilter("tag1"),
+	//	})
+
+	cards, count, err := cardRepo.FindAll(context.Background(), 20, 0, nil)
 
 	assert.Nil(t, err)
-	fmt.Printf("%+v", cards)
+	fmt.Printf("%+v\n", cards)
+	fmt.Printf("%+v\n", count)
 
 	//var datas []Card
 	//res := NewDB(config.NewConfig()).

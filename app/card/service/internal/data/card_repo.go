@@ -9,7 +9,7 @@ import (
 type CardRepo interface {
 	Insert(ctx context.Context, data *Card) (uint64, error)
 	FindOne(ctx context.Context, id uint64) (*Card, error)
-	FindAll(ctx context.Context, limit uint64, offset uint64, filters []Filter) ([]Card, error)
+	FindAll(ctx context.Context, limit uint64, offset uint64, filters []Filter) ([]Card, uint64, error)
 	Update(ctx context.Context, newData *Card) error
 	Delete(ctx context.Context, id uint64) error
 
