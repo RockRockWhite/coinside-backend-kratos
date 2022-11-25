@@ -1,0 +1,211 @@
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+syntax = "proto3";
+
+option go_package = "./;vote";
+package vote;
+
+// The vote service definition.
+service Vote {
+  // Get a vote by id
+  rpc GetvoteById(GetVoteByIdRequest) returns (GetVoteResponse){}
+  // Get a vote by id via stream
+  rpc GetVoteByIdStream(stream GetVoteByIdRequest) returns (stream GetVoteResponse){}
+
+//  // Get  Votes by card_id
+//  rpc GetVoteByCardId(GetVoteByCardIdRequest) returns (GetVotesResponse){}
+//  // Get   Votes by card_id via stream
+//  rpc GetVoteByCardIdStream(stream GetVoteByCardIdRequest) returns (stream GetVotesResponse){}
+
+  // add a Vote
+  rpc AddVote(VoteInfo) returns (AddVoteResponse){}
+  // add a Vote via stream
+  rpc AddVoteStream(stream VoteInfo) returns (stream AddVoteResponse){}
+
+  // set Vote title
+  rpc SetVoteTitle(SetVoteTitleRequest) returns (SetVoteTitleResponse){}
+  // set Vote title via stream
+  rpc SetVoteTitleStream(SetVoteTitleRequest) returns (stream SetVoteTitleResponse){}
+
+  // delete a Vote
+  rpc DeleteVote(DeleteVoteRequest) returns (DeleteVoteResponse){}
+  // delete a Vote via stream
+  rpc DeleteVoteStream(stream DeleteVoteRequest) returns (stream DeleteVoteResponse){}
+
+  //add  a  Voteitem
+  rpc AddItem(VoteItem) returns (AddItemResponse){}
+  // add a Voteitem  via stream
+  rpc AddItemStream(stream VoteItem) returns (stream AddItemResponse){}
+
+  //set Voteitem content
+  rpc SetItemContent(SetContentRequest) returns (SetContentResponse){}
+  // set Voteitem content via stream
+  rpc SetItemContentStream(stream SetContentRequest) returns (stream SetContentResponse){}
+
+
+  // delete a Voteitem
+  rpc DeleteVoteItem(DeleteVoteItemRequest) returns (DeleteVoteItemResponse){}
+  // delete a Voteitem via stream
+  rpc DeleteVoteItemStream(stream DeleteVoteItemRequest) returns (stream DeleteVoteItemResponse){}
+
+  rpc AddCommit(VoteItemCommit) returns (AddCommitResponse){}
+
+  rpc DeleteCommit(DeleteCommitRequest) returns (DeleteCommitResponse){}
+
+
+}
+
+enum Code {
+  OK = 0;
+  ERROR_UNKNOWN = 1;
+  ERROR_VOTE_NOTFOUND = 2;
+}
+// The response message containing the greetings
+message VoteInfo {
+  uint64 id = 1; // 投票id
+  uint64 card_id = 2; // 所属卡片id
+  string title = 3; // 投票标题
+  repeated VoteItem items = 4; //投票项
+  string created_at = 5; // 投票创建时间
+  string updated_at = 6; // 投票更新时间
+}
+
+message VoteItem{
+  uint64 id = 1;//id
+  uint64 vote_id = 2;   //所属投票的id
+  string content = 3;//具体内容
+  string created_at = 4; // 投票项目创建时间
+  string updated_at = 5; // 投票项目更新时间
+}
+message VoteItemCommit{
+  uint64 id = 1;//id
+  uint64 vote_item_id = 2;   //所属投票的id
+  uint64 user_id = 3;//具体内容
+  string created_at = 4; // 投票项目创建时间
+  string updated_at = 5; // 投票项目更新时间
+}
+
+message GetVoteResponse {
+  VoteInfo Vote = 1;
+  Code code = 2;
+}
+
+message GetVoteByIdRequest
+{
+  uint64 id = 1;
+}
+
+//message GetVotesResponse{
+//  repeated Vote Vote = 1;
+//}
+//
+//message GetVoteByCardIdRequest
+//{
+//  uint64 card_id = 1;
+//}
+
+message AddVoteResponse
+{
+  Code code = 1;
+  uint64 id = 2;
+}
+
+message SetVoteTitleRequest
+{
+  uint64 id = 1;
+  string title = 2;
+}
+
+message SetVoteTitleResponse
+{
+  Code code = 1;
+}
+
+message SetContentRequest
+{
+  uint64 id = 1;
+  uint64 item_id = 2;
+  string content = 3;
+}
+message SetContentResponse
+{
+  Code code = 1;
+}
+message SetFinishedRequest
+{
+  uint64 id = 1;
+  uint64 item_id = 2;
+  bool is_finished = 3;
+  uint64 user_id = 4;
+}
+
+message SetFinishedResponse
+{
+  Code code = 1;
+}
+//message UpdateVoteResponse
+//{
+//  bool success = 1;
+//  string message = 2;
+//}
+
+message DeleteVoteRequest
+{
+  uint64 id = 1;
+}
+
+message DeleteVoteResponse
+{
+  Code code = 1;
+}
+
+message AddItemResponse
+{
+  Code code = 1;
+  uint64 id = 2;
+}
+//
+//message UpdateItemResponse
+//{
+//  bool success = 1;
+//  string message = 2;
+//}
+
+
+message DeleteVoteItemRequest
+{
+  uint64 Vote_id = 1;
+  uint64 Vote_item_id = 2;
+
+}
+
+message DeleteVoteItemResponse
+{
+  Code code = 1;
+}
+
+message AddCommitResponse
+{
+  Code code = 1;
+}
+
+message DeleteCommitRequest
+{
+  uint64 id = 1;
+  uint64 item_id = 2;
+  uint64 user_id = 3;
+}
+
+message DeleteCommitResponse
+{
+  Code code = 1;
+}
