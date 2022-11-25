@@ -17,6 +17,8 @@ service:
     name: "team-service"
   markdown:
     name: "markdown-service"
+  todo:
+    name: "todo-service"
 
 cos:
   bucket: "{{ COS_BUCKET}}"
