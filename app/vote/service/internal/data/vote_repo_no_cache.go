@@ -97,8 +97,8 @@ func (u VoteRepoNoCache) UpdateItem(ctx context.Context, id uint64, itemId uint6
 
 	items[0].Content = context
 	//这里这里，，是不是这样要测试
-	err = u.db.Model(&data).Association("Items").Replace(items[0])
-	return err
+	res := u.db.Save(items[0])
+	return res.Error
 }
 
 func (u VoteRepoNoCache) InsertCommit(ctx context.Context, id uint64, itemId uint64, userId uint64) error {

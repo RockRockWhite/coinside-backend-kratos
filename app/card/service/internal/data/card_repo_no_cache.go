@@ -22,7 +22,7 @@ func (u CardRepoNoCache) FindOne(ctx context.Context, id uint64) (*Card, error) 
 }
 
 // FindAll 批量查询卡片信息
-func (u CardRepoNoCache) FindAll(ctx context.Context, limit uint64, offset uint64, filters []Filter) ([]Card, error) {
+func (u CardRepoNoCache) FindAll(ctx context.Context, limit uint64, offset uint64, filters []Filter) ([]Card, uint64, error) {
 	var datas []Card
 	db := u.db.Model(&Card{})
 
@@ -30,8 +30,13 @@ func (u CardRepoNoCache) FindAll(ctx context.Context, limit uint64, offset uint6
 		db = f.Filter(db)
 	}
 
-	res := db.Preload("Members").Preload("Tags").Limit(int(limit)).Offset(int(offset)).Find(&datas)
-	return datas, res.Error
+	db = db.Preload("Members").Preload("Tags")
+
+	var count int64
+	db.Count(&count)
+	
+	res := db.Limit(int(limit)).Offset(int(offset)).Find(&datas)
+	return datas, uint64(count), res.Error
 }
 
 func (u CardRepoNoCache) Update(ctx context.Context, newData *Card) error {

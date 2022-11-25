@@ -10,6 +10,8 @@ func TeamRouter(r *gin.Engine, controller *controller.TeamController) *gin.Engin
 	team := r.Group("/teams")
 	{
 		team.GET("/:id", middleware.JwtAuth(nil), controller.GetTeamInfo)
+		team.GET("", middleware.JwtAuth(nil), controller.GetTeamInfoList)
+
 		team.POST("", middleware.JwtAuth(nil), controller.CreateTeam)
 		team.POST("/:id/members/:user_id", controller.SetTeamMember)
 		team.POST("/:id/admins/:user_id", controller.SetTeamAdmin)

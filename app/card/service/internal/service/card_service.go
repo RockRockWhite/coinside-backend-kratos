@@ -143,7 +143,7 @@ func (c CardService) GetCardInfoList(ctx context.Context, request *card.GetCardI
 		}
 	}
 
-	all, err := c.repo.FindAll(ctx, request.Limit, request.Offset, filters)
+	all, count, err := c.repo.FindAll(ctx, request.Limit, request.Offset, filters)
 	switch err {
 	case nil:
 
@@ -193,6 +193,7 @@ func (c CardService) GetCardInfoList(ctx context.Context, request *card.GetCardI
 	return &card.GetCardInfoListResponse{
 		Infos: infos,
 		Code:  card.Code_OK,
+		Count: count,
 	}, nil
 }
 

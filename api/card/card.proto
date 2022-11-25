@@ -68,6 +68,7 @@ enum CardFilterType{
   MEMBER = 3;
   TAG = 4;
 }
+
 message CardFilter{
   CardFilterType type = 1;
   string value = 2;
@@ -82,6 +83,7 @@ message GetCardInfoListRequest{
 message GetCardInfoListResponse{
   Code code = 1;
   repeated CardInfo infos = 2;
+  uint64  count = 3;
 }
 
 message UpdateCardTitleRequest{

@@ -2,6 +2,7 @@ package controller
 
 import (
 	"context"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/ljxsteam/coinside-backend-kratos/api/team"
 	"github.com/ljxsteam/coinside-backend-kratos/api/user"
@@ -18,15 +19,8 @@ type TeamController struct {
 
 func (t *TeamController) GetTeamInfo(c *gin.Context) {
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
-
 	res, err := t.teamClient.GetTeamById(context.Background(), &team.GetTeamByIdRequest{Id: id})
 
-	//resDto := dto.ResponseDto{
-	//	Code:    dto.TeamErrorCode[res.Code].Code,
-	//	Message: dto.TeamErrorCode[res.Code].Message,
-	//	Data:    nil,
-	//}
-	//
 	if err != nil {
 		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err.Error()))
 		return
@@ -92,14 +86,126 @@ func (t *TeamController) GetTeamInfo(c *gin.Context) {
 			Data:    nil,
 		})
 	}
-	//
-	//if res.Code != team.Code_OK {
-	//	resDto.Data = err
-	//} else {
-	//	resDto.Data = res.Team
-	//}
-	//
-	//c.JSON(http.StatusOK, resDto)
+}
+
+func (t *TeamController) GetTeamInfoList(c *gin.Context) {
+	userId := c.Query("user_id")
+	claims := c.MustGet("claims").(*util.JwtClaims)
+	if userId != fmt.Sprint(claims.Id) {
+		c.JSON(http.StatusOK, dto.ErrorForbidden)
+		return
+	}
+	isAdminQuery := c.Query("is_admin")
+	limit, _ := strconv.ParseUint(c.Query("limit"), 10, 64)
+	if limit == 0 {
+		limit = 20
+	}
+	offset, _ := strconv.ParseUint(c.Query("offset"), 10, 64)
+
+	// 生成过滤器参数
+	var filters []*team.TeamFilter
+
+	if isAdminQuery != "" {
+		isAdmin, err := strconv.ParseBool(isAdminQuery)
+		if err != nil {
+			c.JSON(http.StatusOK, dto.NewErrorInternalDto(err.Error()))
+			return
+		}
+
+		switch isAdmin {
+		case true:
+			filters = append(filters, &team.TeamFilter{
+				Type:  team.TeamFilterType_USER_ADMIN,
+				Value: userId,
+			})
+		case false:
+			filters = append(filters, &team.TeamFilter{
+				Type:  team.TeamFilterType_USER_NO_ADMIN,
+				Value: userId,
+			})
+		}
+	} else {
+		filters = append(filters, &team.TeamFilter{
+			Type:  team.TeamFilterType_USER_ALL,
+			Value: userId,
+		})
+	}
+
+	res, err := t.teamClient.GetTeamInfoList(context.Background(), &team.GetTeamInfoListRequest{
+		Limit:   limit,
+		Offset:  offset,
+		Filters: filters,
+	})
+	if err != nil {
+		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err.Error()))
+		return
+	}
+
+	// 获取冗余用户信息
+	type MemberInfo struct {
+		*team.TeamMember
+		Nickname string `json:"nickname"`
+		Fullname string `json:"fullname"`
+		Email    string `json:"email"`
+		Avatar   string `json:"avatar"`
+	}
+	var data []struct {
+		*team.TeamInfo
+		Members []MemberInfo `json:"members"`
+	}
+
+	infos := res.Infos
+	for _, info := range infos {
+		var members []MemberInfo
+		// 获取成员信息
+		stream, err := t.userClient.GetUserInfoStream(context.Background())
+		defer stream.CloseSend()
+		if err != nil {
+			c.JSON(http.StatusOK, dto.NewErrorInternalDto(err.Error()))
+			return
+		}
+
+		for _, m := range info.Members {
+			if err := stream.Send(&user.GetUserInfoRequest{Id: m.UserId}); err != nil {
+				c.JSON(http.StatusOK, dto.NewErrorInternalDto(err.Error()))
+				return
+			}
+
+			userInfo, err := stream.Recv()
+			if err != nil {
+				c.JSON(http.StatusOK, dto.NewErrorInternalDto(err.Error()))
+				return
+			}
+
+			members = append(members, MemberInfo{
+				TeamMember: m,
+				Nickname:   userInfo.Info.Nickname,
+				Fullname:   userInfo.Info.Fullname,
+				Email:      userInfo.Info.Email,
+				Avatar:     userInfo.Info.Avatar,
+			})
+		}
+
+		data = append(data, struct {
+			*team.TeamInfo
+			Members []MemberInfo `json:"members"`
+		}{
+			TeamInfo: info,
+			Members:  members,
+		})
+	}
+
+	c.JSON(http.StatusOK, &dto.ResponseDto{
+		Code:    dto.TeamErrorCode[team.Code_OK].Code,
+		Message: dto.TeamErrorCode[team.Code_OK].Message,
+		Data: struct {
+			Count uint64 `json:"count,omitempty"`
+			Infos interface{}
+		}{
+			Count: res.Count,
+			Infos: data,
+		},
+	})
 }
 
 func (t *TeamController) CreateTeam(c *gin.Context) {
