@@ -15,12 +15,12 @@ func newApp(conf *config.Config, srv *grpc.Server, r registry.Registrar) *kratos
 }
 
 func main() {
-	//app, _, err := initApp(config.NewConfig())
-	//if err != nil {
-	//	return
-	//}
-	//
-	//if err := app.Run(); err != nil {
-	//	panic(err)
-	//}
+	app, _, err := initApp(config.NewConfig())
+	if err != nil {
+		return
+	}
+
+	if err := app.Run(); err != nil {
+		panic(err)
+	}
 }

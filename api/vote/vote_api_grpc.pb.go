@@ -23,11 +23,11 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type VoteClient interface {
 	// Get a vote by id
-	GetvoteById(ctx context.Context, in *GetVoteByIdRequest, opts ...grpc.CallOption) (*GetVoteResponse, error)
+	GetVoteById(ctx context.Context, in *GetVoteByIdRequest, opts ...grpc.CallOption) (*GetVoteResponse, error)
 	// Get a vote by id via stream
 	GetVoteByIdStream(ctx context.Context, opts ...grpc.CallOption) (Vote_GetVoteByIdStreamClient, error)
 	// add a Vote
-	AddVote(ctx context.Context, in *VoteInfo, opts ...grpc.CallOption) (*AddVoteResponse, error)
+	AddVote(ctx context.Context, in *AddVoteRequest, opts ...grpc.CallOption) (*AddVoteResponse, error)
 	// add a Vote via stream
 	AddVoteStream(ctx context.Context, opts ...grpc.CallOption) (Vote_AddVoteStreamClient, error)
 	// set Vote title
@@ -39,7 +39,7 @@ type VoteClient interface {
 	// delete a Vote via stream
 	DeleteVoteStream(ctx context.Context, opts ...grpc.CallOption) (Vote_DeleteVoteStreamClient, error)
 	// add  a  Voteitem
-	AddItem(ctx context.Context, in *VoteItem, opts ...grpc.CallOption) (*AddItemResponse, error)
+	AddItem(ctx context.Context, in *AddItemRequest, opts ...grpc.CallOption) (*AddItemResponse, error)
 	// add a Voteitem  via stream
 	AddItemStream(ctx context.Context, opts ...grpc.CallOption) (Vote_AddItemStreamClient, error)
 	// set Voteitem content
@@ -50,7 +50,7 @@ type VoteClient interface {
 	DeleteVoteItem(ctx context.Context, in *DeleteVoteItemRequest, opts ...grpc.CallOption) (*DeleteVoteItemResponse, error)
 	// delete a Voteitem via stream
 	DeleteVoteItemStream(ctx context.Context, opts ...grpc.CallOption) (Vote_DeleteVoteItemStreamClient, error)
-	AddCommit(ctx context.Context, in *VoteItemCommit, opts ...grpc.CallOption) (*AddCommitResponse, error)
+	AddCommit(ctx context.Context, in *AddCommitRequest, opts ...grpc.CallOption) (*AddCommitResponse, error)
 	DeleteCommit(ctx context.Context, in *DeleteCommitRequest, opts ...grpc.CallOption) (*DeleteCommitResponse, error)
 }
 
@@ -62,9 +62,9 @@ func NewVoteClient(cc grpc.ClientConnInterface) VoteClient {
 	return &voteClient{cc}
 }
 
-func (c *voteClient) GetvoteById(ctx context.Context, in *GetVoteByIdRequest, opts ...grpc.CallOption) (*GetVoteResponse, error) {
+func (c *voteClient) GetVoteById(ctx context.Context, in *GetVoteByIdRequest, opts ...grpc.CallOption) (*GetVoteResponse, error) {
 	out := new(GetVoteResponse)
-	err := c.cc.Invoke(ctx, "/vote.Vote/GetvoteById", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/vote.Vote/GetVoteById", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +102,7 @@ func (x *voteGetVoteByIdStreamClient) Recv() (*GetVoteResponse, error) {
 	return m, nil
 }
 
-func (c *voteClient) AddVote(ctx context.Context, in *VoteInfo, opts ...grpc.CallOption) (*AddVoteResponse, error) {
+func (c *voteClient) AddVote(ctx context.Context, in *AddVoteRequest, opts ...grpc.CallOption) (*AddVoteResponse, error) {
 	out := new(AddVoteResponse)
 	err := c.cc.Invoke(ctx, "/vote.Vote/AddVote", in, out, opts...)
 	if err != nil {
@@ -121,7 +121,7 @@ func (c *voteClient) AddVoteStream(ctx context.Context, opts ...grpc.CallOption)
 }
 
 type Vote_AddVoteStreamClient interface {
-	Send(*VoteInfo) error
+	Send(*AddVoteRequest) error
 	Recv() (*AddVoteResponse, error)
 	grpc.ClientStream
 }
@@ -130,7 +130,7 @@ type voteAddVoteStreamClient struct {
 	grpc.ClientStream
 }
 
-func (x *voteAddVoteStreamClient) Send(m *VoteInfo) error {
+func (x *voteAddVoteStreamClient) Send(m *AddVoteRequest) error {
 	return x.ClientStream.SendMsg(m)
 }
 
@@ -223,7 +223,7 @@ func (x *voteDeleteVoteStreamClient) Recv() (*DeleteVoteResponse, error) {
 	return m, nil
 }
 
-func (c *voteClient) AddItem(ctx context.Context, in *VoteItem, opts ...grpc.CallOption) (*AddItemResponse, error) {
+func (c *voteClient) AddItem(ctx context.Context, in *AddItemRequest, opts ...grpc.CallOption) (*AddItemResponse, error) {
 	out := new(AddItemResponse)
 	err := c.cc.Invoke(ctx, "/vote.Vote/AddItem", in, out, opts...)
 	if err != nil {
@@ -242,7 +242,7 @@ func (c *voteClient) AddItemStream(ctx context.Context, opts ...grpc.CallOption)
 }
 
 type Vote_AddItemStreamClient interface {
-	Send(*VoteItem) error
+	Send(*AddItemRequest) error
 	Recv() (*AddItemResponse, error)
 	grpc.ClientStream
 }
@@ -251,7 +251,7 @@ type voteAddItemStreamClient struct {
 	grpc.ClientStream
 }
 
-func (x *voteAddItemStreamClient) Send(m *VoteItem) error {
+func (x *voteAddItemStreamClient) Send(m *AddItemRequest) error {
 	return x.ClientStream.SendMsg(m)
 }
 
@@ -343,7 +343,7 @@ func (x *voteDeleteVoteItemStreamClient) Recv() (*DeleteVoteItemResponse, error)
 	return m, nil
 }
 
-func (c *voteClient) AddCommit(ctx context.Context, in *VoteItemCommit, opts ...grpc.CallOption) (*AddCommitResponse, error) {
+func (c *voteClient) AddCommit(ctx context.Context, in *AddCommitRequest, opts ...grpc.CallOption) (*AddCommitResponse, error) {
 	out := new(AddCommitResponse)
 	err := c.cc.Invoke(ctx, "/vote.Vote/AddCommit", in, out, opts...)
 	if err != nil {
@@ -366,11 +366,11 @@ func (c *voteClient) DeleteCommit(ctx context.Context, in *DeleteCommitRequest, 
 // for forward compatibility
 type VoteServer interface {
 	// Get a vote by id
-	GetvoteById(context.Context, *GetVoteByIdRequest) (*GetVoteResponse, error)
+	GetVoteById(context.Context, *GetVoteByIdRequest) (*GetVoteResponse, error)
 	// Get a vote by id via stream
 	GetVoteByIdStream(Vote_GetVoteByIdStreamServer) error
 	// add a Vote
-	AddVote(context.Context, *VoteInfo) (*AddVoteResponse, error)
+	AddVote(context.Context, *AddVoteRequest) (*AddVoteResponse, error)
 	// add a Vote via stream
 	AddVoteStream(Vote_AddVoteStreamServer) error
 	// set Vote title
@@ -382,7 +382,7 @@ type VoteServer interface {
 	// delete a Vote via stream
 	DeleteVoteStream(Vote_DeleteVoteStreamServer) error
 	// add  a  Voteitem
-	AddItem(context.Context, *VoteItem) (*AddItemResponse, error)
+	AddItem(context.Context, *AddItemRequest) (*AddItemResponse, error)
 	// add a Voteitem  via stream
 	AddItemStream(Vote_AddItemStreamServer) error
 	// set Voteitem content
@@ -393,7 +393,7 @@ type VoteServer interface {
 	DeleteVoteItem(context.Context, *DeleteVoteItemRequest) (*DeleteVoteItemResponse, error)
 	// delete a Voteitem via stream
 	DeleteVoteItemStream(Vote_DeleteVoteItemStreamServer) error
-	AddCommit(context.Context, *VoteItemCommit) (*AddCommitResponse, error)
+	AddCommit(context.Context, *AddCommitRequest) (*AddCommitResponse, error)
 	DeleteCommit(context.Context, *DeleteCommitRequest) (*DeleteCommitResponse, error)
 	mustEmbedUnimplementedVoteServer()
 }
@@ -402,13 +402,13 @@ type VoteServer interface {
 type UnimplementedVoteServer struct {
 }
 
-func (UnimplementedVoteServer) GetvoteById(context.Context, *GetVoteByIdRequest) (*GetVoteResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetvoteById not implemented")
+func (UnimplementedVoteServer) GetVoteById(context.Context, *GetVoteByIdRequest) (*GetVoteResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetVoteById not implemented")
 }
 func (UnimplementedVoteServer) GetVoteByIdStream(Vote_GetVoteByIdStreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetVoteByIdStream not implemented")
 }
-func (UnimplementedVoteServer) AddVote(context.Context, *VoteInfo) (*AddVoteResponse, error) {
+func (UnimplementedVoteServer) AddVote(context.Context, *AddVoteRequest) (*AddVoteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddVote not implemented")
 }
 func (UnimplementedVoteServer) AddVoteStream(Vote_AddVoteStreamServer) error {
@@ -426,7 +426,7 @@ func (UnimplementedVoteServer) DeleteVote(context.Context, *DeleteVoteRequest) (
 func (UnimplementedVoteServer) DeleteVoteStream(Vote_DeleteVoteStreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method DeleteVoteStream not implemented")
 }
-func (UnimplementedVoteServer) AddItem(context.Context, *VoteItem) (*AddItemResponse, error) {
+func (UnimplementedVoteServer) AddItem(context.Context, *AddItemRequest) (*AddItemResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddItem not implemented")
 }
 func (UnimplementedVoteServer) AddItemStream(Vote_AddItemStreamServer) error {
@@ -444,7 +444,7 @@ func (UnimplementedVoteServer) DeleteVoteItem(context.Context, *DeleteVoteItemRe
 func (UnimplementedVoteServer) DeleteVoteItemStream(Vote_DeleteVoteItemStreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method DeleteVoteItemStream not implemented")
 }
-func (UnimplementedVoteServer) AddCommit(context.Context, *VoteItemCommit) (*AddCommitResponse, error) {
+func (UnimplementedVoteServer) AddCommit(context.Context, *AddCommitRequest) (*AddCommitResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddCommit not implemented")
 }
 func (UnimplementedVoteServer) DeleteCommit(context.Context, *DeleteCommitRequest) (*DeleteCommitResponse, error) {
@@ -463,20 +463,20 @@ func RegisterVoteServer(s grpc.ServiceRegistrar, srv VoteServer) {
 	s.RegisterService(&Vote_ServiceDesc, srv)
 }
 
-func _Vote_GetvoteById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Vote_GetVoteById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetVoteByIdRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(VoteServer).GetvoteById(ctx, in)
+		return srv.(VoteServer).GetVoteById(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/vote.Vote/GetvoteById",
+		FullMethod: "/vote.Vote/GetVoteById",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VoteServer).GetvoteById(ctx, req.(*GetVoteByIdRequest))
+		return srv.(VoteServer).GetVoteById(ctx, req.(*GetVoteByIdRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -508,7 +508,7 @@ func (x *voteGetVoteByIdStreamServer) Recv() (*GetVoteByIdRequest, error) {
 }
 
 func _Vote_AddVote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(VoteInfo)
+	in := new(AddVoteRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -520,7 +520,7 @@ func _Vote_AddVote_Handler(srv interface{}, ctx context.Context, dec func(interf
 		FullMethod: "/vote.Vote/AddVote",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VoteServer).AddVote(ctx, req.(*VoteInfo))
+		return srv.(VoteServer).AddVote(ctx, req.(*AddVoteRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -531,7 +531,7 @@ func _Vote_AddVoteStream_Handler(srv interface{}, stream grpc.ServerStream) erro
 
 type Vote_AddVoteStreamServer interface {
 	Send(*AddVoteResponse) error
-	Recv() (*VoteInfo, error)
+	Recv() (*AddVoteRequest, error)
 	grpc.ServerStream
 }
 
@@ -543,8 +543,8 @@ func (x *voteAddVoteStreamServer) Send(m *AddVoteResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *voteAddVoteStreamServer) Recv() (*VoteInfo, error) {
-	m := new(VoteInfo)
+func (x *voteAddVoteStreamServer) Recv() (*AddVoteRequest, error) {
+	m := new(AddVoteRequest)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -635,7 +635,7 @@ func (x *voteDeleteVoteStreamServer) Recv() (*DeleteVoteRequest, error) {
 }
 
 func _Vote_AddItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(VoteItem)
+	in := new(AddItemRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -647,7 +647,7 @@ func _Vote_AddItem_Handler(srv interface{}, ctx context.Context, dec func(interf
 		FullMethod: "/vote.Vote/AddItem",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VoteServer).AddItem(ctx, req.(*VoteItem))
+		return srv.(VoteServer).AddItem(ctx, req.(*AddItemRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -658,7 +658,7 @@ func _Vote_AddItemStream_Handler(srv interface{}, stream grpc.ServerStream) erro
 
 type Vote_AddItemStreamServer interface {
 	Send(*AddItemResponse) error
-	Recv() (*VoteItem, error)
+	Recv() (*AddItemRequest, error)
 	grpc.ServerStream
 }
 
@@ -670,8 +670,8 @@ func (x *voteAddItemStreamServer) Send(m *AddItemResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *voteAddItemStreamServer) Recv() (*VoteItem, error) {
-	m := new(VoteItem)
+func (x *voteAddItemStreamServer) Recv() (*AddItemRequest, error) {
+	m := new(AddItemRequest)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -767,7 +767,7 @@ func (x *voteDeleteVoteItemStreamServer) Recv() (*DeleteVoteItemRequest, error) 
 }
 
 func _Vote_AddCommit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(VoteItemCommit)
+	in := new(AddCommitRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -779,7 +779,7 @@ func _Vote_AddCommit_Handler(srv interface{}, ctx context.Context, dec func(inte
 		FullMethod: "/vote.Vote/AddCommit",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VoteServer).AddCommit(ctx, req.(*VoteItemCommit))
+		return srv.(VoteServer).AddCommit(ctx, req.(*AddCommitRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -810,8 +810,8 @@ var Vote_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*VoteServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetvoteById",
-			Handler:    _Vote_GetvoteById_Handler,
+			MethodName: "GetVoteById",
+			Handler:    _Vote_GetVoteById_Handler,
 		},
 		{
 			MethodName: "AddVote",
