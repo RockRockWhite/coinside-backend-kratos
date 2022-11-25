@@ -1,0 +1,111 @@
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+syntax = "proto3";
+
+option go_package = "./;attachment";
+package attachment;
+
+// The attachment service definition.
+service Attachment {
+  // Get a Attachment by id
+  rpc GetAttachmentById(GetAttachmentByIdRequest) returns (GetAttachmentResponse){}
+  // Get a Attachment by id via stream
+  rpc GetAttachmentByIdStream(stream GetAttachmentByIdRequest) returns (stream GetAttachmentResponse){}
+
+  // Get a Attachments by card_id
+  rpc GetAttachmentsByCardId(GetAttachmentsByCardIdRequest) returns (GetAttachmentsResponse){}
+  // Get a  Attachment by card_id via stream
+  rpc GetAttachmentsByCardIdStream(stream GetAttachmentsByCardIdRequest) returns (stream GetAttachmentsResponse){}
+
+  // add a Attachment
+  rpc AddAttachment(AddAttachmentRequest) returns (AddAttachmentResponse){}
+  // add a Attachment via stream
+  rpc AddAttachmentStream(stream AddAttachmentRequest) returns (stream AddAttachmentResponse){}
+
+  // update a Attachment
+  rpc UpdateAttachment(UpdateAttachmentRequest) returns (UpdateAttachmentResponse){}
+  // update a Attachment via stream
+  rpc UpdateAttachmentStream(UpdateAttachmentRequest) returns (stream UpdateAttachmentResponse){}
+
+  // delete a Attachment
+  rpc DeleteAttachment(DeleteAttachmentRequest) returns (DeleteAttachmentResponse){}
+  // delete a Attachment via stream
+  rpc DeleteAttachmentStream(stream DeleteAttachmentRequest) returns (stream DeleteAttachmentResponse){}
+
+}
+
+
+enum Code {
+  OK = 0;
+  ERROR_UNKNOWN = 1;
+  ERROR_ATTACHMENT_NOTFOUND = 2;
+}
+
+// The response message containing the greetings
+message AttachmentInfo {
+  uint64 id = 1; // Attachment id
+  uint64 card_id = 2; // 所属卡片id
+  string link = 3; // Attachment链接
+  uint64 download_count = 4;//下载量
+  string created_at = 5; // Attachment创建时间
+  string updated_at = 6; // Attachment更新时间
+}
+
+message AddAttachmentRequest
+{
+  uint64 card_id = 1; // 所属卡片id
+  string link = 2; // Attachment链接
+}
+message UpdateAttachmentRequest
+{
+  string link = 1; // Attachment链接
+}
+message GetAttachmentResponse {
+  AttachmentInfo Attachment = 1;
+  Code code = 2;
+}
+
+message GetAttachmentByIdRequest
+{
+  uint64 id = 1;
+}
+
+message GetAttachmentsResponse{
+  repeated AttachmentInfo Attachment = 1;
+  Code code = 2;
+}
+
+message GetAttachmentsByCardIdRequest
+{
+  uint64 card_id = 1;
+}
+
+message AddAttachmentResponse
+{
+  Code code = 1;
+  uint64 id = 2;
+}
+
+message UpdateAttachmentResponse
+{
+  Code code = 1;
+}
+
+message DeleteAttachmentRequest
+{
+  uint64 id = 1;
+}
+
+message DeleteAttachmentResponse
+{
+  Code code = 1;
+}
