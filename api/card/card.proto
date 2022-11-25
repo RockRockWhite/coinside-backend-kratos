@@ -68,6 +68,7 @@ enum CardFilterType{
   MEMBER = 3;
   TAG = 4;
 }
+
 message CardFilter{
   CardFilterType type = 1;
   string value = 2;

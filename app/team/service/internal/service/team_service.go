@@ -5,6 +5,7 @@ import (
 	api "github.com/ljxsteam/coinside-backend-kratos/api/team"
 	"github.com/ljxsteam/coinside-backend-kratos/app/team/service/internal/data"
 	"gorm.io/gorm"
+	"strconv"
 )
 
 type TeamService struct {
@@ -62,12 +63,81 @@ func (t TeamService) GetTeamByIdStream(server api.Team_GetTeamByIdStreamServer) 
 	panic("implement me")
 }
 
-func (t TeamService) GetTeamsByName(ctx context.Context, request *api.GetTeamsByNameRequest) (*api.GetTeamsResponse, error) {
-	//TODO implement me
-	panic("implement me")
+func (t TeamService) GetTeamInfoList(ctx context.Context, request *api.GetTeamInfoListRequest) (*api.GetTeamInfoListResponse, error) {
+	var filters []data.Filter
+
+	// 生成过滤器参数
+	for _, f := range request.Filters {
+		switch f.Type {
+		case api.TeamFilterType_USER_ADMIN:
+			userId, err := strconv.ParseUint(f.Value, 10, 64)
+			if err != nil {
+				return nil, err
+			}
+			filters = append(filters, data.NewUserFilter(userId, &data.FilterAdminOption{IsAdmin: true}))
+		case api.TeamFilterType_USER_NO_ADMIN:
+			userId, err := strconv.ParseUint(f.Value, 10, 64)
+			if err != nil {
+				return nil, err
+			}
+			filters = append(filters, data.NewUserFilter(userId, &data.FilterAdminOption{IsAdmin: false}))
+		case api.TeamFilterType_USER_ALL:
+			userId, err := strconv.ParseUint(f.Value, 10, 64)
+			if err != nil {
+				return nil, err
+			}
+			filters = append(filters, data.NewUserFilter(userId, nil))
+		default:
+		}
+	}
+
+	all, count, err := t.repo.FindAll(ctx, request.Limit, request.Offset, filters)
+
+	switch err {
+	case nil:
+
+	default:
+		return &api.GetTeamInfoListResponse{
+			Code:  api.Code_ERROR_UNKNOWN,
+			Infos: nil,
+		}, err
+	}
+
+	var infos []*api.TeamInfo
+
+	// 组装members
+	for _, one := range all {
+		var members []*api.TeamMember
+		for _, m := range one.Members {
+			members = append(members, &api.TeamMember{
+				UserId:    m.UserId,
+				IsAdmin:   m.IsAdmin,
+				CreatedAt: m.CreatedAt.Format("2006-01-02 15:04:05"),
+				UpdatedAt: m.UpdatedAt.Format("2006-01-02 15:04:05"),
+			})
+		}
+
+		infos = append(infos, &api.TeamInfo{
+			Id:          one.Id,
+			Name:        one.Name,
+			Description: one.Description,
+			Website:     one.Website,
+			Avatar:      one.Avatar,
+			Email:       one.Email,
+			Members:     members,
+			CreatedAt:   one.CreatedAt.Format("2006-01-02 15:04:05"),
+			UpdatedAt:   one.UpdatedAt.Format("2006-01-02 15:04:05"),
+		})
+	}
+
+	return &api.GetTeamInfoListResponse{
+		Code:  api.Code_OK,
+		Count: count,
+		Infos: infos,
+	}, nil
 }
 
-func (t TeamService) GetTeamsByNameStream(server api.Team_GetTeamsByNameStreamServer) error {
+func (t TeamService) GetTeamInfoListStream(server api.Team_GetTeamInfoListStreamServer) error {
 	//TODO implement me
 	panic("implement me")
 }
@@ -335,7 +405,7 @@ func (t TeamService) AddAdminStream(server api.Team_AddAdminStreamServer) error 
 	panic("implement me")
 }
 
-func (t TeamService) mustEmbedUnimplementedTeamServiceServer() {
+func (t TeamService) mustEmbedUnimplementedTeamServer() {
 	//TODO implement me
 	panic("implement me")
 }
