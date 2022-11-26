@@ -195,7 +195,25 @@ services:
       - 3306
     ports:
       - "3312:3306"
-
+  # attachment-Service
+  attachmentdb:
+    image: mariadb:latest
+    volumes:
+      -  attachmentdb_data:/var/lib/mysql
+      - ./app/attachment/resource/sql:/docker-entrypoint-initdb.d
+    restart: always
+    environment:
+      - LANG=C.UTF-8
+      - MYSQL_ROOT_PASSWORD=ljxljxljxljx
+      - MYSQL_DATABASE=coinside
+      - MYSQL_USER=ljx
+      - MYSQL_PASSWORD=ljxljxljxljx
+    networks:
+      - app-network
+    expose:
+      - 3306
+    ports:
+      - "3313:3306"
   # BFF
   bff-api:
     build:
@@ -221,3 +239,4 @@ volumes:
   markdowndb_data:
   tododb_data:
   votedb_data:
+  attachmentdb_data:
