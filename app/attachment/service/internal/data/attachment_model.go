@@ -17,5 +17,5 @@ type Attachment struct {
 }
 
 func (Attachment) TableName() string {
-	return "a_attachment"
+	return "m_attachment"
 }
