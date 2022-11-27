@@ -14,17 +14,17 @@ func VoteRouter(r *gin.Engine, controller *controller.VoteController) *gin.Engin
 	//	return id == claims.Id
 	//}
 
-	team := r.Group("/modules/votes")
+	vote := r.Group("/modules/votes")
 	{
-		team.GET("/:id", middleware.JwtAuth(nil), controller.GetVoteInfo)
-		team.POST("", middleware.JwtAuth(nil), controller.CreateVote)
-		team.POST("/:id/items", controller.SetVoteItem)
+		vote.GET("/:id", middleware.JwtAuth(nil), controller.GetVoteInfo)
+		vote.POST("", middleware.JwtAuth(nil), controller.CreateVote)
+		vote.POST("/:id/items", controller.SetVoteItem)
 
-		team.PUT(":id/title", middleware.JwtAuth(nil), controller.SetTitle)
-		team.PUT(":id/items/:item_id/content", middleware.JwtAuth(nil), controller.SetItemContent)
+		vote.PUT(":id/title", middleware.JwtAuth(nil), controller.SetTitle)
+		vote.PUT(":id/items/:item_id/content", middleware.JwtAuth(nil), controller.SetItemContent)
 
-		team.DELETE("/:id", middleware.JwtAuth(nil), controller.DeleteVote)
-		team.DELETE("/:id/items/:item_id", middleware.JwtAuth(nil), controller.DeleteVoteItem)
+		vote.DELETE("/:id", middleware.JwtAuth(nil), controller.DeleteVote)
+		vote.DELETE("/:id/items/:item_id", middleware.JwtAuth(nil), controller.DeleteVoteItem)
 
 	}
 
