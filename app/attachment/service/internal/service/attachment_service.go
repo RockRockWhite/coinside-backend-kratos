@@ -59,7 +59,7 @@ func (a AttachmentService) GetAttachmentsByCardIdStream(server api.Attachment_Ge
 	panic("implement me")
 }
 
-func (a AttachmentService) AddAttachment(ctx context.Context, attachment *api.AttachmentInfo) (*api.AddAttachmentResponse, error) {
+func (a AttachmentService) AddAttachment(ctx context.Context, attachment *api.AddAttachmentRequest) (*api.AddAttachmentResponse, error) {
 	id, err := a.repo.Insert(ctx, &data.Attachment{
 		CardId:        attachment.CardId,
 		Link:          attachment.Link,
@@ -80,7 +80,8 @@ func (a AttachmentService) AddAttachmentStream(server api.Attachment_AddAttachme
 	panic("implement me")
 }
 
-func (a AttachmentService) UpdateAttachment(ctx context.Context, attachment *api.AttachmentInfo) (*api.UpdateAttachmentResponse, error) {
+// need the method: UpdateAttachment(context.Context, *UpdateAttachmentRequest) (*UpdateAttachmentResponse, error)
+func (a AttachmentService) UpdateAttachment(ctx context.Context, attachment *api.UpdateAttachmentRequest) (*api.UpdateAttachmentResponse, error) {
 	one, err := a.repo.FindOne(ctx, attachment.Id)
 
 	switch err {
@@ -104,12 +105,12 @@ func (a AttachmentService) UpdateAttachment(ctx context.Context, attachment *api
 		CreatedAt:     one.CreatedAt,
 	}
 
-	if attachment.CardId != 0 && attachment.CardId != NewAttachment.CardId {
-		NewAttachment.CardId = attachment.CardId
-	}
-
 	if attachment.Link != "" && attachment.Link != NewAttachment.Link {
 		NewAttachment.Link = attachment.Link
+	}
+
+	if attachment.DownloadCount != 0 && attachment.DownloadCount != NewAttachment.DownloadCount {
+		NewAttachment.DownloadCount = attachment.DownloadCount
 	}
 
 	if error := a.repo.Update(ctx, &NewAttachment); error != nil {
@@ -124,7 +125,7 @@ func (a AttachmentService) UpdateAttachment(ctx context.Context, attachment *api
 
 }
 
-func (a AttachmentService) UpdateAttachmentStream(info *api.AttachmentInfo, server api.Attachment_UpdateAttachmentStreamServer) error {
+func (a AttachmentService) UpdateAttachmentStream(info *api.UpdateAttachmentRequest, server api.Attachment_UpdateAttachmentStreamServer) error {
 	//TODO implement me
 	panic("implement me")
 }

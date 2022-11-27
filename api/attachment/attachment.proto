@@ -67,7 +67,9 @@ message AddAttachmentRequest
 }
 message UpdateAttachmentRequest
 {
-  string link = 1; // Attachment链接
+  uint64 id = 1;
+  string link = 2; // Attachment链接
+  uint64 download_count = 3;
 }
 message GetAttachmentResponse {
   AttachmentInfo Attachment = 1;
