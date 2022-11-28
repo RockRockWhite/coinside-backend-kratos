@@ -13,7 +13,7 @@ import (
 func NewAttachmentClient(conf *config.Config, dis registry.Discovery) attachment.AttachmentClient {
 	conn, err := grpc.DialInsecure(
 		context.Background(),
-		grpc.WithEndpoint(fmt.Sprintf("discovery:///%s", conf.GetString("service.markdown.name"))),
+		grpc.WithEndpoint(fmt.Sprintf("discovery:///%s", conf.GetString("service.attachment.name"))),
 		grpc.WithDiscovery(dis),
 		grpc.WithMiddleware(
 			recovery.Recovery(),

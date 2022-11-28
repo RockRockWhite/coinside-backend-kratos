@@ -25,6 +25,8 @@ func initRouter(conf *config.Config) *gin.Engine {
 	cardClient := client.NewCardClinet(conf, discovery)
 	teamClient := client.NewTeamClinet(conf, discovery)
 	cardController := controller.NewCardController(userClient, cardClient, teamClient)
+	attachmentClient := client.NewAttachmentClient(conf, discovery)
+	attachmentController := controller.NewAttachmentController(attachmentClient)
 	teamController := controller.NewTeamController(userClient, teamClient)
 	voteClient := client.NewVoteClinet(conf, discovery)
 	voteController := controller.NewVoteController(userClient, voteClient)
@@ -34,6 +36,6 @@ func initRouter(conf *config.Config) *gin.Engine {
 	markdownController := controller.NewMarkdownController(markdownClient)
 	cosClient := util.NewCOSClinet(conf)
 	objectController := controller.NewObjectController(cosClient)
-	engine := router.NewApiRouter(userController, cardController, teamController, voteController, todoController, markdownController, objectController)
+	engine := router.NewApiRouter(userController, cardController, attachmentController, teamController, voteController, todoController, markdownController, objectController)
 	return engine
 }

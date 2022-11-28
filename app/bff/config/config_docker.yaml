@@ -21,6 +21,8 @@ service:
     name: "todo-service"
   vote:
     name: "vote-service"
+  attachment:
+    name: "attachment-service"
 cos:
   bucket: "{{ COS_BUCKET}}"
   region: "{{ COS_REGION }}"

@@ -24,7 +24,7 @@ func AttachmentRouter(r *gin.Engine, controller *controller.AttachmentController
 
 		attachment.DELETE("/attachments/:id", middleware.JwtAuth(nil), controller.DeleteAttachment)
 
-		attachment.PUT("/attachments/:id", middleware.JwtAuth(nil), controller.SetDownloadCount)
+		attachment.PUT("/attachments/:id/count", middleware.JwtAuth(nil), controller.SetDownloadCount)
 	}
 
 	return r
