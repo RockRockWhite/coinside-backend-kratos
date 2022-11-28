@@ -195,6 +195,19 @@ services:
       - 3306
     ports:
       - "3312:3306"
+  vote-rpc:
+    build:
+      context: ./
+      dockerfile: app/vote/service/Dockerfile
+    expose:
+      - 9000
+    networks:
+      - app-network
+    restart: always
+    depends_on:
+      - zookeeper
+      - votedb
+
   # attachment-Service
   attachmentdb:
     image: mariadb:latest

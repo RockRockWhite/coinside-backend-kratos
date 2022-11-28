@@ -326,6 +326,68 @@ func (t *VoteController) DeleteVoteItem(c *gin.Context) {
 	c.JSON(http.StatusOK, resDto)
 }
 
+func (t *VoteController) SetVoteItemCommit(c *gin.Context) {
+	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
+	itemId, _ := strconv.ParseUint(c.Param("item_id"), 10, 64)
+
+	//userId, _ := strconv.ParseUint(c.Param("user_id"), 10, 64)
+
+	reqDto := struct {
+		UserId uint64 `json:"user_id"`
+	}{}
+	if err := c.ShouldBind(&reqDto); err != nil {
+		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
+		return
+	}
+
+	res, err := t.voteClient.AddCommit(context.Background(), &vote.AddCommitRequest{
+		Id:         id,
+		VoteItemId: itemId,
+		UserId:     reqDto.UserId,
+	})
+
+	resDto := dto.ResponseDto{
+		Code:    dto.VoteErrorCode[res.Code].Code,
+		Message: dto.VoteErrorCode[res.Code].Message,
+		Data:    nil,
+	}
+
+	if res.Code != vote.Code_OK {
+		resDto.Data = err
+	}
+
+	c.JSON(http.StatusOK, resDto)
+}
+
+func (t *VoteController) DeleteVoteItemCommit(c *gin.Context) {
+	voteId, _ := strconv.ParseUint(c.Param("id"), 10, 64)
+	voteItemId, _ := strconv.ParseUint(c.Param("item_id"), 10, 64)
+	userId, _ := strconv.ParseUint(c.Param("user_id"), 10, 64)
+	res, err := t.voteClient.DeleteCommit(context.Background(), &vote.DeleteCommitRequest{
+		Id:     voteId,
+		ItemId: voteItemId,
+		UserId: userId,
+	})
+
+	if err != nil {
+		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err))
+		return
+	}
+
+	resDto := dto.ResponseDto{
+		Code:    dto.VoteErrorCode[res.Code].Code,
+		Message: dto.VoteErrorCode[res.Code].Message,
+		Data:    nil,
+	}
+
+	if res.Code != vote.Code_OK {
+		resDto.Data = err
+	} else {
+	}
+
+	c.JSON(http.StatusOK, resDto)
+}
+
 func NewVoteController(userClient user.UserClient, client vote.VoteClient) *VoteController {
 	return &VoteController{userClient: userClient, voteClient: client}
 }

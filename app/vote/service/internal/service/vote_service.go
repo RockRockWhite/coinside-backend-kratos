@@ -31,22 +31,37 @@ func (u VoteService) GetVoteById(ctx context.Context, request *vote.GetVoteByIdR
 	}
 	//var commits []*api.VoteItemCommit
 	//for _, m := range data.Items {
-	//	commits = append(commits, &api.VoteItemCommit{
-	//		Id:         m.Id,
-	//		VoteItemId: m.
-	//		UserId:     m.Content,
-	//		CreatedAt:  m.CreatedAt.Format("2006-01-02 15:04:05"),
-	//		UpdatedAt:  m.UpdatedAt.Format("2006-01-02 15:04:05"),
-	//	})
+	//	for _, c := range m.Commits {
+	//
+	//		commits = append(commits, &api.VoteItemCommit{
+	//			Id:         c.Id,
+	//			VoteItemId: c.VoteItemId,
+	//			UserId:     c.UserId,
+	//			CreatedAt:  c.CreatedAt.Format("2006-01-02 15:04:05"),
+	//			UpdatedAt:  c.UpdatedAt.Format("2006-01-02 15:04:05"),
+	//		})
+	//	}
 	//}
 
 	var items []*api.VoteItem
 	for _, m := range data.Items {
+		var commits []*api.VoteItemCommit
+		for _, c := range m.Commits {
+
+			commits = append(commits, &api.VoteItemCommit{
+				Id:         c.Id,
+				VoteItemId: c.VoteItemId,
+				UserId:     c.UserId,
+				CreatedAt:  c.CreatedAt.Format("2006-01-02 15:04:05"),
+				UpdatedAt:  c.UpdatedAt.Format("2006-01-02 15:04:05"),
+			})
+		}
+
 		items = append(items, &api.VoteItem{
-			Id:      m.Id,
-			VoteId:  m.VoteId,
-			Content: m.Content,
-			//	Commits:   commits,
+			Id:        m.Id,
+			VoteId:    m.VoteId,
+			Content:   m.Content,
+			Commits:   commits,
 			CreatedAt: m.CreatedAt.Format("2006-01-02 15:04:05"),
 			UpdatedAt: m.UpdatedAt.Format("2006-01-02 15:04:05"),
 		})
@@ -208,13 +223,26 @@ func (u VoteService) DeleteVoteItemStream(server vote.Vote_DeleteVoteItemStreamS
 }
 
 func (u VoteService) AddCommit(ctx context.Context, commit *vote.AddCommitRequest) (*vote.AddCommitResponse, error) {
-	//TODO implement me
-	panic("implement me")
+	err := u.repo.InsertCommit(ctx, commit.Id, commit.VoteItemId, commit.UserId)
+
+	if err != nil {
+		return &api.AddCommitResponse{
+			Code: api.Code_ERROR_UNKNOWN,
+		}, err
+	}
+
+	return &api.AddCommitResponse{Code: api.Code_OK}, nil
 }
 
 func (u VoteService) DeleteCommit(ctx context.Context, request *vote.DeleteCommitRequest) (*vote.DeleteCommitResponse, error) {
-	//TODO implement me
-	panic("implement me")
+	if err := u.repo.DeleteCommit(ctx, request.Id, request.ItemId, request.UserId); err != nil {
+		return &api.DeleteCommitResponse{
+			Code: api.Code_ERROR_UNKNOWN,
+		}, err
+	}
+	return &api.DeleteCommitResponse{
+		Code: api.Code_OK,
+	}, nil
 }
 
 func (u VoteService) mustEmbedUnimplementedVoteServer() {

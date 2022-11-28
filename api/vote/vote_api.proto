@@ -127,6 +127,7 @@ message AddItemRequest
 }
 message AddCommitRequest
 {
+  uint64 id = 1;
   uint64 vote_item_id = 2;   //所属投票的id
   uint64 user_id = 3;//具体内容
 }

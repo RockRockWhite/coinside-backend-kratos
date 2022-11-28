@@ -19,12 +19,14 @@ func VoteRouter(r *gin.Engine, controller *controller.VoteController) *gin.Engin
 		vote.GET("/:id", middleware.JwtAuth(nil), controller.GetVoteInfo)
 		vote.POST("", middleware.JwtAuth(nil), controller.CreateVote)
 		vote.POST("/:id/items", controller.SetVoteItem)
+		vote.POST("/:id/items/:item_id/commits", controller.SetVoteItemCommit)
 
 		vote.PUT(":id/title", middleware.JwtAuth(nil), controller.SetTitle)
 		vote.PUT(":id/items/:item_id/content", middleware.JwtAuth(nil), controller.SetItemContent)
 
 		vote.DELETE("/:id", middleware.JwtAuth(nil), controller.DeleteVote)
 		vote.DELETE("/:id/items/:item_id", middleware.JwtAuth(nil), controller.DeleteVoteItem)
+		vote.DELETE("/:id/items/:item_id/commits/:user_id", middleware.JwtAuth(nil), controller.DeleteVoteItemCommit)
 
 	}
 
