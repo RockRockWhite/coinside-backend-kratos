@@ -267,6 +267,45 @@ func (t *TeamController) SetName(c *gin.Context) {
 
 	c.JSON(http.StatusOK, resDto)
 }
+
+func (t *TeamController) Update(c *gin.Context) {
+	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
+
+	reqDto := struct {
+		Name        string `json:"name"`
+		Description string `json:"description"`
+		Website     string `json:"website"`
+		Avatar      string `json:"avatar"`
+		Email       string `json:"email"`
+	}{}
+	if err := c.ShouldBind(&reqDto); err != nil {
+		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
+		return
+	}
+
+	res, err := t.teamClient.UpdateTeam(context.Background(), &team.UpdateTeamRequest{
+		Id:          id,
+		Name:        reqDto.Name,
+		Description: reqDto.Description,
+		Website:     reqDto.Website,
+		Avatar:      reqDto.Avatar,
+		Email:       reqDto.Email,
+	})
+
+	resDto := dto.ResponseDto{
+		Code:    dto.TeamErrorCode[res.Code].Code,
+		Message: dto.TeamErrorCode[res.Code].Message,
+		Data:    nil,
+	}
+
+	if res.Code != team.Code_OK {
+		resDto.Data = err
+	} else {
+	}
+
+	c.JSON(http.StatusOK, resDto)
+}
+
 func (t *TeamController) SetDescription(c *gin.Context) {
 	id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
 

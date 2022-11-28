@@ -16,6 +16,7 @@ func TeamRouter(r *gin.Engine, controller *controller.TeamController) *gin.Engin
 		team.POST("/:id/members/:user_id", controller.SetTeamMember)
 		team.POST("/:id/admins/:user_id", controller.SetTeamAdmin)
 
+		team.PUT(":id", middleware.JwtAuth(nil), controller.Update)
 		team.PUT(":id/name", middleware.JwtAuth(nil), controller.SetName)
 		team.PUT(":id/avatar", middleware.JwtAuth(nil), controller.SetAvatar)
 		team.PUT(":id/email", middleware.JwtAuth(nil), controller.SetEmail)
