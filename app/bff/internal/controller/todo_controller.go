@@ -102,27 +102,32 @@ func (t *TodoController) CreateTodo(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, dto.ErrorBadRequest)
 		return
 	}
-	//req.CreatorId = c.MustGet("claims").(*util.JwtClaims).Id
 
 	res, err := t.todoClient.AddTodo(context.Background(), &req)
-
-	resDto := dto.ResponseDto{
-		Code:    dto.TodoErrorCode[res.Code].Code,
-		Message: dto.TodoErrorCode[res.Code].Message,
-		Data:    nil,
+	if err != nil {
+		c.JSON(http.StatusBadRequest, dto.NewErrorInternalDto(err.Error()))
+		return
 	}
 
-	if res.Code != todo.Code_OK {
-		resDto.Data = err
-	} else {
-		resDto.Data = struct {
-			Id uint64 `json:"id"`
-		}{
-			Id: res.Id,
-		}
-	}
+	switch res.Code {
+	case todo.Code_OK:
+		c.JSON(http.StatusOK, &dto.ResponseDto{
+			Code:    dto.TodoErrorCode[res.Code].Code,
+			Message: dto.TodoErrorCode[res.Code].Message,
+			Data: struct {
+				Id uint64 `json:"id"`
+			}{
+				Id: res.Id,
+			},
+		})
+	default:
 
-	c.JSON(http.StatusOK, resDto)
+		c.JSON(http.StatusOK, dto.ResponseDto{
+			Code:    dto.TodoErrorCode[res.Code].Code,
+			Message: dto.TodoErrorCode[res.Code].Message,
+			Data:    nil,
+		})
+	}
 }
 
 func (t *TodoController) SetTitle(c *gin.Context) {

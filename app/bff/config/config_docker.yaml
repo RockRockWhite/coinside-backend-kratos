@@ -23,6 +23,7 @@ service:
     name: "vote-service"
   attachment:
     name: "attachment-service"
+
 cos:
   bucket: "{{ COS_BUCKET}}"
   region: "{{ COS_REGION }}"
