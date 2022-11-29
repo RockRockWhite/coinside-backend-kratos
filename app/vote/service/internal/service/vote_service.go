@@ -14,8 +14,71 @@ type VoteService struct {
 }
 
 func (u VoteService) GetVoteById(ctx context.Context, request *vote.GetVoteByIdRequest) (*vote.GetVoteResponse, error) {
-	//TODO implement me
-	panic("implement me")
+	data, err := u.repo.FindOne(ctx, request.Id)
+
+	switch err {
+	case nil:
+	case gorm.ErrRecordNotFound:
+		return &api.GetVoteResponse{
+			Vote: nil,
+			Code: api.Code_ERROR_VOTE_NOTFOUND,
+		}, nil
+	default:
+		return &api.GetVoteResponse{
+			Code: api.Code_ERROR_UNKNOWN,
+		}, err
+
+	}
+	//var commits []*api.VoteItemCommit
+	//for _, m := range data.Items {
+	//	for _, c := range m.Commits {
+	//
+	//		commits = append(commits, &api.VoteItemCommit{
+	//			Id:         c.Id,
+	//			VoteItemId: c.VoteItemId,
+	//			UserId:     c.UserId,
+	//			CreatedAt:  c.CreatedAt.Format("2006-01-02 15:04:05"),
+	//			UpdatedAt:  c.UpdatedAt.Format("2006-01-02 15:04:05"),
+	//		})
+	//	}
+	//}
+
+	var items []*api.VoteItem
+	for _, m := range data.Items {
+		var commits []*api.VoteItemCommit
+		for _, c := range m.Commits {
+
+			commits = append(commits, &api.VoteItemCommit{
+				Id:         c.Id,
+				VoteItemId: c.VoteItemId,
+				UserId:     c.UserId,
+				CreatedAt:  c.CreatedAt.Format("2006-01-02 15:04:05"),
+				UpdatedAt:  c.UpdatedAt.Format("2006-01-02 15:04:05"),
+			})
+		}
+
+		items = append(items, &api.VoteItem{
+			Id:        m.Id,
+			VoteId:    m.VoteId,
+			Content:   m.Content,
+			Commits:   commits,
+			CreatedAt: m.CreatedAt.Format("2006-01-02 15:04:05"),
+			UpdatedAt: m.UpdatedAt.Format("2006-01-02 15:04:05"),
+		})
+	}
+
+	vote := &api.VoteInfo{
+		Id:        data.Id,
+		CardId:    data.CardId,
+		Title:     data.Title,
+		Items:     items,
+		CreatedAt: data.CreatedAt.Format("2006-01-02 15:04:05"),
+		UpdatedAt: data.UpdatedAt.Format("2006-01-02 15:04:05"),
+	}
+	return &api.GetVoteResponse{
+		Vote: vote,
+		Code: api.Code_OK,
+	}, nil
 }
 
 func (u VoteService) GetVoteByIdStream(server vote.Vote_GetVoteByIdStreamServer) error {
@@ -23,7 +86,7 @@ func (u VoteService) GetVoteByIdStream(server vote.Vote_GetVoteByIdStreamServer)
 	panic("implement me")
 }
 
-func (u VoteService) AddVote(ctx context.Context, vote *vote.VoteInfo) (*vote.AddVoteResponse, error) {
+func (u VoteService) AddVote(ctx context.Context, vote *vote.AddVoteRequest) (*vote.AddVoteResponse, error) {
 	id, err := u.repo.Insert(ctx, &data.Vote{
 		CardId: vote.CardId,
 		Title:  vote.Title,
@@ -94,7 +157,7 @@ func (u VoteService) DeleteVoteStream(server vote.Vote_DeleteVoteStreamServer) e
 	panic("implement me")
 }
 
-func (u VoteService) AddItem(ctx context.Context, item *vote.VoteItem) (*vote.AddItemResponse, error) {
+func (u VoteService) AddItem(ctx context.Context, item *vote.AddItemRequest) (*vote.AddItemResponse, error) {
 	id, err := u.repo.InsertItem(ctx, item.VoteId, item.Content)
 
 	if err != nil {
@@ -159,14 +222,27 @@ func (u VoteService) DeleteVoteItemStream(server vote.Vote_DeleteVoteItemStreamS
 	panic("implement me")
 }
 
-func (u VoteService) AddCommit(ctx context.Context, commit *vote.VoteItemCommit) (*vote.AddCommitResponse, error) {
-	//TODO implement me
-	panic("implement me")
+func (u VoteService) AddCommit(ctx context.Context, commit *vote.AddCommitRequest) (*vote.AddCommitResponse, error) {
+	err := u.repo.InsertCommit(ctx, commit.Id, commit.VoteItemId, commit.UserId)
+
+	if err != nil {
+		return &api.AddCommitResponse{
+			Code: api.Code_ERROR_UNKNOWN,
+		}, err
+	}
+
+	return &api.AddCommitResponse{Code: api.Code_OK}, nil
 }
 
 func (u VoteService) DeleteCommit(ctx context.Context, request *vote.DeleteCommitRequest) (*vote.DeleteCommitResponse, error) {
-	//TODO implement me
-	panic("implement me")
+	if err := u.repo.DeleteCommit(ctx, request.Id, request.ItemId, request.UserId); err != nil {
+		return &api.DeleteCommitResponse{
+			Code: api.Code_ERROR_UNKNOWN,
+		}, err
+	}
+	return &api.DeleteCommitResponse{
+		Code: api.Code_OK,
+	}, nil
 }
 
 func (u VoteService) mustEmbedUnimplementedVoteServer() {

@@ -14,18 +14,18 @@ func TodoRouter(r *gin.Engine, controller *controller.TodoController) *gin.Engin
 	//	return id == claims.Id
 	//}
 
-	team := r.Group("/modules/todos")
+	todo := r.Group("/modules/todos")
 	{
-		team.GET("/:id", middleware.JwtAuth(nil), controller.GetTodoInfo)
-		team.POST("", middleware.JwtAuth(nil), controller.CreateTodo)
-		team.POST("/:id/items", controller.SetTodoItem)
+		todo.GET("/:id", middleware.JwtAuth(nil), controller.GetTodoInfo)
+		todo.POST("", middleware.JwtAuth(nil), controller.CreateTodo)
+		todo.POST("/:id/items", controller.SetTodoItem)
 
-		team.PUT(":id/title", middleware.JwtAuth(nil), controller.SetTitle)
-		team.PUT(":id/items/:item_id/content", middleware.JwtAuth(nil), controller.SetItemContent)
-		team.PUT(":id/items/:item_id/finished", middleware.JwtAuth(nil), controller.SetItemFinished)
+		todo.PUT(":id/title", middleware.JwtAuth(nil), controller.SetTitle)
+		todo.PUT(":id/items/:item_id/content", middleware.JwtAuth(nil), controller.SetItemContent)
+		todo.PUT(":id/items/:item_id/finished", middleware.JwtAuth(nil), controller.SetItemFinished)
 
-		team.DELETE("/:id", middleware.JwtAuth(nil), controller.DeleteTodo)
-		team.DELETE("/:id/items/:item_id", middleware.JwtAuth(nil), controller.DeleteTodoItem)
+		todo.DELETE("/:id", middleware.JwtAuth(nil), controller.DeleteTodo)
+		todo.DELETE("/:id/items/:item_id", middleware.JwtAuth(nil), controller.DeleteTodoItem)
 
 	}
 

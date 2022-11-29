@@ -22,14 +22,13 @@ func (Vote) TableName() string {
 }
 
 type Item struct {
-	Id        uint64         `gorm:"primaryKey, column:id"` // id
-	VoteId    uint64         `gorm:"column:vote_id"`        // 投票id
-	Content   string         `gorm:"column:content"`        // 内容
-	CreatedAt time.Time      `gorm:"column:created_at"`     // 创建时间
-	UpdatedAt time.Time      `gorm:"column:updated_at"`     // 更新时间
-	DeletedAt gorm.DeletedAt `gorm:"column:deleted_at"`     // 删除时间,软删除支持字段
-	//这个放这里还是底下
-	Commits []Commit `gorm:"foreignKey:VoteItemId;references:Id"` // 投票提交
+	Id        uint64         `gorm:"primaryKey, column:id"`               // id
+	VoteId    uint64         `gorm:"column:vote_id"`                      // 投票id
+	Content   string         `gorm:"column:content"`                      // 内容
+	CreatedAt time.Time      `gorm:"column:created_at"`                   // 创建时间
+	UpdatedAt time.Time      `gorm:"column:updated_at"`                   // 更新时间
+	DeletedAt gorm.DeletedAt `gorm:"column:deleted_at"`                   // 删除时间,软删除支持字段
+	Commits   []Commit       `gorm:"foreignKey:VoteItemId;references:Id"` // 投票提交
 }
 
 func (Item) TableName() string {
@@ -38,7 +37,7 @@ func (Item) TableName() string {
 
 type Commit struct {
 	Id         uint64         `gorm:"primaryKey, column:id"` // id
-	VoteItemId string         `gorm:"column:vote_item_id"`   // 投票项id
+	VoteItemId uint64         `gorm:"column:vote_item_id"`   // 投票项id
 	UserId     uint64         `gorm:"column:user_id"`        //用户id
 	CreatedAt  time.Time      `gorm:"column:created_at"`     // 创建时间
 	UpdatedAt  time.Time      `gorm:"column:updated_at"`     // 更新时间

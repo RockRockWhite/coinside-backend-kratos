@@ -19,6 +19,10 @@ service:
     name: "markdown-service"
   todo:
     name: "todo-service"
+  vote:
+    name: "vote-service"
+  attachment:
+    name: "attachment-service"
 
 cos:
   bucket: "{{ COS_BUCKET}}"

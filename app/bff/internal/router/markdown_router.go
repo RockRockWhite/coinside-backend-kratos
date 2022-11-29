@@ -14,15 +14,15 @@ func MarkdownRouter(r *gin.Engine, controller *controller.MarkdownController) *g
 	//	return id == claims.Id
 	//}
 
-	user := r.Group("/modules")
+	markdown := r.Group("/modules")
 	{
-		user.GET("/markdowns/:id", middleware.JwtAuth(nil), controller.GetMarkdownInfo)
+		markdown.GET("/markdowns/:id", middleware.JwtAuth(nil), controller.GetMarkdownInfo)
 
-		user.POST("/markdowns", middleware.JwtAuth(nil), controller.CreateMarkdown)
+		markdown.POST("/markdowns", middleware.JwtAuth(nil), controller.CreateMarkdown)
 
-		user.PUT("/markdowns/:id", middleware.JwtAuth(nil), controller.SetContent)
+		markdown.PUT("/markdowns/:id", middleware.JwtAuth(nil), controller.SetContent)
 
-		user.DELETE("/markdowns/:id", middleware.JwtAuth(nil), controller.DeleteMarkdown)
+		markdown.DELETE("/markdowns/:id", middleware.JwtAuth(nil), controller.DeleteMarkdown)
 	}
 
 	return r

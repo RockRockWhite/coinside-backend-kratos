@@ -17,7 +17,7 @@ package vote;
 // The vote service definition.
 service Vote {
   // Get a vote by id
-  rpc GetvoteById(GetVoteByIdRequest) returns (GetVoteResponse){}
+  rpc GetVoteById(GetVoteByIdRequest) returns (GetVoteResponse){}
   // Get a vote by id via stream
   rpc GetVoteByIdStream(stream GetVoteByIdRequest) returns (stream GetVoteResponse){}
 
@@ -27,9 +27,9 @@ service Vote {
 //  rpc GetVoteByCardIdStream(stream GetVoteByCardIdRequest) returns (stream GetVotesResponse){}
 
   // add a Vote
-  rpc AddVote(VoteInfo) returns (AddVoteResponse){}
+  rpc AddVote(AddVoteRequest) returns (AddVoteResponse){}
   // add a Vote via stream
-  rpc AddVoteStream(stream VoteInfo) returns (stream AddVoteResponse){}
+  rpc AddVoteStream(stream AddVoteRequest) returns (stream AddVoteResponse){}
 
   // set Vote title
   rpc SetVoteTitle(SetVoteTitleRequest) returns (SetVoteTitleResponse){}
@@ -42,9 +42,9 @@ service Vote {
   rpc DeleteVoteStream(stream DeleteVoteRequest) returns (stream DeleteVoteResponse){}
 
   //add  a  Voteitem
-  rpc AddItem(VoteItem) returns (AddItemResponse){}
+  rpc AddItem(AddItemRequest) returns (AddItemResponse){}
   // add a Voteitem  via stream
-  rpc AddItemStream(stream VoteItem) returns (stream AddItemResponse){}
+  rpc AddItemStream(stream AddItemRequest) returns (stream AddItemResponse){}
 
   //set Voteitem content
   rpc SetItemContent(SetContentRequest) returns (SetContentResponse){}
@@ -57,7 +57,7 @@ service Vote {
   // delete a Voteitem via stream
   rpc DeleteVoteItemStream(stream DeleteVoteItemRequest) returns (stream DeleteVoteItemResponse){}
 
-  rpc AddCommit(VoteItemCommit) returns (AddCommitResponse){}
+  rpc AddCommit(AddCommitRequest) returns (AddCommitResponse){}
 
   rpc DeleteCommit(DeleteCommitRequest) returns (DeleteCommitResponse){}
 
@@ -83,8 +83,9 @@ message VoteItem{
   uint64 id = 1;//id
   uint64 vote_id = 2;   //所属投票的id
   string content = 3;//具体内容
-  string created_at = 4; // 投票项目创建时间
-  string updated_at = 5; // 投票项目更新时间
+  repeated VoteItemCommit commits = 4;
+  string created_at = 5; // 投票项目创建时间
+  string updated_at = 6; // 投票项目更新时间
 }
 message VoteItemCommit{
   uint64 id = 1;//id
@@ -113,6 +114,23 @@ message GetVoteByIdRequest
 //  uint64 card_id = 1;
 //}
 
+message AddVoteRequest
+{
+  uint64 card_id = 2; // 所属卡片id
+  string title = 3; // 投票标题
+}
+
+message AddItemRequest
+{
+  uint64 vote_id = 2;   //所属投票的id
+  string content = 3;//具体内容
+}
+message AddCommitRequest
+{
+  uint64 id = 1;
+  uint64 vote_item_id = 2;   //所属投票的id
+  uint64 user_id = 3;//具体内容
+}
 message AddVoteResponse
 {
   Code code = 1;
