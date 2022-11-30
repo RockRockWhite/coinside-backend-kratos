@@ -17,7 +17,7 @@ func (u VoteRepoNoCache) Insert(ctx context.Context, data *Vote) (uint64, error)
 
 func (u VoteRepoNoCache) FindOne(ctx context.Context, id uint64) (*Vote, error) {
 	var data Vote
-	res := u.db.Model(&data).Preload("Items").Where("id = ?", id).First(&data)
+	res := u.db.Model(&data).Preload("Items").Preload("Items.Commits").Where("id = ?", id).First(&data)
 	return &data, res.Error
 }
 
@@ -70,7 +70,7 @@ func (u VoteRepoNoCache) DeleteItem(ctx context.Context, id uint64, itemId uint6
 	}
 
 	var items []Item
-	if err = u.db.Model(&data).Association("Items").Find(&items, "item_id = ?", itemId); err != nil {
+	if err = u.db.Model(&data).Association("Items").Find(&items, "id = ?", itemId); err != nil {
 		return err
 	}
 
@@ -81,13 +81,13 @@ func (u VoteRepoNoCache) DeleteItem(ctx context.Context, id uint64, itemId uint6
 	err = u.db.Model(&data).Association("Items").Delete(items[0])
 	return err
 }
-func (u VoteRepoNoCache) UpdateItem(ctx context.Context, id uint64, itemId uint64, context string) error {
+func (u VoteRepoNoCache) UpdateItem(ctx context.Context, id uint64, itemId uint64, content string) error {
 	data, err := u.FindOne(ctx, id)
 	if err != nil {
 		return err
 	}
 	var items []Item
-	if err = u.db.Model(&data).Association("Items").Find(&items, "item_id = ?", itemId); err != nil {
+	if err = u.db.Model(&data).Association("Items").Find(&items, "id = ?", itemId); err != nil {
 		return err
 	}
 
@@ -95,17 +95,57 @@ func (u VoteRepoNoCache) UpdateItem(ctx context.Context, id uint64, itemId uint6
 		return nil
 	}
 
-	items[0].Content = context
-	//这里这里，，是不是这样要测试
+	items[0].Content = content
 	res := u.db.Save(items[0])
 	return res.Error
 }
 
 func (u VoteRepoNoCache) InsertCommit(ctx context.Context, id uint64, itemId uint64, userId uint64) error {
-	return nil
+	data, err := u.FindOne(ctx, id)
+	if err != nil {
+		return err
+	}
+	var items []Item
+	if err = u.db.Model(&data).Association("Items").Find(&items, "id = ?", itemId); err != nil {
+		return err
+	}
+
+	if len(items) == 0 {
+		return nil
+	}
+
+	commit := &Commit{
+		UserId: userId,
+	}
+
+	err = u.db.Model(&items[0]).Association("Commits").Append(commit)
+
+	return err
 }
 func (u VoteRepoNoCache) DeleteCommit(ctx context.Context, id uint64, itemId uint64, userId uint64) error {
-	return nil
+
+	data, err := u.FindOne(ctx, id)
+	if err != nil {
+		return err
+	}
+	var items []Item
+	if err = u.db.Model(&data).Association("Items").Find(&items, "id = ?", itemId); err != nil {
+		return err
+	}
+
+	if len(items) == 0 {
+		return nil
+	}
+
+	var commits []Commit
+	if err = u.db.Model(&items[0]).Association("Commits").Find(&commits, "user_id = ?", userId); err != nil {
+		return err
+	}
+	if len(commits) == 0 {
+		return nil
+	}
+	err = u.db.Model(&items[0]).Association("Commits").Delete(commits[0])
+	return err
 }
 
 func NewVoteRepoNoCache(db *gorm.DB) VoteRepo {

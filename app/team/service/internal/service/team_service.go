@@ -172,6 +172,40 @@ func (t TeamService) AddTeamStream(server api.Team_AddTeamStreamServer) error {
 	panic("implement me")
 }
 
+func (t TeamService) UpdateTeam(ctx context.Context, req *api.UpdateTeamRequest) (*api.UpdateTeamResponse, error) {
+	one, err := t.repo.FindOne(ctx, req.Id)
+
+	switch err {
+	case nil:
+	case gorm.ErrRecordNotFound:
+		return &api.UpdateTeamResponse{
+			Code: api.Code_ERROR_TEAM_NOTFOUND,
+		}, nil
+	default:
+		return &api.UpdateTeamResponse{
+			Code: api.Code_ERROR_UNKNOWN,
+		}, err
+
+	}
+
+	one.Name = req.Name
+	one.Email = req.Email
+	one.Description = req.Description
+	one.Avatar = req.Avatar
+	one.Website = req.Website
+
+	if error := t.repo.Update(ctx, one); error != nil {
+		return &api.UpdateTeamResponse{
+			Code: api.Code_ERROR_UNKNOWN,
+		}, error
+	}
+
+	return &api.UpdateTeamResponse{
+		Code: api.Code_OK,
+	}, nil
+
+}
+
 func (t TeamService) SetTeamName(ctx context.Context, req *api.SetTeamNameRequest) (*api.SetTeamNameResponse, error) {
 	one, err := t.repo.FindOne(ctx, req.Id)
 

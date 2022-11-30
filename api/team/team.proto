@@ -31,10 +31,10 @@ service Team {
   // add a team via stream
   rpc AddTeamStream(stream AddTeamRequest) returns (stream AddTeamResponse){}
 
-  //  // update a team
-  //  rpc UpdateTeam(TeamInfo) returns (UpdateTeamResponse){}
-  //  // update a team via stream
-  //  rpc UpdateTeamSteam(TeamInfo) returns (stream UpdateTeamResponse){}
+    // update a team
+    rpc UpdateTeam(UpdateTeamRequest) returns (UpdateTeamResponse){}
+    // update a team via stream
+    rpc UpdateTeamSteam(UpdateTeamRequest) returns (stream UpdateTeamResponse){}
 
   //set team name
   rpc SetTeamName(SetTeamNameRequest) returns (SetTeamNameResponse){}
@@ -104,6 +104,20 @@ message TeamInfo {
   string updated_at = 9; // 团队更新时间
 }
 
+message UpdateTeamRequest
+{
+  uint64 id = 1; // 团队id
+  string name = 2; // 团队名
+  string description = 3; // 团队描述
+  string website = 4; // 团队官网
+  string avatar = 5; // 头像链接
+  string email = 6; // 团队邮箱
+}
+
+message UpdateTeamResponse
+{
+  Code code = 1;
+}
 message AddTeamRequest{
   TeamInfo team = 1;
   uint64 creator_id = 2;

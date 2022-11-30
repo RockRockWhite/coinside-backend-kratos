@@ -16,7 +16,7 @@ CREATE TABLE
 CREATE TABLE
     IF NOT EXISTS `m_vote_item` (
                                `id` int NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT 'id',
-                               `vote_id` int NOT NULL COMMENT '投票id',
+                               `vote_id` int  COMMENT '投票id',
                                `content` varchar(255)  NOT NULL COMMENT '投票项',
                                `created_at` timestamp NOT NULL COMMENT '创建时间',
                                `updated_at` timestamp NULL  COMMENT '更新时间',
@@ -30,7 +30,7 @@ CREATE TABLE
 CREATE TABLE
     IF NOT EXISTS `m_vote_commit` (
                                  `id` int NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT 'id',
-                                 `vote_item_id` int NOT NULL COMMENT '投票项id',
+                                 `vote_item_id` int  COMMENT '投票项id',
                                  `user_id` int NOT NULL COMMENT '用户id',
                                  `created_at` timestamp NOT NULL COMMENT '创建时间',
                                  `updated_at` timestamp NULL  COMMENT '更新时间',
