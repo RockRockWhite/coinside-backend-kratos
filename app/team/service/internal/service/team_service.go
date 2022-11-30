@@ -63,6 +63,39 @@ func (t TeamService) GetTeamByIdStream(server api.Team_GetTeamByIdStreamServer) 
 	panic("implement me")
 }
 
+func (t TeamService) GetIsAdmin(ctx context.Context, request *api.GetIsAdminRequest) (*api.GetIsAdminResponse, error) {
+	data, err := t.repo.FindOne(ctx, request.TeamId)
+
+	switch err {
+	case nil:
+	case gorm.ErrRecordNotFound:
+		return &api.GetIsAdminResponse{
+			IsAdmin: false,
+			Code:    api.Code_ERROR_TEAM_NOTFOUND,
+		}, nil
+	default:
+		return &api.GetIsAdminResponse{
+			Code: api.Code_ERROR_UNKNOWN,
+		}, err
+
+	}
+
+	var isAdmin bool
+	for _, m := range data.Members {
+		if m.UserId == request.UserId {
+			isAdmin = m.IsAdmin
+		}
+	}
+
+	return &api.GetIsAdminResponse{
+		IsAdmin: isAdmin,
+		Code:    api.Code_OK,
+	}, nil
+}
+func (t TeamService) GetIsAdminStream(server api.Team_GetIsAdminStreamServer) error {
+	//TODO implement me
+	panic("implement me")
+}
 func (t TeamService) GetTeamInfoList(ctx context.Context, request *api.GetTeamInfoListRequest) (*api.GetTeamInfoListResponse, error) {
 	var filters []data.Filter
 
