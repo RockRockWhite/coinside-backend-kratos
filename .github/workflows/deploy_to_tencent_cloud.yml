@@ -5,11 +5,11 @@ on:
       - deploy
     paths-ignore:
       - README.md
-  pull_request:
-    branches:
-      - deploy
-    paths-ignore:
-      - README.md
+#   pull_request:
+#     branches:
+#       - deploy
+#     paths-ignore:
+#       - README.md
 jobs:
   deploy:
     runs-on: ubuntu-latest
