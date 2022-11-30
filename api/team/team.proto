@@ -21,6 +21,10 @@ service Team {
   // Get a team by id via stream
   rpc GetTeamByIdStream(stream GetTeamByIdRequest) returns (stream GetTeamResponse){}
 
+  rpc GetIsAdmin(GetIsAdminRequest) returns (GetIsAdminResponse){}
+
+  rpc GetIsAdminStream(stream GetIsAdminRequest) returns (stream GetIsAdminResponse){}
+
   // Get a team by name
   rpc GetTeamInfoList(GetTeamInfoListRequest) returns (GetTeamInfoListResponse){}
   // Get a user by name via stream
@@ -141,6 +145,16 @@ message GetTeamByIdRequest
   uint64 id = 1;
 }
 
+message GetIsAdminRequest
+{
+  uint64 user_id = 1;
+  uint64 team_id = 2;
+}
+message GetIsAdminResponse
+{
+  bool is_admin = 1;
+  Code code = 2;
+}
 enum TeamFilterType{
   USER_ADMIN = 0;
   USER_NO_ADMIN = 1;

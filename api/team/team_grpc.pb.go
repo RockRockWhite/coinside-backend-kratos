@@ -26,6 +26,8 @@ type TeamClient interface {
 	GetTeamById(ctx context.Context, in *GetTeamByIdRequest, opts ...grpc.CallOption) (*GetTeamResponse, error)
 	// Get a team by id via stream
 	GetTeamByIdStream(ctx context.Context, opts ...grpc.CallOption) (Team_GetTeamByIdStreamClient, error)
+	GetIsAdmin(ctx context.Context, in *GetIsAdminRequest, opts ...grpc.CallOption) (*GetIsAdminResponse, error)
+	GetIsAdminStream(ctx context.Context, opts ...grpc.CallOption) (Team_GetIsAdminStreamClient, error)
 	// Get a team by name
 	GetTeamInfoList(ctx context.Context, in *GetTeamInfoListRequest, opts ...grpc.CallOption) (*GetTeamInfoListResponse, error)
 	// Get a user by name via stream
@@ -124,6 +126,46 @@ func (x *teamGetTeamByIdStreamClient) Recv() (*GetTeamResponse, error) {
 	return m, nil
 }
 
+func (c *teamClient) GetIsAdmin(ctx context.Context, in *GetIsAdminRequest, opts ...grpc.CallOption) (*GetIsAdminResponse, error) {
+	out := new(GetIsAdminResponse)
+	err := c.cc.Invoke(ctx, "/team.Team/GetIsAdmin", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *teamClient) GetIsAdminStream(ctx context.Context, opts ...grpc.CallOption) (Team_GetIsAdminStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Team_ServiceDesc.Streams[1], "/team.Team/GetIsAdminStream", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &teamGetIsAdminStreamClient{stream}
+	return x, nil
+}
+
+type Team_GetIsAdminStreamClient interface {
+	Send(*GetIsAdminRequest) error
+	Recv() (*GetIsAdminResponse, error)
+	grpc.ClientStream
+}
+
+type teamGetIsAdminStreamClient struct {
+	grpc.ClientStream
+}
+
+func (x *teamGetIsAdminStreamClient) Send(m *GetIsAdminRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *teamGetIsAdminStreamClient) Recv() (*GetIsAdminResponse, error) {
+	m := new(GetIsAdminResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 func (c *teamClient) GetTeamInfoList(ctx context.Context, in *GetTeamInfoListRequest, opts ...grpc.CallOption) (*GetTeamInfoListResponse, error) {
 	out := new(GetTeamInfoListResponse)
 	err := c.cc.Invoke(ctx, "/team.Team/GetTeamInfoList", in, out, opts...)
@@ -134,7 +176,7 @@ func (c *teamClient) GetTeamInfoList(ctx context.Context, in *GetTeamInfoListReq
 }
 
 func (c *teamClient) GetTeamInfoListStream(ctx context.Context, opts ...grpc.CallOption) (Team_GetTeamInfoListStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Team_ServiceDesc.Streams[1], "/team.Team/GetTeamInfoListStream", opts...)
+	stream, err := c.cc.NewStream(ctx, &Team_ServiceDesc.Streams[2], "/team.Team/GetTeamInfoListStream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -174,7 +216,7 @@ func (c *teamClient) AddTeam(ctx context.Context, in *AddTeamRequest, opts ...gr
 }
 
 func (c *teamClient) AddTeamStream(ctx context.Context, opts ...grpc.CallOption) (Team_AddTeamStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Team_ServiceDesc.Streams[2], "/team.Team/AddTeamStream", opts...)
+	stream, err := c.cc.NewStream(ctx, &Team_ServiceDesc.Streams[3], "/team.Team/AddTeamStream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -214,7 +256,7 @@ func (c *teamClient) UpdateTeam(ctx context.Context, in *UpdateTeamRequest, opts
 }
 
 func (c *teamClient) UpdateTeamSteam(ctx context.Context, in *UpdateTeamRequest, opts ...grpc.CallOption) (Team_UpdateTeamSteamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Team_ServiceDesc.Streams[3], "/team.Team/UpdateTeamSteam", opts...)
+	stream, err := c.cc.NewStream(ctx, &Team_ServiceDesc.Streams[4], "/team.Team/UpdateTeamSteam", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -255,7 +297,7 @@ func (c *teamClient) SetTeamName(ctx context.Context, in *SetTeamNameRequest, op
 }
 
 func (c *teamClient) SetTeamNameSteam(ctx context.Context, opts ...grpc.CallOption) (Team_SetTeamNameSteamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Team_ServiceDesc.Streams[4], "/team.Team/SetTeamNameSteam", opts...)
+	stream, err := c.cc.NewStream(ctx, &Team_ServiceDesc.Streams[5], "/team.Team/SetTeamNameSteam", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -295,7 +337,7 @@ func (c *teamClient) SetTeamDescription(ctx context.Context, in *SetTeamDescript
 }
 
 func (c *teamClient) SetTeamDescriptionSteam(ctx context.Context, opts ...grpc.CallOption) (Team_SetTeamDescriptionSteamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Team_ServiceDesc.Streams[5], "/team.Team/SetTeamDescriptionSteam", opts...)
+	stream, err := c.cc.NewStream(ctx, &Team_ServiceDesc.Streams[6], "/team.Team/SetTeamDescriptionSteam", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -335,7 +377,7 @@ func (c *teamClient) SetTeamWebsite(ctx context.Context, in *SetTeamWebsiteReque
 }
 
 func (c *teamClient) SetTeamWebsiteSteam(ctx context.Context, opts ...grpc.CallOption) (Team_SetTeamWebsiteSteamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Team_ServiceDesc.Streams[6], "/team.Team/SetTeamWebsiteSteam", opts...)
+	stream, err := c.cc.NewStream(ctx, &Team_ServiceDesc.Streams[7], "/team.Team/SetTeamWebsiteSteam", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -375,7 +417,7 @@ func (c *teamClient) SetTeamAvatar(ctx context.Context, in *SetTeamAvatarRequest
 }
 
 func (c *teamClient) SetTeamAvatarSteam(ctx context.Context, opts ...grpc.CallOption) (Team_SetTeamAvatarSteamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Team_ServiceDesc.Streams[7], "/team.Team/SetTeamAvatarSteam", opts...)
+	stream, err := c.cc.NewStream(ctx, &Team_ServiceDesc.Streams[8], "/team.Team/SetTeamAvatarSteam", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -415,7 +457,7 @@ func (c *teamClient) SetTeamEmail(ctx context.Context, in *SetTeamEmailRequest, 
 }
 
 func (c *teamClient) SetTeamEmailSteam(ctx context.Context, opts ...grpc.CallOption) (Team_SetTeamEmailSteamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Team_ServiceDesc.Streams[8], "/team.Team/SetTeamEmailSteam", opts...)
+	stream, err := c.cc.NewStream(ctx, &Team_ServiceDesc.Streams[9], "/team.Team/SetTeamEmailSteam", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -455,7 +497,7 @@ func (c *teamClient) DeleteTeam(ctx context.Context, in *DeleteTeamRequest, opts
 }
 
 func (c *teamClient) DeleteTeamStream(ctx context.Context, opts ...grpc.CallOption) (Team_DeleteTeamStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Team_ServiceDesc.Streams[9], "/team.Team/DeleteTeamStream", opts...)
+	stream, err := c.cc.NewStream(ctx, &Team_ServiceDesc.Streams[10], "/team.Team/DeleteTeamStream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -495,7 +537,7 @@ func (c *teamClient) AddMember(ctx context.Context, in *AddMemberRequest, opts .
 }
 
 func (c *teamClient) AddMemberStream(ctx context.Context, opts ...grpc.CallOption) (Team_AddMemberStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Team_ServiceDesc.Streams[10], "/team.Team/AddMemberStream", opts...)
+	stream, err := c.cc.NewStream(ctx, &Team_ServiceDesc.Streams[11], "/team.Team/AddMemberStream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -535,7 +577,7 @@ func (c *teamClient) DeleteMember(ctx context.Context, in *DeleteMemberRequest, 
 }
 
 func (c *teamClient) DeleteMemberStream(ctx context.Context, opts ...grpc.CallOption) (Team_DeleteMemberStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Team_ServiceDesc.Streams[11], "/team.Team/DeleteMemberStream", opts...)
+	stream, err := c.cc.NewStream(ctx, &Team_ServiceDesc.Streams[12], "/team.Team/DeleteMemberStream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -575,7 +617,7 @@ func (c *teamClient) AddAdmin(ctx context.Context, in *AddAdminRequest, opts ...
 }
 
 func (c *teamClient) AddAdminStream(ctx context.Context, opts ...grpc.CallOption) (Team_AddAdminStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Team_ServiceDesc.Streams[12], "/team.Team/AddAdminStream", opts...)
+	stream, err := c.cc.NewStream(ctx, &Team_ServiceDesc.Streams[13], "/team.Team/AddAdminStream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -613,6 +655,8 @@ type TeamServer interface {
 	GetTeamById(context.Context, *GetTeamByIdRequest) (*GetTeamResponse, error)
 	// Get a team by id via stream
 	GetTeamByIdStream(Team_GetTeamByIdStreamServer) error
+	GetIsAdmin(context.Context, *GetIsAdminRequest) (*GetIsAdminResponse, error)
+	GetIsAdminStream(Team_GetIsAdminStreamServer) error
 	// Get a team by name
 	GetTeamInfoList(context.Context, *GetTeamInfoListRequest) (*GetTeamInfoListResponse, error)
 	// Get a user by name via stream
@@ -673,6 +717,12 @@ func (UnimplementedTeamServer) GetTeamById(context.Context, *GetTeamByIdRequest)
 }
 func (UnimplementedTeamServer) GetTeamByIdStream(Team_GetTeamByIdStreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetTeamByIdStream not implemented")
+}
+func (UnimplementedTeamServer) GetIsAdmin(context.Context, *GetIsAdminRequest) (*GetIsAdminResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetIsAdmin not implemented")
+}
+func (UnimplementedTeamServer) GetIsAdminStream(Team_GetIsAdminStreamServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetIsAdminStream not implemented")
 }
 func (UnimplementedTeamServer) GetTeamInfoList(context.Context, *GetTeamInfoListRequest) (*GetTeamInfoListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTeamInfoList not implemented")
@@ -797,6 +847,50 @@ func (x *teamGetTeamByIdStreamServer) Send(m *GetTeamResponse) error {
 
 func (x *teamGetTeamByIdStreamServer) Recv() (*GetTeamByIdRequest, error) {
 	m := new(GetTeamByIdRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func _Team_GetIsAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetIsAdminRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TeamServer).GetIsAdmin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/team.Team/GetIsAdmin",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TeamServer).GetIsAdmin(ctx, req.(*GetIsAdminRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Team_GetIsAdminStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(TeamServer).GetIsAdminStream(&teamGetIsAdminStreamServer{stream})
+}
+
+type Team_GetIsAdminStreamServer interface {
+	Send(*GetIsAdminResponse) error
+	Recv() (*GetIsAdminRequest, error)
+	grpc.ServerStream
+}
+
+type teamGetIsAdminStreamServer struct {
+	grpc.ServerStream
+}
+
+func (x *teamGetIsAdminStreamServer) Send(m *GetIsAdminResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *teamGetIsAdminStreamServer) Recv() (*GetIsAdminRequest, error) {
+	m := new(GetIsAdminRequest)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -1338,6 +1432,10 @@ var Team_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Team_GetTeamById_Handler,
 		},
 		{
+			MethodName: "GetIsAdmin",
+			Handler:    _Team_GetIsAdmin_Handler,
+		},
+		{
 			MethodName: "GetTeamInfoList",
 			Handler:    _Team_GetTeamInfoList_Handler,
 		},
@@ -1390,6 +1488,12 @@ var Team_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "GetTeamByIdStream",
 			Handler:       _Team_GetTeamByIdStream_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "GetIsAdminStream",
+			Handler:       _Team_GetIsAdminStream_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},
