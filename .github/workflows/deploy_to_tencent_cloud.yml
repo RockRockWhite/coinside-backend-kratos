@@ -15,6 +15,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: sed omitempty in pb.go
+        run: |
+          sed -i "s@,omitempty@@g" ./api/*/*.pb.go
       - name: write configs
         run: |
           echo "${{ secrets.BFF_CONFIG }}" > ./app/bff/config/config_docker.yaml
