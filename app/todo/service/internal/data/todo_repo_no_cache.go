@@ -70,7 +70,7 @@ func (t TodoRepoNoCache) DeleteItem(ctx context.Context, id uint64, itemId uint6
 	return err
 }
 
-func (t TodoRepoNoCache) FinishItem(ctx context.Context, id uint64, itemId uint64, finishedUserId uint64) error {
+func (t TodoRepoNoCache) FinishItem(ctx context.Context, id uint64, itemId uint64, isFinished bool, finishedUserId uint64) error {
 	data, err := t.FindOne(ctx, id)
 	if err != nil {
 		return err
@@ -85,7 +85,7 @@ func (t TodoRepoNoCache) FinishItem(ctx context.Context, id uint64, itemId uint6
 		return nil
 	}
 
-	item[0].IsFinished = true
+	item[0].IsFinished = isFinished
 	item[0].FinishedUserId = finishedUserId
 
 	res := t.db.Save(item[0])
