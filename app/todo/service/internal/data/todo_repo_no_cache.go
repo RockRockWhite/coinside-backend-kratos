@@ -90,6 +90,7 @@ func (t TodoRepoNoCache) FinishItem(ctx context.Context, id uint64, itemId uint6
 
 	res := t.db.Save(item[0])
 	return res.Error
+
 }
 
 func (t TodoRepoNoCache) UpdateContent(ctx context.Context, id uint64, itemId uint64, content string) error {
