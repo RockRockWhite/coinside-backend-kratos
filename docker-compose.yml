@@ -254,6 +254,20 @@ services:
       - zookeeper
       - user-rpc
 
+  bff-redis:
+    image: redis:latest
+    networks:
+      - app-network
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - bff_redis_datadir:/data
+      - bff_redis_redis.conf:/usr/local/etc/redis/redis.conf
+      - bff_redis_logs:/logs
+    expose:
+      - 6379
+
 networks:
   app-network:
     driver: bridge
@@ -266,3 +280,6 @@ volumes:
   tododb_data:
   votedb_data:
   attachmentdb_data:
+  bff_redis_datadir:
+  bff_redis_redis.conf:
+  bff_redis_logs:
