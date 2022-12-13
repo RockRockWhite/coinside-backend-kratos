@@ -36,6 +36,6 @@ func initRouter(conf *config.Config) *gin.Engine {
 	markdownController := controller.NewMarkdownController(markdownClient)
 	cosClient := util.NewCOSClinet(conf)
 	objectController := controller.NewObjectController(cosClient)
-	engine := router.NewApiRouter(userController, cardController, attachmentController, teamController, voteController, todoController, markdownController, objectController)
+	engine := router.NewApiRouter(conf, userController, cardController, attachmentController, teamController, voteController, todoController, markdownController, objectController)
 	return engine
 }

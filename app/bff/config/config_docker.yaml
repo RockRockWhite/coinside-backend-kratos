@@ -34,3 +34,7 @@ jwt:
   secret: "zRwhJ8AHxEBVx27uEivF5f6heZcz3g1Vtj60IT83Kwg"
   issuer: "ljxsteam"
   expire_days: 14
+
+redis:
+  network: "tcp"
+  addr: "bff-redis:6379"
