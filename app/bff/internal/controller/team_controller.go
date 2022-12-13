@@ -88,6 +88,38 @@ func (t *TeamController) GetTeamInfo(c *gin.Context) {
 	}
 }
 
+func (t *TeamController) GetIsAdmin(c *gin.Context) {
+	userId, _ := strconv.ParseUint(c.Param("user_id"), 10, 64)
+	teamId, _ := strconv.ParseUint(c.Param("id"), 10, 64)
+	res, err := t.teamClient.GetIsAdmin(context.Background(), &team.GetIsAdminRequest{UserId: userId, TeamId: teamId})
+
+	if err != nil {
+		c.JSON(http.StatusOK, dto.NewErrorInternalDto(err.Error()))
+		return
+	}
+
+	switch res.Code {
+	case team.Code_OK:
+
+		c.JSON(http.StatusOK, &dto.ResponseDto{
+			Code:    dto.TeamErrorCode[res.Code].Code,
+			Message: dto.TeamErrorCode[res.Code].Message,
+			Data: struct {
+				IsAdmin bool `json:"is_admin"`
+			}{
+				IsAdmin: res.IsAdmin,
+			},
+		})
+
+	default:
+		c.JSON(http.StatusOK, &dto.ResponseDto{
+			Code:    dto.TeamErrorCode[res.Code].Code,
+			Message: dto.TeamErrorCode[res.Code].Message,
+			Data:    nil,
+		})
+	}
+}
+
 func (t *TeamController) GetTeamInfoList(c *gin.Context) {
 	userId := c.Query("user_id")
 	claims := c.MustGet("claims").(*util.JwtClaims)

@@ -12,7 +12,7 @@ type TodoRepo interface {
 
 	InsertItem(ctx context.Context, id uint64, content string) (uint64, error)
 	DeleteItem(ctx context.Context, id uint64, itemId uint64) error
-	FinishItem(ctx context.Context, id uint64, itemId uint64, finishedUserId uint64) error
+	FinishItem(ctx context.Context, id uint64, itemId uint64, isFinished bool, finishedUserId uint64) error
 	RestartItem(ctx context.Context, id uint64, itemId uint64) error
 	UpdateContent(ctx context.Context, id uint64, itemId uint64, content string) error
 }

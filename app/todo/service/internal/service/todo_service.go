@@ -201,7 +201,7 @@ func (t TodoService) SetItemFinished(ctx context.Context, req *api.SetFinishedRe
 
 	}
 
-	if error := t.repo.FinishItem(ctx, req.Id, req.ItemId, req.UserId); error != nil {
+	if error := t.repo.FinishItem(ctx, req.Id, req.ItemId, req.IsFinished, req.UserId); error != nil {
 		return &api.SetFinishedResponse{
 			Code: api.Code_ERROR_UNKNOWN,
 		}, error
