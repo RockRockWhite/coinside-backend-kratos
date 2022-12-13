@@ -15,7 +15,7 @@ func NewApiRouter(conf *config.Config, userController *controller.UserController
 	router.Use(middleware.Cors)
 
 	// 配置路由
-	router = UserRouter(router, userController)
+	router = UserRouter(router, conf, userController)
 	router = CardRouter(router, cardController)
 	router = TeamRouter(router, teamController)
 	router = MarkdownRouter(router, markdownController)
