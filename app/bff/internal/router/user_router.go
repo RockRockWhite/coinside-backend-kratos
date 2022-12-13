@@ -1,10 +1,9 @@
 package router
 
 import (
-	cache "github.com/chenyahui/gin-cache"
-	"github.com/chenyahui/gin-cache/persist"
+	"github.com/gin-contrib/cache"
+	"github.com/gin-contrib/cache/persistence"
 	"github.com/gin-gonic/gin"
-	"github.com/go-redis/redis/v8"
 	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/controller"
 	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/middleware"
 	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/util"
@@ -21,15 +20,18 @@ func UserRouter(r *gin.Engine, conf *config.Config, controller *controller.UserC
 		return id == claims.Id
 	}
 
-	// 配置缓存中间件
-	redisStore := persist.NewRedisStore(redis.NewClient(&redis.Options{
-		Network: conf.GetString("redis.network"),
-		Addr:    conf.GetString("redis.addr"),
-	}))
+	store := persistence.NewRedisCache(conf.GetString("redis.addr"), "", 1*time.Second)
+
+	//redisStore := persist.NewRedisStore(redis.NewClient(&redis.Options{
+	//	Network: conf.GetString("redis.network"),
+	//	Addr:    conf.GetString("redis.addr"),
+	//}))
+	//
+	//store := persistence.NewInMemoryStore(60 * time.Second)
 
 	user := r.Group("/users")
 	{
-		user.GET("/:id", middleware.JwtAuth(selfCond), cache.CacheByRequestURI(redisStore, 2*time.Second), controller.GetUserInfo)
+		user.GET("/:id", middleware.JwtAuth(selfCond), cache.CachePage(store, 2*time.Second, controller.GetUserInfo))
 		user.GET("/id", controller.GetUserId)
 
 		user.POST("", controller.CreateUser)
