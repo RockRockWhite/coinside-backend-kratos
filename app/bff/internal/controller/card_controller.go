@@ -108,6 +108,9 @@ func (u *CardController) GetCardInfoList(c *gin.Context) {
 					break
 				}
 			}
+			if len(memberIds) != 0 {
+				ok = true
+			}
 			if !ok {
 				c.JSON(http.StatusOK, dto.ErrorForbidden)
 				return
