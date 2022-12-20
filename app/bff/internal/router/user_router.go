@@ -4,6 +4,7 @@ import (
 	cache "github.com/chenyahui/gin-cache"
 	"github.com/chenyahui/gin-cache/persist"
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis/v8"
 	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/controller"
 	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/middleware"
 	"github.com/ljxsteam/coinside-backend-kratos/app/bff/internal/util"
@@ -21,11 +22,10 @@ func UserRouter(r *gin.Engine, conf *config.Config, controller *controller.UserC
 	}
 
 	// 配置缓存中间件
-	redisStore := persist.NewMemoryStore(1 * time.Minute)
-	//redisStore := persist.NewRedisStore(redis.NewClient(&redis.Options{
-	//	Network: conf.GetString("redis.network"),
-	//	Addr:    conf.GetString("redis.addr"),
-	//}))
+	redisStore := persist.NewRedisStore(redis.NewClient(&redis.Options{
+		Network: conf.GetString("redis.network"),
+		Addr:    conf.GetString("redis.addr"),
+	}))
 
 	user := r.Group("/users")
 	{
